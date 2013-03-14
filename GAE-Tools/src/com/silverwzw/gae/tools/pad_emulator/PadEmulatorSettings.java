@@ -107,4 +107,10 @@ final public class PadEmulatorSettings {
 	public void releaseSaveLock() {
 		set("notLocked", true);
 	}
+	public void setDisableAllFunction(boolean bool) {
+		set("disableAllFunction", bool);
+	}
+	public boolean isAllFunctionDisabled() {
+		return is("disableAllFunction");
+	}
 }

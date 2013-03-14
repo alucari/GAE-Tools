@@ -77,33 +77,35 @@ public class Pad extends SimpleServlet{
 
 		resp.setHeader("Content-Type", "text/html; charset=UTF-8");
 		
-		if (actionIs("confirm_level_up") && settings.isBlockLevelUp()) {
-			resp.getWriter().print("{\"res\":97}");
-			settings.setBlockLevelUp(false); //for safety
-			return;
-		}
-		
-		if (actionIs("sneak_dungeon") && settings.isLocked()) {
-			resp.getWriter().print("{\"res\":98}");
-			return;
-		}
-		
-		if (actionIs("sneak_dungeon_ack") && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
-			Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
-			boolean find_one_egg;
-			find_one_egg = false;
-			while(mitm.find()) {
-				if (settings.WantedEggs().contains(mitm.group(1))) {
-					find_one_egg = true;
-					break;
-				}
-			}
-			if (!find_one_egg) {
-				resp.getWriter().print("{\"res\":96}");
-				settings.acquireSaveLock();
+		if (settings != null && !settings.isAllFunctionDisabled()) {
+			if (actionIs("confirm_level_up") && settings.isBlockLevelUp()) {
+				resp.getWriter().print("{\"res\":97}");
+				settings.setBlockLevelUp(false); //for safety
 				return;
-			} else {
-				settings.setLookingForCertainEgg(false);
+			}
+			
+			if (actionIs("sneak_dungeon") && settings.isLocked()) {
+				resp.getWriter().print("{\"res\":98}");
+				return;
+			}
+			
+			if (actionIs("sneak_dungeon_ack") && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
+				Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
+				boolean find_one_egg;
+				find_one_egg = false;
+				while(mitm.find()) {
+					if (settings.WantedEggs().contains(mitm.group(1))) {
+						find_one_egg = true;
+						break;
+					}
+				}
+				if (!find_one_egg) {
+					resp.getWriter().print("{\"res\":96}");
+					settings.acquireSaveLock();
+					return;
+				} else {
+					settings.setLookingForCertainEgg(false);
+				}
 			}
 		}
 		
@@ -126,15 +128,17 @@ public class Pad extends SimpleServlet{
 			res += '\n' + line;
 		}
 		
-		if (actionIs("sneak_dungeon")) {
-			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
-			Dungeon dungeon;
-			dungeon = new Dungeon(res);
-			res = dungeon.modDungeon();
-		}
-		if (actionIs("get_player_data")) {
-			Matcher m = Pattern.compile(",\\s*\"msg\"\\s*:\"").matcher(res);
-			res = m.replaceAll(",\"msg\":\"Silverwzw-");
+		if (settings != null && !settings.isAllFunctionDisabled()) {
+			if (actionIs("sneak_dungeon")) {
+				(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
+				Dungeon dungeon;
+				dungeon = new Dungeon(res);
+				res = dungeon.modDungeon();
+			}
+			if (actionIs("get_player_data")) {
+				Matcher m = Pattern.compile(",\\s*\"msg\"\\s*:\"").matcher(res);
+				res = m.replaceAll(",\"msg\":\"Silverwzw-");
+			}
 		}
 		resp.getWriter().print(res);
 	}

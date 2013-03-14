@@ -17,21 +17,26 @@ final public class controlPanel extends ActionHandler {
 		
 		HashMap<String,String> users;
 		users = new HashMap<String,String>();
-		users.put("364342234","silverwzw");
+		users.put("324363124","silverwzw");
 		
 		o = resp.getWriter();
 		
 		o.println("<html><head><script src=\"/monster.js\"></script></head><body>");
 		o.println("<table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>Last Dungeon Entered</th><th>block Level Up?</th><th>Wanted Eggs</th><th>Other</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>Enable</th><th>Last Dungeon Entered</th><th>block Level Up?</th><th>Wanted Eggs</th><th>Other</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
-			String pid;
+			String pid,str;
+			boolean disable;
 			pid = e.getKey();
 			settings = new PadEmulatorSettings(pid);
 			o.print("<tr>");
 			o.print(td(pid));
 			o.print(td(e.getValue()));
+			disable = settings.isAllFunctionDisabled();
+			str = (disable?"N":"Y") + sp + a("/pad?action=functionEnableDisable&pid="+pid+(disable?"&enable=1":"&disable=1"),disable?"[turn on]":"[turn off]");
+			o.print(td(str));
+			
 			o.print(td(a("/pad?action=showDungeon&pid=" + pid, "show", "_blank")));
 			if (settings.isBlockLevelUp()) {
 				o.print(td("Y" + sp + a("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[release]")));
@@ -40,9 +45,9 @@ final public class controlPanel extends ActionHandler {
 			}
 			o.print("<td>");
 			if (settings.isLookingForCertainEgg()) {
-				String str = "";
+				str = "";
 				for (String egg : settings.WantedEggs()) {
-					str += "show(" + egg + ");";
+					str += "document.write(show(" + egg + "));";
 				}
 				if (str.equals("")) {
 					str = "Yes, but no eggs set";

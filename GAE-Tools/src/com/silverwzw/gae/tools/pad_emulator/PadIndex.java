@@ -9,6 +9,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("showDungeon", new ShowDungeon());
 		setAction("doNotLvlUp", new NoLvlUp());
 		setAction("lookForEggs", new LookForEggs());
+		setAction("functionEnableDisable", new FunctionEnableDisable());
 		setDefaultAction(new controlPanel());
 	}
 }
