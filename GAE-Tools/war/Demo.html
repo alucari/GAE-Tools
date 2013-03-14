@@ -1,0 +1,188 @@
+<html>
+<head>
+<style>
+    .toggler { width: 500px; height: 200px; }
+    #button { padding: .5em 1em; text-decoration: none; }
+    #effect { width: 240px; height: 135px; padding: 0.4em; position: relative; }
+    #effect h3 { margin: 0; padding: 0.4em; text-align: center; }
+</style>
+<script src="jquery-1.8.2.js"></script>
+<script src="jquery-ui-1.9.1.custom.js"></script>
+<script src="jquery-ui-1.9.1.custom.min.js"></script>
+<script src="jquery.flot.js"></script>
+<script>
+var chartdata, chartsettings, chart, predata;
+
+var tfun = function(axis) {
+	var r = (axis.max - axis.min)/25;
+	var res  = [[axis.min,""]];
+	var i, t=Math.pow(1.5, -5);
+	for (i = -5; i < 8; i++) {
+		res.push([axis.min + r * t, ""]);
+		t = t * 1.5;
+	}
+	return res;
+}
+
+chartsettings = {
+	yaxis : {
+		ticks : tfun,
+		min : 0,
+		max : 5
+	},
+	xaxis : {
+		ticks : [[10,""], [20,""], [30,""], [40,""]],
+		min : 0,
+		max : 50
+	},
+	grid : {
+		hoverable : true,
+		clickable : true,
+		autoHighlight : true
+	}
+};
+function generateData() {
+	var i,d;
+	predata={
+		"sin" : {
+			label:'sin',
+			data:[],
+			hoverable: true,
+			clickable: false,
+			points : {
+				show : true
+			},
+			lines : {
+				show : true
+			}
+		},
+		"log" : {
+			label:'log',
+			data:[],
+			clickable: true,
+			hoverable: true,
+			bars : {
+				show : true,
+				barWidth : 2
+			}
+		},
+		"xml" : {
+			label:'xml',
+			data:[],
+			clickable: false,
+			hoverable: true,
+			lines : {
+				show : true
+			}
+		}
+	};
+	for (i=0; i<50; i++) {
+		if (!(i%2)){
+			d=[i, 2+2*Math.sin(i/5)];
+			predata['sin'].data.push(d);
+		}
+		if (!(i%4)) {
+			d=[i, 1-Math.log((i+1)/40)];
+			predata['log'].data.push(d);
+		}
+	}
+}
+
+function getdata() {
+	$.get("data.xml",function (xml) {
+		$(xml).find("data").each( function () {
+			var d=$(this);
+			predata["xml"].data.push([d.attr("x"), d.attr("y")]);
+		});
+	});
+}
+
+var click_cb = function (event, pos, item) {
+	var str;
+	if (item) {
+		str = "data point (" + item.datapoint[0].toFixed(2) + "," + item.datapoint[1].toFixed(2) + ") in data series \"" + item.series.label + "\" is selected! for more information, click here.";
+		$("#infobox").empty();
+		$("#infobox").append(str);
+	}
+}
+
+var hover_cb = function (event, pos, item) {
+	var str;
+	if (!item || item.series.label != "sin") {
+		$("#floatinginfo").empty();
+		$("#floatingbox").hide();
+		return;
+	}
+	str = "current position: " + pos.x.toFixed(2) + "," + pos.y.toFixed(2);
+	str += "<br /> data point (" + item.datapoint[0].toFixed(2) + "," + item.datapoint[1].toFixed(2) + ") in data series \"" + item.series.label + "\" is selected!";
+	$("#floatinginfo").empty();
+	$("#floatinginfo").append(str);
+    $('#floatingbox').css({top: pos.pageY, left: pos.pageX});
+	$("#floatingbox").show();
+}
+
+var plotAccordingToChoices = function () {
+	chartdata = [];
+	chart = null;
+	$("#plot").empty();
+	$("#choices").find("input:checked").each(function () {
+            var key = $(this).attr("name");
+            if (key && predata[key])
+                chartdata.push(predata[key]);
+        });
+
+        if (chartdata.length > 0)
+            chart = $.plot($("#plot"), chartdata, chartsettings);
+	$("#plot").bind("plotclick", click_cb);
+	$("#plot").bind("plothover", hover_cb);
+}
+var ma=null;
+var ld=function() {
+	ma = $("#main_area");
+	ma.draggable();
+	generateData();
+	getdata();
+	$("#floatingbox").hide();
+	$("#choices").find("input").click(plotAccordingToChoices);
+	plotAccordingToChoices();
+};
+$(document).ready(ld);
+</script>
+</head>
+
+<body>
+	<table id="main_area" style="position:absolute; background:#FFFFFF" >
+		<tbody>
+		<tr>
+			<th colspan="2" align="center">
+				<h3 style="margin: 0; padding: 0.4em; text-align: center;"  class="ui-widget-header ui-corner-all">Title</h3>
+			</th>
+		</tr>
+			<tr>
+				<td  height=200 width=400  id="plot">
+				</td>
+				<th rowspan="2" id = "infobox" width=120>
+				Info Box
+				</th>
+			</tr>
+			<tr>
+				<td id="choices">
+				<input type="checkbox" name='log' checked>log</input>, <input type="checkbox" name='sin' checked>sin</input>, <input name='xml' type="checkbox">remote xml data</input>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="floatingbox" style="position:absolute; background:#FFFFFF" >
+		<table  border='1'>
+			<tbody>
+				<tr>
+					<td id="floatinginfo" width=120 >
+					fbox
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
+
