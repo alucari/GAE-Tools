@@ -80,7 +80,9 @@ final public class PadEmulatorSettings {
 			cacheCopy = new ArrayList<String>();
 		}
 		for (String egg : eggIDs) {
-			cacheCopy.add(egg);
+			if (egg != null) {
+				cacheCopy.add(egg);
+			}
 		}
 		set("wantedEggs", (Object)cacheCopy);
 	}
@@ -107,10 +109,10 @@ final public class PadEmulatorSettings {
 	public void releaseSaveLock() {
 		set("notLocked", true);
 	}
-	public void setDisableAllFunction(boolean bool) {
-		set("disableAllFunction", bool);
+	public void setDisableDungeonMod(boolean bool) {
+		set("disableDungeonMod", bool);
 	}
-	public boolean isAllFunctionDisabled() {
-		return is("disableAllFunction");
+	public boolean isDungeonModDisabled() {
+		return is("disableDungeonMod");
 	}
 }

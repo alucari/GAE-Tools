@@ -20,18 +20,20 @@ import javax.servlet.http.HttpServletResponse;
 import com.silverwzw.gae.SimpleServlet;
 
 @SuppressWarnings("serial")
-public class Pad extends SimpleServlet{
-	private static String target = "http://api-na-adr-pad.gungho.jp/api.php"; 
+public class Pad extends SimpleServlet{ 
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 	private PadEmulatorSettings settings;
+	private static Pattern pattern = Pattern.compile(",\\s*\"msg\"\\s*:\"");
 	public void serv(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
+
+		String target;
 
 		resp = response;
 		req = request;
 		
-
+		target = isApple()?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
+		
 		// POST method have highest priority, should be handled before any req.getParameter call
 		String urlStr;
 		HttpURLConnection conn;
@@ -77,35 +79,33 @@ public class Pad extends SimpleServlet{
 
 		resp.setHeader("Content-Type", "text/html; charset=UTF-8");
 		
-		if (settings != null && !settings.isAllFunctionDisabled()) {
-			if (actionIs("confirm_level_up") && settings.isBlockLevelUp()) {
-				resp.getWriter().print("{\"res\":97}");
-				settings.setBlockLevelUp(false); //for safety
-				return;
-			}
-			
-			if (actionIs("sneak_dungeon") && settings.isLocked()) {
-				resp.getWriter().print("{\"res\":98}");
-				return;
-			}
-			
-			if (actionIs("sneak_dungeon_ack") && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
-				Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
-				boolean find_one_egg;
-				find_one_egg = false;
-				while(mitm.find()) {
-					if (settings.WantedEggs().contains(mitm.group(1))) {
-						find_one_egg = true;
-						break;
-					}
+		if (actionIs("confirm_level_up") && settings.isBlockLevelUp()) {
+			resp.getWriter().print("{\"res\":97}");
+			settings.setBlockLevelUp(false); //for safety
+			return;
+		}
+		
+		if (actionIs("sneak_dungeon") && settings.isLocked()) {
+			resp.getWriter().print("{\"res\":98}");
+			return;
+		}
+		
+		if (actionIs("sneak_dungeon_ack") && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
+			Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
+			boolean find_one_egg;
+			find_one_egg = false;
+			while(mitm.find()) {
+				if (settings.WantedEggs().contains(mitm.group(1))) {
+					find_one_egg = true;
+					break;
 				}
-				if (!find_one_egg) {
-					resp.getWriter().print("{\"res\":96}");
-					settings.acquireSaveLock();
-					return;
-				} else {
-					settings.setLookingForCertainEgg(false);
-				}
+			}
+			if (!find_one_egg) {
+				resp.getWriter().print("{\"res\":96}");
+				settings.acquireSaveLock();
+				return;
+			} else {
+				settings.setLookingForCertainEgg(false);
 			}
 		}
 		
@@ -128,21 +128,32 @@ public class Pad extends SimpleServlet{
 			res += '\n' + line;
 		}
 		
-		if (settings != null && !settings.isAllFunctionDisabled()) {
-			if (actionIs("sneak_dungeon")) {
-				(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
-				Dungeon dungeon;
-				dungeon = new Dungeon(res);
-				res = dungeon.modDungeon();
+		if (actionIs("sneak_dungeon")) {
+			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
+			Dungeon dungeon;
+			dungeon = new Dungeon(res);
+
+			if (settings != null && !settings.isDungeonModDisabled()) {
+				res = dungeon.modDungeon(1);
 			}
-			if (actionIs("get_player_data")) {
-				Matcher m = Pattern.compile(",\\s*\"msg\"\\s*:\"").matcher(res);
-				res = m.replaceAll(",\"msg\":\"Silverwzw-");
-			}
+		}
+		if (actionIs("get_player_data")) {
+			Matcher m = pattern.matcher(res);
+			res = m.replaceAll(",\"msg\":\"Silverwzw-");
 		}
 		resp.getWriter().print(res);
 	}
 	private boolean actionIs(String actionName) {
 		return req.getParameter("action").equals(actionName);
+	}
+	private boolean isApple(){
+		String qs = req.getQueryString();
+		if (qs.indexOf("dev=iPad3,4") >= 0) {
+			return true;
+		}
+		if (qs.indexOf("pid=324151024")>=0) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -1,45 +1,43 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.silverwzw.gae.SimpleServlet;
+
 
 @SuppressWarnings("serial")
-final public class Pad_na_adr extends HttpServlet{
-	String str;
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+final public class Pad_na_adr extends SimpleServlet{
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("application/octet-stream");
-		str = "{";
-		p("\"res\":0,");
-		p("\"links\":[");
-		p("\t{	\"name\":\"Official Web Site\",");
-		p("\t\t\"link\":\"http:\\/\\/www.gunghoonline.com\\/games\\/puzzle-dragons\\/\"");
-		p("\t},");
-		p("\t{	\"name\":\"Trailer\",");
-		p("\t\t\"link\":\"http:\\/\\/www.youtube.com\\/watch?v=vgZFZtG8rQM\"");
-		p("\t},");
-		p("\t{\t\"name\":\"Combo Tips\",");
-		p("\t\t\"link\":\"http:\\/\\/www.youtube.com\\/watch?v=bE9CP9Q07OU\"");
-		p("\t},");
-		p("\t{\t\"name\":\"Facebook\",");
-		p("\t\t\"link\":\"https:\\/\\/www.facebook.com\\/zhuowei.wang\"");
-		p("\t}");
-		p("],");
-		p("\"banner\":[");
-		p("\t{\t\"start\":\"120101000000\",");
-		p("\t\t\"end\":\"990101000000\",");
-		p("\t\t\"height\":64,");
-		p("\t\t\"link\":\"http:\\/\\/patch-pad.gungho.jp\\/banner.html\"");
-		p("\t}");
-		p("]");
-		p("}");
-		resp.getWriter().print(str);
-	}
-	 private final void p(String str2) {
-		str = str + '\n' + str2;
+		BufferedReader reader;
+		HttpURLConnection conn;
+		String line,str;
+		
+		resp.setContentType("application/json");
+		
+		conn = (HttpURLConnection) (new URL("http://patch-na-pad.gungho.jp/pad-na-adr.json")).openConnection();
+		conn.connect();
+		reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+		
+		
+		if ((line = reader.readLine()) != null) {
+			str = line;
+		} else {
+			str = "";
+		}
+		while ((line = reader.readLine()) != null) {
+			str += '\n' + line;
+		}
+		
+		resp.getWriter().print(str.replaceAll("api-na-adr-pad\\.gungho\\.jp","tools\\.silverwzw\\.com"));
 	}
 }

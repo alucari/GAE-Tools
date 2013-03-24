@@ -15,9 +15,9 @@ public class FunctionEnableDisable extends ActionHandler {
 		} else {
 			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
 			if (req.getParameter("enable")!=null) {
-				settings.setDisableAllFunction(false);
+				settings.setDisableDungeonMod(false);
 			} else if (req.getParameter("disable")!=null){
-				settings.setDisableAllFunction(true);
+				settings.setDisableDungeonMod(true);
 			}
 			resp.sendRedirect("/pad");
 		}
