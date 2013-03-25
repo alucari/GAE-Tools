@@ -3,6 +3,7 @@ package com.silverwzw.gae.tools.pad_emulator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
@@ -16,7 +17,7 @@ final public class PadEmulatorSettings {
 	PadEmulatorSettings(String playerId) {
 		pid = playerId;
 	}
-	public Object get(String itemName) {
+	private static Object get(String itemName, String settingPid) {
 		String key;
 		if (cache == null) {
 			try {
@@ -26,14 +27,23 @@ final public class PadEmulatorSettings {
 				return null;
 			}
 		}
-		key = itemName + '-' + pid;
+		key = itemName;
+		if (settingPid != null) {
+			key += '-' + settingPid;
+		}
 		if (cache.containsKey(key)) {
 			return cache.get(key);
 		} else {
 			return null;
 		}	
 	}
-	public boolean set(String itemName, Object value) {
+	public Object getSpec(String itemName) {
+		return get(itemName, pid);
+	}
+	public static Object getGeneral(String itemName) {
+		return get(itemName, null);
+	}
+	private static boolean set(String itemName, Object value, String settingPid) {
 		if (cache == null) {
 			try {
 				cache = CacheManager.getInstance().getCacheFactory().createCache(Collections.emptyMap());
@@ -42,12 +52,21 @@ final public class PadEmulatorSettings {
 				return false;
 			}
 		}
-		String key = itemName + '-' + pid;
+		String key = itemName;
+		if (settingPid != null) {
+			key += '-' + settingPid;
+		}
 		cache.put(key, value);
 		return true;
 	}
+	public boolean setSpec(String itemName, Object value){
+		return set(itemName,value,pid);
+	}
+	public static boolean setGeneral(String itemName, Object value){
+		return set(itemName,value,null);
+	}
 	public boolean is(String itemName) {
-		Boolean b = (Boolean)get(itemName);
+		Boolean b = (Boolean)getSpec(itemName);
 		if (b == null) {
 			return false;
 		} else {
@@ -58,42 +77,43 @@ final public class PadEmulatorSettings {
 		return is("blockLevelUp");
 	}
 	public void setBlockLevelUp(boolean bool) {
-		set("blockLevelUp", bool);
+		setSpec("blockLevelUp", bool);
 	}
 	public void setDungeonString(String dungeonStr) {
-		set("LastDungeonRecieved", dungeonStr);
+		setSpec("LastDungeonRecieved", dungeonStr);
 	}
 	public String getDungeonString() {
-		return (String)get("LastDungeonRecieved");
+		return (String)getSpec("LastDungeonRecieved");
 	}
 	public boolean isLookingForCertainEgg() {
 		return is("isLookingForCertainEgg");
 	}
 	public void setLookingForCertainEgg(boolean bool) {
-		set("isLookingForCertainEgg", bool);
+		setSpec("isLookingForCertainEgg", bool);
 	}
 	@SuppressWarnings("unchecked")
 	public void addWantedEgges(String ... eggIDs) {
 		ArrayList<String> cacheCopy;
-		cacheCopy = (ArrayList<String>)get("wantedEggs");
+		cacheCopy = (ArrayList<String>)getSpec("wantedEggs");
 		if (cacheCopy == null) {
 			cacheCopy = new ArrayList<String>();
 		}
 		for (String egg : eggIDs) {
 			if (egg != null) {
 				cacheCopy.add(egg);
+				setFreqEgg(egg);
 			}
 		}
-		set("wantedEggs", (Object)cacheCopy);
+		setSpec("wantedEggs", (Object)cacheCopy);
 	}
 	public void cleanWantedEggs() {
-		set("wantedEggs",(Object)new ArrayList<String>());
+		setSpec("wantedEggs",(Object)new ArrayList<String>());
 		setLookingForCertainEgg(false);
 	}
 	@SuppressWarnings("unchecked")
 	public Collection<String> WantedEggs() {
 		ArrayList<String> cacheCopy;
-		cacheCopy = (ArrayList<String>)get("wantedEggs");
+		cacheCopy = (ArrayList<String>)getSpec("wantedEggs");
 		if (cacheCopy != null) {
 			return cacheCopy;
 		} else {
@@ -101,18 +121,62 @@ final public class PadEmulatorSettings {
 		}
 	}
 	public void acquireSaveLock() {
-		set("notLocked", false);
+		setSpec("notLocked", false);
 	}
 	public boolean isLocked() {
 		return !is("notLocked");
 	}
 	public void releaseSaveLock() {
-		set("notLocked", true);
+		setSpec("notLocked", true);
 	}
 	public void setDisableDungeonMod(boolean bool) {
-		set("disableDungeonMod", bool);
+		setSpec("disableDungeonMod", bool);
 	}
 	public boolean isDungeonModDisabled() {
 		return is("disableDungeonMod");
+	}
+	public static Iterable<String> getFreqEggs() {
+		if (getGeneral("freqEggs") == null) {
+			setGeneral("freqEggs", new freqAccessEggs(16));
+		}
+		return ((freqAccessEggs)getGeneral("freqEggs")).collection();
+	}
+	public static boolean setFreqEgg(String egg) {
+		freqAccessEggs fae;
+		boolean ret;
+		fae = (freqAccessEggs)getGeneral("freqEggs");
+		if (fae == null) {
+			fae = new freqAccessEggs(16);
+		}
+		ret = fae.mtf(egg);
+		setGeneral("freqEggs",fae);
+		return ret;
+	}
+}
+
+@SuppressWarnings("serial")
+final class freqAccessEggs implements java.io.Serializable {
+	private int capacity;
+	private LinkedList<String> list;
+	freqAccessEggs(int c) {
+		if (c < 1) {
+			c = 1;
+		} else if (c > 64) {
+			c = 64;
+		}
+		capacity = c;
+		list = new LinkedList<String>();
+	}
+	boolean mtf(String eggnumber) {
+		boolean ret;
+		ret = list.remove(eggnumber);
+		list.addFirst(eggnumber);
+		if (list.size() > capacity) {
+			list.removeLast();
+		}
+		return ret;
+	}
+	Iterable<String> collection() {
+		return (Iterable<String>)list;
 	}
 }

@@ -60,7 +60,13 @@ final public class controlPanel extends ActionHandler {
 			o.print("</tr>");
 		}
 		o.println("</tbody></table>");
-		o.println("</body></html>");
+		o.println("<br />Quick List:<br /><script>");
+		Iterable<String> freqEggs = PadEmulatorSettings.getFreqEggs();
+		int counter = 0;
+		for (String egg : freqEggs) {
+			o.println("document.write('[" + egg + "' + show(" + egg + ") + ']&nbsp;" +((++counter % 8 == 0)?"<br />')":"')"));
+		}
+		o.println("</script></body></html>");
 	}
 	final private static String td(String labelContent) {
 		return "<td>" + labelContent + "</td>";  
