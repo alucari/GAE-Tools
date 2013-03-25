@@ -1,15 +1,43 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script>
+    	var i;
+    	setTimeout(function () {
+    		var prime;
+    		var j;
+    		
+    		prime=[2];
+    		
+    		for (i = 3; i < 100; i++) {
+    			var isPrime;
+    			isPrime = true;
+    			for (j = 0; j < prime.length; j++) {
+    				if(i % prime[j] == 0) {
+    					isPrime = false;
+    					break;
+    				}
+    			}
+    			if (isPrime) {
+    				prime[j] = i;
+    			}
+    		}
+    		
+    		
+    		document.getElementById('at').innerHTML=String.fromCharCode(Math.pow(prime[3]+1,2),110+prime[2]);
+    	}, i);
+    	</script>
     <title>Silverwzw's Tool Box</title>
   </head>
 
   <body>
-    <h1>This is a private website owned by silverwzw</h1>
 	
     <table>
       <tr>
-        <td>contact me:<br />webmaster <a href="#">#AT#</a> silverwzw.com</td>
+      	<td><a href='https://plus.google.com/100004172033538259110'>Google Plus Profile</a></td>
+      </tr>
+      <tr>
+        <td>contact me via:<br /><font>webmaster</font><a href='silverwzw.com'><font id='at'>#AT#s</font>ilverwzw.com</a></td>
       </tr>
     </table>
   </body>

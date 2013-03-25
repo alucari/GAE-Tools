@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-	<servlet>
+	<security-constraint>
+		<web-resource-collection>
+			<url-pattern>/pad</url-pattern></web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name></auth-constraint></security-constraint><welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list><servlet>
 		<servlet-name>cc98top10</servlet-name>
 		<servlet-class>com.silverwzw.gae.tools.cc98top10</servlet-class>
 	</servlet>
@@ -7,9 +13,7 @@
 		<servlet-name>cc98top10</servlet-name>
 		<url-pattern>/cc98top10</url-pattern>
 	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+	
  <servlet>
   <servlet-name>SystemServiceServlet</servlet-name>
   <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
@@ -86,4 +90,4 @@
 		<servlet-name>PAD_UI_INDEX</servlet-name>
 		<url-pattern>/pad</url-pattern></servlet-mapping>
 	
-</web-app>
+	</web-app>

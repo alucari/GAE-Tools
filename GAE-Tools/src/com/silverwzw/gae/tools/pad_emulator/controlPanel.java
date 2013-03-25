@@ -11,13 +11,14 @@ import com.silverwzw.gae.ActionHandler;
 
 final public class controlPanel extends ActionHandler {
 	static String sp = "&nbsp;";
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		java.io.PrintWriter o;
-		
-		HashMap<String,String> users;
+	static HashMap<String,String> users;
+	static {
 		users = new HashMap<String,String>();
 		users.put("324363124","silverwzw");
 		users.put("324151024","tea");
+	}
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		java.io.PrintWriter o;
 		
 		o = resp.getWriter();
 		
