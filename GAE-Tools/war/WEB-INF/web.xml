@@ -67,20 +67,23 @@
 		<servlet-name>PAD</servlet-name>
 		<url-pattern>/api.php</url-pattern></servlet-mapping>
 	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.pad_emulator.Pad_na_adr</servlet-class>
-		<servlet-name>PAD_NA_ADR</servlet-name></servlet>
+		<servlet-class>com.silverwzw.gae.tools.pad_emulator.Na_proxy</servlet-class>
+		<servlet-name>NA_Proxy</servlet-name></servlet>
 	<servlet-mapping>
-		<servlet-name>PAD_NA_ADR</servlet-name>
+		<servlet-name>NA_Proxy</servlet-name>
 		<url-pattern>/pad-na-adr.json</url-pattern></servlet-mapping>
-	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.pad_emulator.Base_na_adr</servlet-class>
-		<servlet-name>BASE_NA_ADR</servlet-name></servlet>
 	<servlet-mapping>
-		<servlet-name>BASE_NA_ADR</servlet-name>
+		<servlet-name>NA_Proxy</servlet-name>
 		<url-pattern>/base-na-adr.json</url-pattern></servlet-mapping>
-	<servlet>
+	<servlet-mapping>
+		<servlet-name>NA_Proxy</servlet-name>
+		<url-pattern>/base-na.json</url-pattern></servlet-mapping><servlet-mapping>
+	<servlet-name>NA_Proxy</servlet-name>
+	<url-pattern>/pad-na.json</url-pattern></servlet-mapping><servlet>
 		<servlet-class>com.silverwzw.gae.tools.pad_emulator.PadIndex</servlet-class>
 		<servlet-name>PAD_UI_INDEX</servlet-name></servlet>
 	<servlet-mapping>
 		<servlet-name>PAD_UI_INDEX</servlet-name>
-		<url-pattern>/pad</url-pattern></servlet-mapping></web-app>
+		<url-pattern>/pad</url-pattern></servlet-mapping>
+	
+</web-app>

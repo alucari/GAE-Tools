@@ -49,6 +49,12 @@ public class Pad extends SimpleServlet{
 		String method; 
 		method = req.getMethod();
 		conn.setRequestMethod(method);
+		
+		while ( enumer.hasMoreElements() ) {
+			String key;
+			key = (String)enumer.nextElement();
+			c2sHeader.put(key, req.getHeader(key));
+		}
 		for (Entry<String,String> e : c2sHeader.entrySet()) {
 			conn.setRequestProperty(e.getKey(), e.getValue());
 		}
@@ -110,11 +116,7 @@ public class Pad extends SimpleServlet{
 		}
 		
 		
-		while ( enumer.hasMoreElements() ) {
-			String key;
-			key = (String)enumer.nextElement();
-			c2sHeader.put(key, req.getHeader(key));
-		}
+		
 		conn.connect();
 		String res, line;
 		
