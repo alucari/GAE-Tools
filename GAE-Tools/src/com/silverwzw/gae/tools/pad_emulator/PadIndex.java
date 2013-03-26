@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
+import com.silverwzw.gae.ActionHandler;
 import com.silverwzw.gae.ActionRouterServlet;
 
 @SuppressWarnings("serial")
@@ -28,6 +29,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("lookForEggs", new LookForEggs());
 		setAction("functionEnableDisable", new FunctionEnableDisable());
 		setAction("getJSON", new GetJSON());
+		setAction("resetEggList", new ResetEggList());
 		setDefaultAction(new controlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse response) throws IOException{
@@ -44,5 +46,12 @@ public final class PadIndex extends ActionRouterServlet {
 			return false;
 		}
 		return true;
+	}
+}
+
+final class ResetEggList extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		PadEmulatorSettings.resetFreqEgg();
+		resp.sendRedirect("/pad");
 	}
 }

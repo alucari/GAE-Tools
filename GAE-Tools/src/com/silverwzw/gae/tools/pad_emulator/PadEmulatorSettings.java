@@ -152,6 +152,25 @@ final public class PadEmulatorSettings {
 		setGeneral("freqEggs",fae);
 		return ret;
 	}
+	public static void resetFreqEgg() {
+		freqAccessEggs fae;
+		fae = new freqAccessEggs(16);
+		fae.mtf("399");
+		fae.mtf("234");
+		fae.mtf("321");
+		fae.mtf("251");
+		fae.mtf("153");
+		fae.mtf("227");
+		fae.mtf("254");
+		fae.mtf("178");
+		fae.mtf("257");
+		fae.mtf("260");
+		fae.mtf("181");
+		fae.mtf("303");
+		fae.mtf("305");
+		fae.mtf("307");
+		setGeneral("freqEggs",fae);
+	}
 }
 
 @SuppressWarnings("serial")

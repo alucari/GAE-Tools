@@ -23,5 +23,9 @@ function show(i) {
 }
 
 function addEgg(pid) {
-	location.href = "/pad?action=lookForEggs&egg=" + prompt("ID of the egg:") + "&pid=" + pid;
+	var eggid;
+	eggid = prompt("ID of the egg:");
+	if (/^\d{1,3}$/.exec(eggid) != null) {
+		location.href = "/pad?action=lookForEggs&egg=" + eggid + "&pid=" + pid;
+	}
 }
