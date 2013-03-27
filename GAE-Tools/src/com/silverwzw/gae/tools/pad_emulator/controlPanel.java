@@ -22,8 +22,8 @@ final public class controlPanel extends ActionHandler {
 		
 		o = resp.getWriter();
 		
-		o.println("<html><head><script src=\"/monster.js\"></script></head><body>");
-		o.println("<table border=\"1\"><tbody>");
+		o.println("<html><head><script src=\"/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad.js'></script></head><body>");
+		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>Enable</th><th>Last Dungeon</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
@@ -31,7 +31,7 @@ final public class controlPanel extends ActionHandler {
 			boolean disable;
 			pid = e.getKey();
 			settings = new PadEmulatorSettings(pid);
-			o.print("<tr id=\"" + pid + "\">");
+			o.print("<tr id=\"" + pid + "\" class='inforow'>");
 			o.print(td(pid));
 			o.print(td(e.getValue()));
 			disable = settings.isDungeonModDisabled();
@@ -43,7 +43,7 @@ final public class controlPanel extends ActionHandler {
 
 			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + a("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
 			o.print(td(font(settings.isLookingForCertainEgg()?"Y":"N","isLookingForCertainEgg") + sp + a("/pad?action=lookForEggs&start=1&pid="+pid,"[!+]") + a("/pad?action=lookForEggs&stop=1&pid="+pid,"[-]")));
-			o.print("<td bgcolor='" + (settings.isLookingForCertainEgg()?"green":"red") + "'>");
+			o.print("<td>");
 			str = "";
 			for (String egg : settings.WantedEggs()) {
 				str += "document.write(show(" + egg + "));";
@@ -60,7 +60,7 @@ final public class controlPanel extends ActionHandler {
 			o.print("</tr>");
 		}
 		o.println("</tbody></table>");
-		o.println("<br />Quick List:<br /><script>");
+		o.println("<br />Quick List&nbsp;<a href='/pad?action=resetEggList'>[reset]</a>:<br /><script>");
 		Iterable<String> freqEggs = PadEmulatorSettings.getFreqEggs();
 		int counter = 0;
 		for (String egg : freqEggs) {

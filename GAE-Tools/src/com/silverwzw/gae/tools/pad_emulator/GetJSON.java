@@ -29,12 +29,8 @@ public class GetJSON extends ActionHandler {
 			}
 			return;
 		}
-		
-		json = "{";
-		json += "\"isBlockLevelUp\":" + b2s(settings.isBlockLevelUp()) + ",";
-		json += "\"isLookingForCertainEgg\":" + b2s(settings.isLookingForCertainEgg()) + ",";
 		eggs = (Collection<String>)settings.WantedEggs();
-		json += "\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
+		json = "{\"pid\":" + uid + ",\"isBlockLevelUp\":" + b2s(settings.isBlockLevelUp()) + ",\"isLookingForCertainEgg\":" + b2s(settings.isLookingForCertainEgg()) + ",\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
 		for (String egg : eggs) {
 			json += egg;
 			i++;
@@ -43,9 +39,7 @@ public class GetJSON extends ActionHandler {
 			}
 			json += ',';
 		}
-		json += "\"saveLock\":" + b2s(settings.isLocked()) + ',';
-		json += "\"dungeonModDisable\":" + b2s(settings.isDungeonModDisabled());
-		json += '}';
+		json += "\"safeLock\":" + b2s(settings.isLocked()) + ",\"dungeonModDisable\":" + b2s(settings.isDungeonModDisabled()) + '}';
 		resp.getWriter().print(json);
 	}
 	final private String b2s(boolean b) {
