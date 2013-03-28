@@ -38,7 +38,7 @@ final public class controlPanel extends ActionHandler {
 			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + a("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + a("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + a("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
-			o.print(td(a("/pad/showDungeon?pid=" + pid, "show", "_blank")));
+			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "_blank")));
 			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + a("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + a("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
 			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + a("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
