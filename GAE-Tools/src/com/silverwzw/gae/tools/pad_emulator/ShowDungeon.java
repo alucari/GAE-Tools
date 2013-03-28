@@ -45,7 +45,7 @@ final public class ShowDungeon extends ActionHandler {
 		i = 1;
 		count = 0;
 		
-		o.println("<html><head><script src='/monster.js'></script></head><body>");
+		o.println("<html><head><script src='/pad/monster.js'></script></head><body>");
 		
 		enm = "";
 		itm = "";

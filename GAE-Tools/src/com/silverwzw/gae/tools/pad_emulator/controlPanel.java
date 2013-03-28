@@ -22,7 +22,7 @@ final public class controlPanel extends ActionHandler {
 		
 		o = resp.getWriter();
 		
-		o.println("<html><head><script src=\"/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad.js'></script></head><body>");
+		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Last Dungeon</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
@@ -38,7 +38,7 @@ final public class controlPanel extends ActionHandler {
 			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + a("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + a("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + a("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
-			o.print(td(a("/pad?action=showDungeon&pid=" + pid, "show", "_blank")));
+			o.print(td(a("/pad/showDungeon?pid=" + pid, "show", "_blank")));
 			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + a("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + a("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
 			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + a("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
