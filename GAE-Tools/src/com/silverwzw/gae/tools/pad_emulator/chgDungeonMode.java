@@ -7,18 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.silverwzw.gae.ActionHandler;
 
-public class FunctionEnableDisable extends ActionHandler {
+public class chgDungeonMode extends ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		if (req.getParameter("pid") == null) {
+		if (req.getParameter("pid") == null || req.getParameter("mode") == null) {
 			return;
 		} else {
-			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
-			if (req.getParameter("enable")!=null) {
-				settings.setDisableDungeonMod(false);
-			} else if (req.getParameter("disable")!=null){
-				settings.setDisableDungeonMod(true);
-			}
+			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonMode(Integer.parseInt(req.getParameter("mode")));
 			resp.sendRedirect("/pad");
 		}
 	}

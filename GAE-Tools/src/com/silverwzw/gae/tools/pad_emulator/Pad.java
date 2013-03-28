@@ -135,8 +135,8 @@ public class Pad extends SimpleServlet{
 			Dungeon dungeon;
 			dungeon = new Dungeon(res);
 
-			if (settings != null && !settings.isDungeonModDisabled()) {
-				res = dungeon.modDungeon(1);
+			if (settings != null && settings.getDungeonMode()>0) {
+				res = dungeon.modDungeon(settings.getDungeonMode());
 			}
 		}
 		if (actionIs("get_player_data")) {

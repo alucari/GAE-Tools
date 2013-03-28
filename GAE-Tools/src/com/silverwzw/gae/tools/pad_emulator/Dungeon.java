@@ -20,7 +20,7 @@ final public class Dungeon {
 				throw e;
 			}
 		} else if (mode == 2 ){
-			newDungeon = DungeonString.replaceAll("(?<=\"num\"\\s?:\\s?\"\\d{3}\"\\s?,\\s?\"lv\"\\s?:\\s?)\"?\\d+\"?(?=,)", "0");
+			newDungeon = DungeonString.replaceAll("(?<=\"num\"\\s?:\\s?\"\\d{3}\"\\s?,\\s?\"lv\"\\s?:\\s?)\"?\\d+\"?(?=,)", "1");
 		} else {
 			return DungeonString;
 		}

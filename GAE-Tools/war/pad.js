@@ -43,8 +43,21 @@ function starter() {
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
 		updateElement(json.safeLock,tr.find('.isLocked')[0]);
-		updateElement(!json.dungeonModDisable,tr.find('.allDisable')[0]);
-		
+		var modeElement = tr.find('.dungeonMode')[0];
+		switch (json.dungeonMode){
+			case 1:
+				modeElement.parentElement.bgColor = "3CFF3C";
+				modeElement.innerHTML = "Mode " + json.dungeonMode;
+				break;
+			case 2:
+				modeElement.parentElement.bgColor = "73FFFF";
+				modeElement.innerHTML = "Mode " + json.dungeonMode;
+				break;
+			default:
+				modeElement.parentElement.bgColor = "FF7373";
+				modeElement.innerHTML = "Disabled";
+				break;
+		}
 		var eggstr = "";
 		for (var i = 0; i < json.wantedEggs.length; i++) {
 			eggstr += show(json.wantedEggs[i]);

@@ -24,18 +24,18 @@ final public class controlPanel extends ActionHandler {
 		
 		o.println("<html><head><script src=\"/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad.js'></script></head><body>");
 		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>Enable</th><th>Last Dungeon</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Last Dungeon</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
 			String pid,str;
-			boolean disable;
+			int mode;
 			pid = e.getKey();
 			settings = new PadEmulatorSettings(pid);
 			o.print("<tr id=\"" + pid + "\" class='inforow'>");
 			o.print(td(pid));
 			o.print(td(e.getValue()));
-			disable = settings.isDungeonModDisabled();
-			str = font(disable?"N":"Y","allDisable") + sp + a("/pad?action=functionEnableDisable&pid="+pid+"&enable=1","[+]") + a("/pad?action=functionEnableDisable&pid="+pid+"&disable=1","[-]");
+			mode = settings.getDungeonMode();
+			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + a("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + a("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + a("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
 			o.print(td(a("/pad?action=showDungeon&pid=" + pid, "show", "_blank")));

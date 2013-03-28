@@ -129,11 +129,14 @@ final public class PadEmulatorSettings {
 	public void releaseSaveLock() {
 		setSpec("notLocked", true);
 	}
-	public void setDisableDungeonMod(boolean bool) {
-		setSpec("disableDungeonMod", bool);
+	public void setDungeonMode(int mode) {
+		setSpec("DungeonMode", mode);
 	}
-	public boolean isDungeonModDisabled() {
-		return is("disableDungeonMod");
+	public int getDungeonMode() {
+		if (getSpec("DungeonMode") == null) {
+			return 1;
+		}
+		return (int)(Integer)getSpec("DungeonMode");
 	}
 	public static Iterable<String> getFreqEggs() {
 		if (getGeneral("freqEggs") == null) {

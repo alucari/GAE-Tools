@@ -39,7 +39,7 @@ public class GetJSON extends ActionHandler {
 			}
 			json += ',';
 		}
-		json += "\"safeLock\":" + b2s(settings.isLocked()) + ",\"dungeonModDisable\":" + b2s(settings.isDungeonModDisabled()) + '}';
+		json += "\"safeLock\":" + b2s(settings.isLocked()) + ",\"dungeonMode\":" + settings.getDungeonMode() + '}';
 		resp.getWriter().print(json);
 	}
 	final private String b2s(boolean b) {
