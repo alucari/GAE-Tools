@@ -153,7 +153,13 @@ public class Pad extends SimpleServlet{
 		if (qs.indexOf("dev=iPad3,4") >= 0) {
 			return true;
 		}
+		if (qs.indexOf("dev=iPhone5,1") >= 0) {
+			return true;
+		}
 		if (qs.indexOf("pid=324151024")>=0) {
+			return true;
+		}
+		if (qs.indexOf("pid=324224887")>=0) {
 			return true;
 		}
 		return false;

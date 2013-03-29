@@ -16,6 +16,7 @@ final public class controlPanel extends ActionHandler {
 		users = new HashMap<String,String>();
 		users.put("324363124","silverwzw");
 		users.put("324151024","tea");
+		users.put("324224887", "x");
 	}
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		java.io.PrintWriter o;
@@ -38,7 +39,7 @@ final public class controlPanel extends ActionHandler {
 			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
-			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "_blank")));
+			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "dungeon_view")));
 			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
 			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + ajax("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));

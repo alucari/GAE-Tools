@@ -22,6 +22,7 @@ public final class PadIndex extends ActionRouterServlet {
 		userList = new ArrayList<String>();
 		userList.add("cbf9d8da00cdc95dcd017fe07028029f"); //silverwzw
 		userList.add("36795a4756f4b90fac03d4dd82b28db4"); //tea
+		userList.add("361d39b1af4fa514bd48e43ad0bdcf0d"); //x
 	}
 	public PadIndex() {
 		setAction("showDungeon", new ShowDungeon());
@@ -41,8 +42,9 @@ public final class PadIndex extends ActionRouterServlet {
 			return false;
 		}
 		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
-		if (!userList.contains(new String(Hex.encodeHex(digest.digest())))) {
-			response.sendError(401);
+		String hash = new String(Hex.encodeHex(digest.digest()));
+		if (!userList.contains(hash)) {
+			response.sendError(401,hash);
 			return false;
 		}
 		return true;
