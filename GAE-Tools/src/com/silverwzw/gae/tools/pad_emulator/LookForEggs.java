@@ -27,7 +27,13 @@ public class LookForEggs extends ActionHandler {
 		if (req.getParameter("stop")!=null) {
 			settings.setLookingForCertainEgg(false);
 		}
-		resp.sendRedirect("/pad");
+		
+		if (req.getParameter("ajax") == null) {
+			resp.sendRedirect("/pad");
+		} else {
+			resp.setContentType("application/json");
+			resp.getWriter().print("true");
+		}
 	}
 
 }

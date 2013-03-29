@@ -21,11 +21,3 @@ function src(mid) {
 function show(i) {
 	return "<img src='" + src(i) + "' />";
 }
-
-function addEgg(pid) {
-	var eggid;
-	eggid = prompt("ID of the egg:");
-	if (/^[1-9]\d{0,2}$/.exec(eggid) != null) {
-		location.href = "/pad?action=lookForEggs&egg=" + eggid + "&pid=" + pid;
-	}
-}

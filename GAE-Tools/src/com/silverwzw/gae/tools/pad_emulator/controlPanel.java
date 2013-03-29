@@ -35,14 +35,14 @@ final public class controlPanel extends ActionHandler {
 			o.print(td(pid));
 			o.print(td(e.getValue()));
 			mode = settings.getDungeonMode();
-			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + a("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + a("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + a("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
+			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
 			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "_blank")));
-			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + a("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + a("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
+			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
-			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + a("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
-			o.print(td(font(settings.isLookingForCertainEgg()?"Y":"N","isLookingForCertainEgg") + sp + a("/pad?action=lookForEggs&start=1&pid="+pid,"[!+]") + a("/pad?action=lookForEggs&stop=1&pid="+pid,"[-]")));
+			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + ajax("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
+			o.print(td(font(settings.isLookingForCertainEgg()?"Y":"N","isLookingForCertainEgg") + sp + ajax("/pad?action=lookForEggs&start=1&pid="+pid,"[!+]") + ajax("/pad?action=lookForEggs&stop=1&pid="+pid,"[-]")));
 			o.print("<td>");
 			str = "";
 			for (String egg : settings.WantedEggs()) {
@@ -55,12 +55,12 @@ final public class controlPanel extends ActionHandler {
 			}
 			o.print(font(str,"eggs"));
 			o.print("<a href='#' onclick='addEgg(" + pid + ");'>[+]</a>");
-			o.print(a("/pad?action=lookForEggs&clean=1&pid="+ pid,"[C]"));
+			o.print(ajax("/pad?action=lookForEggs&clean=1&pid="+ pid,"[C]"));
 			o.print("</td>");
 			o.print("</tr>");
 		}
 		o.println("</tbody></table>");
-		o.println("<br />Quick List&nbsp;<a href='/pad?action=resetEggList'>[reset]</a>:<br /><script>");
+		o.println("<br />Quick List&nbsp;"+a("/pad?action=resetEggList","[reset]")+":<br /><script>");
 		Iterable<String> freqEggs = PadEmulatorSettings.getFreqEggs();
 		int counter = 0;
 		for (String egg : freqEggs) {
@@ -77,6 +77,14 @@ final public class controlPanel extends ActionHandler {
 	}
 	final private static String a(String link, String content, String target) {
 		return "<a href='" + link + "' target='" + target + "'>"+content + "</a>";
+	}
+	final private static String ajax(String link, String content) {
+		if (link.indexOf('?') == -1) {
+			link += "?ajax";
+		} else {
+			link += "&ajax";
+		}
+		return "<a href=\"#\" onclick=\"ajaxAction('"+link+"');\">"+content+"</a>";
 	}
 	final private static String font(String content, String className) {
 		return "<font class='" + className + "'>" + content + "</font>";

@@ -19,7 +19,13 @@ public class NoLvlUp extends ActionHandler {
 			} else {
 				settings.setBlockLevelUp(true);
 			}
-			resp.sendRedirect("/pad");
+
+			if (req.getParameter("ajax") == null) {
+				resp.sendRedirect("/pad");
+			} else {
+				resp.setContentType("application/json");
+				resp.getWriter().print("true");
+			}
 		}
 	}
 
