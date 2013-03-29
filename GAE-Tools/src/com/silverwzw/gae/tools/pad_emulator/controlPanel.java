@@ -35,7 +35,7 @@ final public class controlPanel extends ActionHandler {
 			o.print(td(pid));
 			o.print(td(e.getValue()));
 			mode = settings.getDungeonMode();
-			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
+			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
 			o.print(td(str));
 			
 			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "_blank")));

@@ -21,6 +21,13 @@ final public class Dungeon {
 			}
 		} else if (mode == 2 ){
 			newDungeon = DungeonString.replaceAll("(?<=\"num\"\\s?:\\s?\"\\d{3}\"\\s?,\\s?\"lv\"\\s?:\\s?)\"?\\d+\"?(?=,)", "1");
+		} else if (mode == 3) {
+			try {
+				newDungeon = "{\"res\":0,\"hash\":\"" + hash() + "\",\"btype\":0,\"barg\":0,\"fp\":0,\"waves\":[{\"seq\":\"1\",\"monsters\":[{\"type\":0,\"num\":\"173\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":\"42\",\"inum\":1,\"pval\":0}]},{\"seq\":\"2\",\"monsters\":[{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":\"42\",\"inum\":1,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0}]},{\"seq\":\"3\",\"monsters\":[{\"type\":0,\"num\":\"58\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":1,\"num\":\"173\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"58\",\"lv\":1,\"item\":\"58\",\"inum\":1,\"pval\":0}]}]}";
+			} catch (HashNotFoundException e) {
+				newDungeon = DungeonString;
+				throw e;
+			} 
 		} else {
 			return DungeonString;
 		}

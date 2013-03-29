@@ -56,6 +56,10 @@ function starter() {
 				modeElement.parentElement.bgColor = "73FFFF";
 				modeElement.innerHTML = "Mode " + json.dungeonMode;
 				break;
+			case 3:
+				modeElement.parentElement.bgColor = "FF3CFF";
+				modeElement.innerHTML = "Mode " + json.dungeonMode;
+				break;
 			default:
 				modeElement.parentElement.bgColor = "FF7373";
 				modeElement.innerHTML = "Disabled";
