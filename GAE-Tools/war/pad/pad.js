@@ -10,6 +10,7 @@ debug.log = function (obj) {
 	}
 }
 debug.on = false;
+debug.autoRelease = false;
 
 var refresh;
 
@@ -80,6 +81,9 @@ function starter() {
 			isUpdating++;
 			countDown = 11;
 			$('#countDown')[0].innerHTML = "Update count down: Updateing.";
+		}
+		if (debug.autoRelease) {
+			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
 		}
 	};
 	
