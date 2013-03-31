@@ -174,6 +174,12 @@ final public class PadEmulatorSettings {
 		fae.mtf("307");
 		setGeneral("freqEggs",fae);
 	}
+	public static void setShadowId(String id) {
+		setGeneral("shadowId",id);
+	}
+	public static String getShadowId() {
+		return (String)getGeneral("shadowId");
+	}
 }
 
 @SuppressWarnings("serial")

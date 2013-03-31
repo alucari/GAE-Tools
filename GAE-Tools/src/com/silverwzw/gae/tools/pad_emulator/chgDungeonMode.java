@@ -13,7 +13,9 @@ public class chgDungeonMode extends ActionHandler {
 		if (req.getParameter("pid") == null || req.getParameter("mode") == null) {
 			return;
 		} else {
-			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonMode(Integer.parseInt(req.getParameter("mode")));
+			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
+			settings.setDungeonMode(Integer.parseInt(req.getParameter("mode")));
+			PadEmulatorSettings.setShadowId(req.getParameter("shadowId"));
 			if (req.getParameter("ajax") == null) {
 				resp.sendRedirect("/pad");
 			} else {

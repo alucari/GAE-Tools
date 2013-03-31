@@ -18,6 +18,11 @@ function src(mid) {
 	return null;
 }
 
-function show(i) {
-	return "<img src='" + src(i) + "' />";
+function show(i, alt) {
+	if (alt === undefined) {
+		alt = 'id: ' + i;
+	} else {
+		alt = 'id: ' + i + ", "+ alt;
+	}
+	return "<a href='http://zh.pad.wikia.com/wiki/" + i + "' title='" + alt + "' target='monster_wiki'><img src='" + src(i) + "' /></a>";
 }
