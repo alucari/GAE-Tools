@@ -45,5 +45,4 @@ public class GetJSON extends ActionHandler {
 	final private String b2s(boolean b) {
 		return b?"true":"false";
 	}
-
 }

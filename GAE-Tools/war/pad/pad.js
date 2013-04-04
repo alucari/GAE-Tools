@@ -47,6 +47,9 @@ function starter() {
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
 		updateElement(json.safeLock,tr.find('.isLocked')[0]);
+		if ((""+json.pid) == "324363124" && debug.autoRelease && json.safeLock) {
+			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
+		}
 		var modeElement = tr.find('.dungeonMode')[0];
 		switch (json.dungeonMode){
 			case 1:
@@ -81,9 +84,6 @@ function starter() {
 			isUpdating++;
 			countDown = 11;
 			$('#countDown')[0].innerHTML = "Update count down: Updateing.";
-		}
-		if (debug.autoRelease) {
-			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
 		}
 	};
 	
@@ -123,11 +123,17 @@ function ajaxAction(link) {
 }
 
 function addEgg(pid) {
-	var eggid;
+	var eggid,ids,i,eggstr;
 	eggid = prompt("ID of the egg:");
-	if (/^[1-9]\d{0,2}$/.exec(eggid) != null) {
-		ajaxAction("/pad?action=lookForEggs&ajax&egg=" + eggid + "&pid=" + pid);
+	if (/^(?:[1-9]\d{0,2},)*[1-9]\d{0,2}$/.exec(eggid) == null) { //441,108,44,45,254,189
+		return;
 	}
+	ids = eggid.match(/[0-9]\d{0,2}/g);
+	eggstr="";
+	for (i = 0; i < ids.length; i++) {
+		eggstr += "&egg=" + ids[i];
+	}
+	ajaxAction("/pad?action=lookForEggs&ajax&pid=" + pid + eggstr);
 }
 
 $(document).ready(starter);

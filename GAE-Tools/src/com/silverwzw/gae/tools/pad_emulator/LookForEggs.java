@@ -15,8 +15,8 @@ public class LookForEggs extends ActionHandler {
 		if (req.getParameter("release")!=null) {
 			settings.releaseSaveLock();
 		}
-		if (req.getParameter("egg")!=null) {
-			settings.addWantedEgges(req.getParameter("egg"));
+		if (req.getParameterValues("egg")!=null) {
+			settings.addWantedEgges(req.getParameterValues("egg"));
 		}
 		if (req.getParameter("clean")!=null) {
 			settings.cleanWantedEggs();
@@ -34,6 +34,7 @@ public class LookForEggs extends ActionHandler {
 			resp.setContentType("application/json");
 			resp.getWriter().print("true");
 		}
+		
 	}
 
 }
