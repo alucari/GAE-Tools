@@ -24,7 +24,7 @@ final public class Dungeon {
 					newDungeon = "{\"res\":0,\"hash\":\"" + hash() + "\",\"btype\":0,\"barg\":0,\"fp\":0,\"waves\":[{\"seq\":\"1\",\"monsters\":[{\"type\":0,\"num\":\"173\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":\"42\",\"inum\":1,\"pval\":0}]},{\"seq\":\"2\",\"monsters\":[{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":\"42\",\"inum\":1,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"42\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0}]},{\"seq\":\"3\",\"monsters\":[{\"type\":0,\"num\":\"58\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":1,\"num\":\"173\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0},{\"type\":0,\"num\":\"58\",\"lv\":1,\"item\":\"58\",\"inum\":1,\"pval\":0}]}]}";
 					break;
 				case 4:
-					newDungeon = "{\"res\":0,\"hash\":\"" + hash() + "\",\"btype\":0,\"barg\":0,\"fp\":0,\"waves\":[{\"seq\":\"1\",\"monsters\":[{\"type\":0,\"num\":\"" + PadEmulatorSettings.getShadowId() + "\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0}]}]}";
+					newDungeon = "{\"res\":0,\"hash\":\"" + hash() + "\",\"btype\":0,\"barg\":0,\"fp\":0,\"waves\":[{\"seq\":\"1\",\"monsters\":[{\"type\":1,\"num\":\"" + PadEmulatorSettings.getShadowId() + "\",\"lv\":1,\"item\":0,\"inum\":0,\"pval\":0}]}]}";
 					break;
 				default:
 					newDungeon = DungeonString;

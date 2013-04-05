@@ -180,6 +180,24 @@ final public class PadEmulatorSettings {
 	public static String getShadowId() {
 		return (String)getGeneral("shadowId");
 	}
+	public void setInfStone(boolean b) {
+		setSpec("infStone",b);
+	}
+	public boolean isInfStone() {
+		return is("infStone");
+	}
+	public static void log(String req,String resp) {
+		LogList logList;
+		logList = (LogList) getGeneral("log");
+		if (logList == null) {
+			logList = new LogList();
+		}
+		logList.add(req, resp);
+		setGeneral("log",logList);
+	}
+	public static LogList log() {
+		return (LogList) getGeneral("log");
+	}
 }
 
 @SuppressWarnings("serial")
@@ -206,5 +224,39 @@ final class freqAccessEggs implements java.io.Serializable {
 	}
 	Iterable<String> collection() {
 		return (Iterable<String>)list;
+	}
+}
+
+final class Log implements java.io.Serializable{
+	public String request;
+	public String response;
+	Log(String req,String resp) {
+		request = req;
+		response = resp;
+	}
+}
+
+final class LogList implements java.io.Serializable{
+	private Log[] ll;
+	private int index;
+	private int length;
+	LogList() {
+		int i;
+		length = 16;
+		ll = new Log[length];
+		index = length - 1;
+		for (i = 0; i < length; i++) {
+			ll[i] = null;
+		}
+	}
+	public void add(String req, String resp) {
+		ll[index] = new Log(req,resp);
+		index = (index == 0) ? (length - 1) : (index - 1);
+	}
+	public Log get(int i) {
+		return ll[(index + 1 + i)%length];
+	}
+	public int capacity() {
+		return length;
 	}
 }

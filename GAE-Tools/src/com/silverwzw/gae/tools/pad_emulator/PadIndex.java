@@ -28,9 +28,11 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("showDungeon", new ShowDungeon());
 		setAction("doNotLvlUp", new NoLvlUp());
 		setAction("lookForEggs", new LookForEggs());
-		setAction("dungeonMode", new chgDungeonMode());
+		setAction("dungeonMode", new ChgDungeonMode());
 		setAction("getJSON", new GetJSON());
 		setAction("resetEggList", new ResetEggList());
+		setAction("infStone", new SetInfStone());
+		setAction("showLog", new ShowLog());
 		setDefaultAction(new controlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse response) throws IOException{
@@ -55,5 +57,120 @@ final class ResetEggList extends ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		PadEmulatorSettings.resetFreqEgg();
 		resp.sendRedirect("/pad");
+	}
+}
+
+final class SetInfStone extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (req.getParameter("pid") == null || req.getParameter("enable") == null) {
+			return;
+		}
+		PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
+		if ("1".equals(req.getParameter("enable"))) {
+			settings.setInfStone(true);
+		} else if ("0".equals(req.getParameter("enable"))) {
+			settings.setInfStone(false);
+		}
+		if (req.getParameter("ajax") == null) {
+			resp.sendRedirect("/pad");
+		} else {
+			resp.setContentType("application/json");
+			resp.getWriter().print(settings.isInfStone()?"true":"false");
+		}
+	}
+}
+
+final class ChgDungeonMode extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		if (req.getParameter("pid") == null || req.getParameter("mode") == null) {
+			return;
+		} else {
+			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
+			settings.setDungeonMode(Integer.parseInt(req.getParameter("mode")));
+			PadEmulatorSettings.setShadowId(req.getParameter("shadowId"));
+			if (req.getParameter("ajax") == null) {
+				resp.sendRedirect("/pad");
+			} else {
+				resp.setContentType("application/json");
+				resp.getWriter().print("true");
+			}
+		}
+	}
+}
+
+
+final class LookForEggs extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		PadEmulatorSettings settings;
+		settings =  new PadEmulatorSettings(req.getParameter("pid"));
+		if (req.getParameter("release")!=null) {
+			settings.releaseSaveLock();
+		}
+		if (req.getParameterValues("egg")!=null) {
+			settings.addWantedEgges(req.getParameterValues("egg"));
+		}
+		if (req.getParameter("clean")!=null) {
+			settings.cleanWantedEggs();
+		}
+		if (req.getParameter("start")!=null) {
+			settings.setLookingForCertainEgg(true);
+		}
+		if (req.getParameter("stop")!=null) {
+			settings.setLookingForCertainEgg(false);
+		}
+		
+		if (req.getParameter("ajax") == null) {
+			resp.sendRedirect("/pad");
+		} else {
+			resp.setContentType("application/json");
+			resp.getWriter().print("true");
+		}
+		
+	}
+}
+
+
+final class NoLvlUp extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		if (req.getParameter("pid") == null) {
+			return;
+		} else {
+			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
+			if (req.getParameter("release")!=null) {
+				settings.setBlockLevelUp(false);
+			} else {
+				settings.setBlockLevelUp(true);
+			}
+
+			if (req.getParameter("ajax") == null) {
+				resp.sendRedirect("/pad");
+			} else {
+				resp.setContentType("application/json");
+				resp.getWriter().print("true");
+			}
+		}
+	}
+
+}
+
+final class ShowLog extends ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		
+		int i;
+		LogList ll;
+		ll = PadEmulatorSettings.log();
+		resp.setContentType("text/plain");
+		for (i = 0; i < ll.capacity(); i++) {
+			if (ll.get(i) == null) {
+				break;
+			}
+			resp.getWriter().println("=>" + ll.get(i).request);
+			resp.getWriter().println("<=" + ll.get(i).response);
+			resp.getWriter().println();
+		}
 	}
 }

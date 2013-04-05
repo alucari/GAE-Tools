@@ -115,7 +115,15 @@ public class Pad extends SimpleServlet{
 			}
 		}
 		
+		if (actionIs("do_continue") && settings.isInfStone()) {
+			resp.getWriter().print("{\"res\":0,\"rid\":\"515dce31e0532\"}");
+			return;
+		}
 		
+		if (actionIs("do_continue_ack") && settings.isInfStone()) {
+			resp.getWriter().print("{\"res\":0}");
+			return;
+		}
 		
 		conn.connect();
 		String res, line;
@@ -129,7 +137,7 @@ public class Pad extends SimpleServlet{
 		while ((line = reader.readLine()) != null) {
 			res += '\n' + line;
 		}
-		
+		PadEmulatorSettings.log(req.getQueryString(), res);
 		if (actionIs("sneak_dungeon")) {
 			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
 			Dungeon dungeon;

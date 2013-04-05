@@ -25,7 +25,7 @@ final public class controlPanel extends ActionHandler {
 		
 		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Last Dungeon</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Inf Stone</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
 			String pid,str;
@@ -36,10 +36,11 @@ final public class controlPanel extends ActionHandler {
 			o.print(td(pid));
 			o.print(td(e.getValue()));
 			mode = settings.getDungeonMode();
-			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]" + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]"));
+			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]","Baddie Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]", "Weak Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]","Mask Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]","Disable all");
 			o.print(td(str));
 			
 			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "dungeon_view")));
+			o.print(td(font(settings.isInfStone()?"Y":"N","isInfStone") + sp + ajax("/pad?action=infStone&enable=1&pid=" + pid,"[+]") + ajax("/pad?action=infStone&enable=0&pid=" + pid,"[-]")));
 			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
 			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + ajax("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
@@ -80,12 +81,20 @@ final public class controlPanel extends ActionHandler {
 		return "<a href='" + link + "' target='" + target + "'>"+content + "</a>";
 	}
 	final private static String ajax(String link, String content) {
+		return ajax(link,content,null);
+	}
+	final private static String ajax(String link, String content, String title) {
 		if (link.indexOf('?') == -1) {
 			link += "?ajax";
 		} else {
 			link += "&ajax";
 		}
-		return "<a href=\"#\" onclick=\"ajaxAction('"+link+"');\">"+content+"</a>";
+		if (title == null) {
+			title = "";
+		} else {
+			title = " title='" + title + "' ";
+		}
+		return "<a href=\"#\" onclick=\"ajaxAction('"+link+"');\" " + title + ">"+content+"</a>";
 	}
 	final private static String font(String content, String className) {
 		return "<font class='" + className + "'>" + content + "</font>";

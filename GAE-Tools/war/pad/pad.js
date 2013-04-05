@@ -47,6 +47,7 @@ function starter() {
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
 		updateElement(json.safeLock,tr.find('.isLocked')[0]);
+		updateElement(json.infStone,tr.find('.isInfStone')[0]);
 		if ((""+json.pid) == "324363124" && debug.autoRelease && json.safeLock) {
 			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
 		}
