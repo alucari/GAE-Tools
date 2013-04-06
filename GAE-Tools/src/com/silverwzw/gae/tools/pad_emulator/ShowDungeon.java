@@ -17,7 +17,7 @@ import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheManager;
 
 
-final public class ShowDungeon extends ActionHandler {
+final public class ShowDungeon implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String dungeon,enm,itm,playerID;
 		PrintWriter o;

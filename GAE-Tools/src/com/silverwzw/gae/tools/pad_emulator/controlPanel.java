@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.silverwzw.gae.SimpleActionHandler;
 
-import com.silverwzw.gae.ActionHandler;
-
-final public class controlPanel extends ActionHandler {
+final public class controlPanel extends SimpleActionHandler {
 	static String sp = "&nbsp;";
 	static HashMap<String,String> users;
 	static {
@@ -18,14 +15,14 @@ final public class controlPanel extends ActionHandler {
 		users.put("324151024","tea");
 		users.put("324224887", "x");
 	}
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public void serv() throws IOException {
 		java.io.PrintWriter o;
 		
 		o = resp.getWriter();
 		
 		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Inf Stone</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
 			String pid,str;

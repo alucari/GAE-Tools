@@ -3,14 +3,11 @@ package com.silverwzw.gae.tools.pad_emulator;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.silverwzw.gae.SimpleActionHandler;
 
-import com.silverwzw.gae.ActionHandler;
+public final class GetJSON extends SimpleActionHandler {
 
-public class GetJSON extends ActionHandler {
-
-	final public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	final public void serv() throws IOException {
 		String uid,json;
 		PadEmulatorSettings settings;
 		Collection<String> eggs;

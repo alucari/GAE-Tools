@@ -44,8 +44,7 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 	protected void postServ(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		;
 	}
-
-
 }
 
+@SuppressWarnings("serial")
 final class NoHandlerAssignedToActionException extends RuntimeException {}; 

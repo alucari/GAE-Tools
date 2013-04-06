@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
-import com.silverwzw.gae.ActionHandler;
 import com.silverwzw.gae.ActionRouterServlet;
+import com.silverwzw.gae.SimpleActionHandler;
 
 @SuppressWarnings("serial")
 public final class PadIndex extends ActionRouterServlet {
@@ -53,15 +53,15 @@ public final class PadIndex extends ActionRouterServlet {
 	}
 }
 
-final class ResetEggList extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+final class ResetEggList extends SimpleActionHandler {
+	public void serv() throws IOException {
 		PadEmulatorSettings.resetFreqEgg();
 		resp.sendRedirect("/pad");
 	}
 }
 
-final class SetInfStone extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+final class SetInfStone extends SimpleActionHandler {
+	public void serv() throws IOException {
 		if (req.getParameter("pid") == null || req.getParameter("enable") == null) {
 			return;
 		}
@@ -80,9 +80,8 @@ final class SetInfStone extends ActionHandler {
 	}
 }
 
-final class ChgDungeonMode extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+final class ChgDungeonMode extends SimpleActionHandler {
+	public void serv() throws IOException {
 		if (req.getParameter("pid") == null || req.getParameter("mode") == null) {
 			return;
 		} else {
@@ -100,9 +99,8 @@ final class ChgDungeonMode extends ActionHandler {
 }
 
 
-final class LookForEggs extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+final class LookForEggs extends SimpleActionHandler {
+	public void serv() throws IOException {
 		PadEmulatorSettings settings;
 		settings =  new PadEmulatorSettings(req.getParameter("pid"));
 		if (req.getParameter("release")!=null) {
@@ -132,9 +130,8 @@ final class LookForEggs extends ActionHandler {
 }
 
 
-final class NoLvlUp extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+final class NoLvlUp extends SimpleActionHandler {
+	public void serv() throws IOException {
 		if (req.getParameter("pid") == null) {
 			return;
 		} else {
@@ -156,10 +153,8 @@ final class NoLvlUp extends ActionHandler {
 
 }
 
-final class ShowLog extends ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
-		
+final class ShowLog extends SimpleActionHandler {
+	public void serv() throws IOException {
 		int i;
 		LogList ll;
 		ll = PadEmulatorSettings.log();
