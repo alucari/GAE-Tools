@@ -5,11 +5,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
+import com.silverwzw.servlet.ActionHandler;
 import com.silverwzw.servlet.ActionRouterServlet;
-import com.silverwzw.servlet.SimpleActionHandler;
 
 @SuppressWarnings("serial")
 public final class PadIndex extends ActionRouterServlet {
@@ -31,7 +34,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("showLog", new ShowLog());
 		setDefaultAction(new controlPanel());
 	}
-	public boolean preServ() throws IOException{
+	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		MessageDigest digest;
 		try {
 			digest = MessageDigest.getInstance("MD5");
@@ -49,15 +52,15 @@ public final class PadIndex extends ActionRouterServlet {
 	}
 }
 
-final class ResetEggList extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class ResetEggList implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		PadEmulatorSettings.resetFreqEgg();
 		resp.sendRedirect("/pad");
 	}
 }
 
-final class SetInfStone extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class SetInfStone implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		if (req.getParameter("pid") == null || req.getParameter("enable") == null) {
 			return;
 		}
@@ -76,8 +79,8 @@ final class SetInfStone extends SimpleActionHandler {
 	}
 }
 
-final class ChgDungeonMode extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class ChgDungeonMode implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		if (req.getParameter("pid") == null || req.getParameter("mode") == null) {
 			return;
 		} else {
@@ -95,8 +98,8 @@ final class ChgDungeonMode extends SimpleActionHandler {
 }
 
 
-final class LookForEggs extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class LookForEggs implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		PadEmulatorSettings settings;
 		settings =  new PadEmulatorSettings(req.getParameter("pid"));
 		if (req.getParameter("release")!=null) {
@@ -126,8 +129,8 @@ final class LookForEggs extends SimpleActionHandler {
 }
 
 
-final class NoLvlUp extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class NoLvlUp implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		if (req.getParameter("pid") == null) {
 			return;
 		} else {
@@ -149,8 +152,8 @@ final class NoLvlUp extends SimpleActionHandler {
 
 }
 
-final class ShowLog extends SimpleActionHandler {
-	public void serv() throws IOException {
+final class ShowLog implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		int i;
 		LogList ll;
 		ll = PadEmulatorSettings.log();

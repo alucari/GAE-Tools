@@ -14,7 +14,7 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 	
 	final public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		
-		if (!preServ()) {
+		if (!preServ(req,resp)) {
 			return;
 		}
 		String action;
@@ -27,7 +27,7 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 		} else {
 			throw new NoHandlerAssignedToActionException();
 		}
-		postServ();
+		postServ(req,resp);
 	}
 	
 	final protected void setAction(String actionName, ActionHandler ah) {
@@ -38,10 +38,10 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 		defaultHandler = defaultActionHandler;
 	}
 	
-	protected boolean preServ() throws IOException {
+	protected boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		return true;
 	}
-	protected void postServ() throws IOException {
+	protected void postServ(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		;
 	}
 }

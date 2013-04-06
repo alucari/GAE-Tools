@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.silverwzw.servlet.SimpleActionHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-final public class controlPanel extends SimpleActionHandler {
+import com.silverwzw.servlet.ActionHandler;
+
+
+final public class controlPanel implements ActionHandler {
 	static String sp = "&nbsp;";
 	static HashMap<String,String> users;
 	static {
@@ -15,7 +19,7 @@ final public class controlPanel extends SimpleActionHandler {
 		users.put("324151024","tea");
 		users.put("324224887", "x");
 	}
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		java.io.PrintWriter o;
 		
 		o = resp.getWriter();
