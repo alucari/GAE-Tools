@@ -14,9 +14,12 @@ import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @SuppressWarnings("serial")
 public class RespLookup extends SimpleServlet {
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String method, encode, respType;
 		String res;
 		boolean send, noContent;

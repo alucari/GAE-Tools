@@ -3,13 +3,16 @@ package com.silverwzw.servlet;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @SuppressWarnings("serial")
 public abstract class ActionRouterServlet extends SimpleServlet {
 	
 	private HashMap<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
 	private ActionHandler defaultHandler = null;
 	
-	final public void serv() throws IOException {
+	final public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		
 		if (!preServ()) {
 			return;

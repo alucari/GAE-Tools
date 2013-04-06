@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheManager;
@@ -20,7 +23,7 @@ import com.silverwzw.servlet.SimpleServlet;
 @SuppressWarnings("serial")
 public class CC98top10 extends SimpleServlet {
 	private Cache cache;
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
 			String contentType;
 			String rssText;
@@ -29,7 +32,7 @@ public class CC98top10 extends SimpleServlet {
 			contentType="application/rss+xml";
 			
 			if (req.getParameter("boardid") != null) {
-				bypass(req.getParameter("boardid"),req.getParameter("id"));
+				bypass(req.getParameter("boardid"),req.getParameter("id"),req,resp);
 				return;
 			}
 			
@@ -122,7 +125,7 @@ public class CC98top10 extends SimpleServlet {
 		}
 	}
 	
-	private void bypass(String bid, String id) throws IOException {
+	private void bypass(String bid, String id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		UserService userService = UserServiceFactory.getUserService();
 		String add;
 		boolean isad = false;

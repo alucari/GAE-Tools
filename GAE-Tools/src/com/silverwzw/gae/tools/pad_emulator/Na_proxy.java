@@ -19,7 +19,7 @@ import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 final public class Na_proxy extends SimpleServlet{
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		BufferedReader reader;
 		HttpURLConnection conn;
 		String line,str;

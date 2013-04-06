@@ -3,12 +3,15 @@ package com.silverwzw.gae.tools.pac;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.silverwzw.servlet.SimpleServlet;
 
 
 @SuppressWarnings("serial")
 final public class Pac extends SimpleServlet{
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String pacStr,proxyAddr;
 		resp.setContentType("application/x-ns-proxy-autoconfig");
 		if (req.getParameter("proxy") != null) {

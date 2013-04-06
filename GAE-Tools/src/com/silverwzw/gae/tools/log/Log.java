@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.*;
 
@@ -11,7 +14,7 @@ import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Log extends SimpleServlet {
-	public void serv() throws IOException{
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		String kind;
 		kind = req.getParameter("kind"); 
 		if (kind == null) {

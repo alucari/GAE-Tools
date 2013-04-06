@@ -14,18 +14,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Pad extends SimpleServlet{ 
-	private PadEmulatorSettings settings;
 	private static Pattern pattern = Pattern.compile(",\\s*\"msg\"\\s*:\"");
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
+		PadEmulatorSettings settings;
 		String target;
 		
-		target = isApple()?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
+		target = isApple(req)?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
 		
 		// POST method have highest priority, should be handled before any req.getParameter call
 		String urlStr;
@@ -78,18 +80,18 @@ public class Pad extends SimpleServlet{
 
 		resp.setHeader("Content-Type", "text/html; charset=UTF-8");
 		
-		if (actionIs("confirm_level_up") && settings.isBlockLevelUp()) {
+		if (actionIs("confirm_level_up",req) && settings.isBlockLevelUp()) {
 			resp.getWriter().print("{\"res\":97}");
 			settings.setBlockLevelUp(false); //for safety
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon") && settings.isLocked()) {
+		if (actionIs("sneak_dungeon",req) && settings.isLocked()) {
 			resp.getWriter().print("{\"res\":98}");
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon_ack") && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
+		if (actionIs("sneak_dungeon_ack",req) && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
 			Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
 			boolean find_one_egg;
 			find_one_egg = false;
@@ -108,12 +110,12 @@ public class Pad extends SimpleServlet{
 			}
 		}
 		
-		if (actionIs("do_continue") && settings.isInfStone()) {
+		if (actionIs("do_continue",req) && settings.isInfStone()) {
 			resp.getWriter().print("{\"res\":0,\"rid\":\"515dce31e0532\"}");
 			return;
 		}
 		
-		if (actionIs("do_continue_ack") && settings.isInfStone()) {
+		if (actionIs("do_continue_ack",req) && settings.isInfStone()) {
 			resp.getWriter().print("{\"res\":0}");
 			return;
 		}
@@ -131,7 +133,7 @@ public class Pad extends SimpleServlet{
 			res += '\n' + line;
 		}
 		PadEmulatorSettings.log(req.getQueryString(), res);
-		if (actionIs("sneak_dungeon")) {
+		if (actionIs("sneak_dungeon",req)) {
 			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
 			Dungeon dungeon;
 			dungeon = new Dungeon(res);
@@ -140,16 +142,16 @@ public class Pad extends SimpleServlet{
 				res = dungeon.modDungeon(settings.getDungeonMode());
 			}
 		}
-		if (actionIs("get_player_data")) {
+		if (actionIs("get_player_data",req)) {
 			Matcher m = pattern.matcher(res);
 			res = m.replaceAll(",\"msg\":\"Silverwzw-");
 		}
 		resp.getWriter().print(res);
 	}
-	private boolean actionIs(String actionName) {
+	private boolean actionIs(String actionName,HttpServletRequest req) {
 		return req.getParameter("action").equals(actionName);
 	}
-	private boolean isApple(){
+	private boolean isApple(HttpServletRequest req){
 		String qs = req.getQueryString();
 		if (qs.indexOf("dev=iPad3,4") >= 0) {
 			return true;

@@ -2,6 +2,9 @@ package com.silverwzw.gae.tools.jmp;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
@@ -15,7 +18,7 @@ import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Jmp extends SimpleServlet {
-	public void serv() throws IOException {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		
 		UserService u = UserServiceFactory.getUserService();
 		if(!(u.isUserLoggedIn() && u.isUserAdmin())) {
