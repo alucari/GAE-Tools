@@ -1,10 +1,6 @@
-package com.silverwzw.gae.tools;
+package com.silverwzw.gae.tools.jmp;
 
 import java.io.IOException;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -14,10 +10,12 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 
+import com.silverwzw.servlet.SimpleServlet;
+
 
 @SuppressWarnings("serial")
-public class Jmp extends HttpServlet {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+public class Jmp extends SimpleServlet {
+	public void serv() throws IOException {
 		
 		UserService u = UserServiceFactory.getUserService();
 		if(!(u.isUserLoggedIn() && u.isUserAdmin())) {
@@ -36,19 +34,13 @@ public class Jmp extends HttpServlet {
 		
 		try {
 			urlMap = DatastoreServiceFactory.getDatastoreService().get(KeyFactory.createKey("urlMap", req.getParameter("jmp")));
-			String j = req.getParameter("j"); 
-			if (j != null && j.equals("1")) {
-				resp.setHeader("location", (String) urlMap.getProperty("url"));
-				resp.setStatus(302);
-				return;
+			if (req.getParameter("j") != null) {
+				resp.sendRedirect((String) urlMap.getProperty("url"));
 			} else {
 				resp.getWriter().print((String) urlMap.getProperty("url"));
-				return;
 			}
 		} catch (EntityNotFoundException e) {
 			resp.sendError(404, "Not Found");
-			return;
 		}
-		
 	}
 }

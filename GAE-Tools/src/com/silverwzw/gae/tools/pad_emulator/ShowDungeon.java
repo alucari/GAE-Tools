@@ -7,14 +7,10 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.silverwzw.gae.ActionHandler;
+import com.silverwzw.servlet.ActionHandler;
 
-import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.sf.jsr107cache.CacheException;
-import net.sf.jsr107cache.CacheManager;
 
 
 final public class ShowDungeon implements ActionHandler {
@@ -78,7 +74,6 @@ final public class ShowDungeon implements ActionHandler {
 		o.println("Bonus :<br /> Box * " + count + "<br />");
 		o.println(itm);
 		o.println(enm);
-		
 		o.println("</body></html>");
 	}
 }

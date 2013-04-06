@@ -3,7 +3,7 @@ package com.silverwzw.gae.tools.pad_emulator;
 import java.io.IOException;
 import java.util.Collection;
 
-import com.silverwzw.gae.SimpleActionHandler;
+import com.silverwzw.servlet.SimpleActionHandler;
 
 public final class GetJSON extends SimpleActionHandler {
 

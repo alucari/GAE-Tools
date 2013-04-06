@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
-import com.silverwzw.gae.ActionRouterServlet;
-import com.silverwzw.gae.SimpleActionHandler;
+import com.silverwzw.servlet.ActionRouterServlet;
+import com.silverwzw.servlet.SimpleActionHandler;
 
 @SuppressWarnings("serial")
 public final class PadIndex extends ActionRouterServlet {

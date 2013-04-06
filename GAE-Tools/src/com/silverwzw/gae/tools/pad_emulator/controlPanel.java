@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.silverwzw.gae.SimpleActionHandler;
+import com.silverwzw.servlet.SimpleActionHandler;
 
 final public class controlPanel extends SimpleActionHandler {
 	static String sp = "&nbsp;";

@@ -1,10 +1,7 @@
-package com.silverwzw.gae;
+package com.silverwzw.servlet;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public abstract class ActionRouterServlet extends SimpleServlet {

@@ -14,10 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.silverwzw.gae.SimpleServlet;
+import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Pad extends SimpleServlet{ 

@@ -1,4 +1,4 @@
-package com.silverwzw.gae.tools;
+package com.silverwzw.gae.tools.resplookup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 
-import javax.servlet.http.*;
+import com.silverwzw.servlet.SimpleServlet;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public class RespLookup extends HttpServlet {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+public class RespLookup extends SimpleServlet {
+	public void serv() throws IOException {
 		String method, encode, respType;
 		String res;
 		boolean send, noContent;
@@ -24,6 +24,18 @@ public class RespLookup extends HttpServlet {
 		send = false;
 		noContent = false;
 		res = "";
+		
+		if(req.getParameterMap().size() == 0) {
+			resp.setContentType("text/plain");
+			resp.getWriter().println("Help file:\n");
+			resp.getWriter().println("parameter[no-content]:\ndo not echo the response content, only header\n");
+			resp.getWriter().println("parameter[m]:\nSpecify request method: POST, GET, HEAD, etc. Default is GET\n");
+			resp.getWriter().println("parameter u:\nRequest URL\n");
+			resp.getWriter().println("parameter[c]:\nResponse contentType, default is text/plain\n");
+			resp.getWriter().println("parameter[_<name>]:\nSpecify the value of <name> field in request header\n");
+			resp.getWriter().println("parameter[<name>]:\nSpecify the value of <name> field in Query String\n");
+			return;
+		}
 		
 		for (Object argName : req.getParameterMap().keySet()) {
 			if ("no-content".equals((String)argName)) {

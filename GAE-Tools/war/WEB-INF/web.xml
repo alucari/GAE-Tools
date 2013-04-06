@@ -7,7 +7,7 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list><servlet>
 		<servlet-name>cc98top10</servlet-name>
-		<servlet-class>com.silverwzw.gae.tools.cc98top10</servlet-class>
+		<servlet-class>com.silverwzw.gae.tools.cc98.CC98top10</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>cc98top10</servlet-name>
@@ -28,13 +28,13 @@
  </servlet-mapping>
  <servlet>
  	<servlet-name>RespLookup</servlet-name>
- 	<servlet-class>com.silverwzw.gae.tools.RespLookup</servlet-class></servlet>
+ 	<servlet-class>com.silverwzw.gae.tools.resplookup.RespLookup</servlet-class></servlet>
  <servlet-mapping>
  	<servlet-name>RespLookup</servlet-name>
  	<url-pattern>/resplookup</url-pattern></servlet-mapping>
  <servlet>
  	<servlet-name>jmp</servlet-name>
- 	<servlet-class>com.silverwzw.gae.tools.Jmp</servlet-class></servlet>
+ 	<servlet-class>com.silverwzw.gae.tools.jmp.Jmp</servlet-class></servlet>
  <servlet-mapping>
  	<servlet-name>jmp</servlet-name>
  	<url-pattern>/jmp</url-pattern></servlet-mapping>
@@ -45,14 +45,7 @@
  	<url-pattern>/login</url-pattern>
  	<servlet-name>login</servlet-name></servlet-mapping>
 	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.test</servlet-class>
-		<servlet-name>test</servlet-name>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>test</servlet-name>
-		<url-pattern>/test</url-pattern></servlet-mapping>
-	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.Log</servlet-class>
+		<servlet-class>com.silverwzw.gae.tools.log.Log</servlet-class>
 		<servlet-name>Log</servlet-name></servlet>
 	<servlet-mapping>
 		<servlet-name>Log</servlet-name>
@@ -60,7 +53,7 @@
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>pac</servlet-name>
-		<servlet-class>com.silverwzw.gae.tools.Pac</servlet-class></servlet>
+		<servlet-class>com.silverwzw.gae.tools.pac.Pac</servlet-class></servlet>
 	<servlet-mapping>
 		<servlet-name>pac</servlet-name>
 		<url-pattern>/pac</url-pattern></servlet-mapping>

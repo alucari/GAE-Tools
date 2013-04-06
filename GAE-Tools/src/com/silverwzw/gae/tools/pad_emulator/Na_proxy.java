@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.silverwzw.gae.SimpleServlet;
+import com.silverwzw.servlet.SimpleServlet;
 
 
 @SuppressWarnings("serial")
