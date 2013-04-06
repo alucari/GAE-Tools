@@ -5,10 +5,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
@@ -35,7 +31,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("showLog", new ShowLog());
 		setDefaultAction(new controlPanel());
 	}
-	public boolean preServ(HttpServletRequest req, HttpServletResponse response) throws IOException{
+	public boolean preServ() throws IOException{
 		MessageDigest digest;
 		try {
 			digest = MessageDigest.getInstance("MD5");
@@ -46,7 +42,7 @@ public final class PadIndex extends ActionRouterServlet {
 		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
 		String hash = new String(Hex.encodeHex(digest.digest()));
 		if (!userList.contains(hash)) {
-			response.sendError(401,hash);
+			resp.sendError(401,hash);
 			return false;
 		}
 		return true;

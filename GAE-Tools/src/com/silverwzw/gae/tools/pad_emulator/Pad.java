@@ -21,16 +21,11 @@ import com.silverwzw.gae.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Pad extends SimpleServlet{ 
-	private HttpServletRequest req;
-	private HttpServletResponse resp;
 	private PadEmulatorSettings settings;
 	private static Pattern pattern = Pattern.compile(",\\s*\"msg\"\\s*:\"");
-	public void serv(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void serv() throws IOException {
 
 		String target;
-
-		resp = response;
-		req = request;
 		
 		target = isApple()?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
 		

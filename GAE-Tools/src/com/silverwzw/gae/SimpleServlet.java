@@ -8,11 +8,17 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public abstract class SimpleServlet extends HttpServlet {
-	public abstract void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException;
+	protected HttpServletRequest req;
+	protected HttpServletResponse resp;
+	public abstract void serv() throws IOException;
 	public final void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		serv(req,resp);
+		this.req = req;
+		this.resp = resp;
+		serv();
 	}
 	public final void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		serv(req,resp);
+		this.req = req;
+		this.resp = resp;
+		serv();
 	}
 }

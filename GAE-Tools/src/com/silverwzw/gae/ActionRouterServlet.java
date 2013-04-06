@@ -12,9 +12,9 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 	private HashMap<String,ActionHandler> actionHandlers = new HashMap<String,ActionHandler>();
 	private ActionHandler defaultHandler = null;
 	
-	final public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	final public void serv() throws IOException {
 		
-		if (!preServ(req,resp)) {
+		if (!preServ()) {
 			return;
 		}
 		String action;
@@ -27,7 +27,7 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 		} else {
 			throw new NoHandlerAssignedToActionException();
 		}
-		postServ(req,resp);
+		postServ();
 	}
 	
 	final protected void setAction(String actionName, ActionHandler ah) {
@@ -38,10 +38,10 @@ public abstract class ActionRouterServlet extends SimpleServlet {
 		defaultHandler = defaultActionHandler;
 	}
 	
-	protected boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	protected boolean preServ() throws IOException {
 		return true;
 	}
-	protected void postServ(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	protected void postServ() throws IOException {
 		;
 	}
 }

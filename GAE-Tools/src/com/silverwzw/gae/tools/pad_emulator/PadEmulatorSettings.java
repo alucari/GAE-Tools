@@ -227,6 +227,7 @@ final class freqAccessEggs implements java.io.Serializable {
 	}
 }
 
+@SuppressWarnings("serial")
 final class Log implements java.io.Serializable{
 	public String request;
 	public String response;
@@ -236,6 +237,7 @@ final class Log implements java.io.Serializable{
 	}
 }
 
+@SuppressWarnings("serial")
 final class LogList implements java.io.Serializable{
 	private Log[] ll;
 	private int index;
