@@ -26,7 +26,7 @@ final public class controlPanel implements ActionHandler {
 		o = resp.getWriter();
 		
 		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
-		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
+		o.println("<table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
 			PadEmulatorSettings settings;
@@ -70,7 +70,7 @@ final public class controlPanel implements ActionHandler {
 		for (String egg : freqEggs) {
 			o.println("document.write('[" + egg + "' + show(" + egg + ") + ']&nbsp;" +((++counter % 8 == 0)?"<br />')":"')"));
 		}
-		o.println("</script><table><tbody><tr><th width=150>tea</th><th width=150>x</th><th width=150>silverwzw</th></tr>");
+		o.println("</script><hr /><table><tbody><tr><th width=150>tea</th><th width=150>x</th><th width=150>silverwzw</th></tr>");
 		for(i = 0; i < 10; i++) {
 			o.println("<tr id='channel" + i + "'><td class='tea'></td><td class='x'></td><td class='silverwzw'></td></tr>");
 		}

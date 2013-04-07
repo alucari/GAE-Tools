@@ -18,7 +18,6 @@ import com.silverwzw.servlet.ActionHandler;
 final public class Channel {
 	static HashMap<String,String> userMapGungho;
 	static HashMap<String,String> userMapGoogle;
-	static ArrayList<String> knownAction;
 	static {
 		userMapGoogle = new HashMap<String,String>();
 		userMapGoogle.put("cbf9d8da00cdc95dcd017fe07028029f","silverwzw"); //silverwzw
@@ -31,21 +30,6 @@ final public class Channel {
 		userMapGungho.put("0a78f1a0-f5a0-49ef-950e-e6205f5e9389", "silverwzw");
 		userMapGungho.put("324224887", "x");
 		userMapGungho.put("27C8DDB8-D23C-4345-94B6-805A5DD36A1F", "x");
-		knownAction = new ArrayList<String>();
-		knownAction.add("buy_stamina");
-		knownAction.add("do_continue");
-		knownAction.add("do_continue_ack");
-		knownAction.add("sneak_dungeon");
-		knownAction.add("sneak_dungeon_ack");
-		knownAction.add("clear_dungeon");
-		knownAction.add("get_player_data");
-		knownAction.add("get_recommended_helpers");
-		knownAction.add("sell_user_cards");
-		knownAction.add("composite_user_cards");
-		knownAction.add("save_decks");
-		knownAction.add("login");
-		knownAction.add("evolve_user_card");
-		knownAction.add("play_gacha_cnt");
 	}
 	final static String hash() {
 		MessageDigest digest;
@@ -76,7 +60,13 @@ final public class Channel {
 		if (user == null) {
 			user = "unknown[" + (req.getParameter("pid") != null ? req.getParameter("pid") : req.getParameter("u")) + "]";
 		}
-		return "{\"action\":\"" + action + "\",\"user\":\"" + user + "\",\"ts\":"+System.currentTimeMillis()+",\"known\":" + (knownAction.contains(action)?"true":"false") + "}";
+		return "{\"type\":\"newAction\",\"action\":\"" + action + "\",\"user\":\"" + user + "\"}";
+	}
+	final static String refreshjson(){
+		return "{\"type\":\"refresh\"}";
+	}
+	final static String refreshjson(String pid){
+		return "{\"type\":\"refresh\",\"pid\":\"" + pid+ "\"}";
 	}
 }
 

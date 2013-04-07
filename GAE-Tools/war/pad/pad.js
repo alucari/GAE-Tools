@@ -14,14 +14,29 @@ debug.autoRelease = false;
 
 var refresh;
 
+var knownAction = [];
+knownAction.push("buy_stamina");
+knownAction.push("do_continue");
+knownAction.push("do_continue_ack");
+knownAction.push("sneak_dungeon");
+knownAction.push("sneak_dungeon_ack");
+knownAction.push("clear_dungeon");
+knownAction.push("get_player_data");
+knownAction.push("get_recommended_helpers");
+knownAction.push("sell_user_cards");
+knownAction.push("composite_user_cards");
+knownAction.push("save_decks");
+knownAction.push("login");
+knownAction.push("evolve_user_card");
+knownAction.push("play_gacha_cnt");
+knownAction.push("get_user_mails");
+knownAction.push("confirm_level_up");
+
 function starter() {
 	var deamon;
 	var update;
 	var updateUI;
-	var trigger = true;
-	var isUpdating = 0;
 	
-	var countDown;
 	var ids = [];
 	var trs;
 	
@@ -29,20 +44,12 @@ function starter() {
 	for (var i = 0; i < trs.length; i++) {
 		ids[ids.length] = trs[i].id; 
 	}
-	countDown = 0;
-	$('a#trigger').click(function (e) {
-		debug.log('trigger flipped!');
-		trigger=!trigger;
-		isUpdating = 0;
-		$('#countDown')[0].innerHTML = "";
-	});
 	
 	updateUI = function (json, code) {
 		debug.log("json data for " + json.pid + " is loaded");
 		debug.log(json);
 		var tr;
 
-		$('#countDown')[0].innerHTML = "Update count down: Updated."
 		tr = $('tr#' + json.pid);;
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
@@ -75,43 +82,26 @@ function starter() {
 			eggstr += show(json.wantedEggs[i]);
 		}
 		tr.find('.eggs')[0].innerHTML = eggstr;
-		isUpdating--;
 	};
 	
-	update = function () {
-		for (var i = 0; i < ids.length; i++) {
-			debug.log("retrieving json data for " + ids[i]);
-			$.get('/pad?action=getJSON&pid=' + ids[i], updateUI);
-			isUpdating++;
-			countDown = 11;
-			$('#countDown')[0].innerHTML = "Update count down: Updateing.";
+	update = function (id) {
+		if (id === undefined) { // update all
+			for (var i = 0; i < ids.length; i++) {
+				debug.log("retrieving json data for " + ids[i]);
+				$.get('/pad?action=getJSON&pid=' + ids[i], updateUI);
+			}
+		} else {
+			debug.log("retrieving json data for " + id);
+			$.get('/pad?action=getJSON&pid=' + id, updateUI);
 		}
 	};
 	
 	refresh = update;
 	
 	deamon = function () {
-		debug.log("deamon awake, countDown = " + countDown + ", trigger = " + trigger);
-		if (countDown == 0) {
-			if (trigger) {
-				update();
-			}
-			countDown = 11;
-		}
-		if (isUpdating == 0) {
-			countDown--;
-			if (trigger) {
-				var strs,i;
-				strs = "Update count down: ";
-				for (i = 0; i < countDown; i++) {
-					strs += "*"; 
-				}
-				$('#countDown')[0].innerHTML = strs;
-			}
-		} else {
-			$('#countDown')[0].innerHTML += '.';
-		}
-		setTimeout(deamon,500);
+		debug.log("deamon awake");
+		update();
+		setTimeout(deamon,300000);
 	};
 	
 	channel = function () {
@@ -126,12 +116,12 @@ function starter() {
 			}
 			for (i = 0; i < users.length; i++) {
 				for (j = 0; j < l[users[i]].length && j < 10; j++) {
-					var d,html;
-					d = l[users[i]][l[users[i]].length-j-1];
-					if (d.known) {
-						html = d.action;
+					var a,html;
+					a = l[users[i]][l[users[i]].length-j-1];
+					if (knownAction.indexOf(a)>=0) {
+						html = a;
 					} else {
-						html = "<font color='red'>" + d.action + "</font>";
+						html = "<font color='red'>" + a + "</font>";
 					}
 					$("tr#channel"+j).find("td."+users[i])[0].innerHTML = html;
 				}
@@ -147,14 +137,22 @@ function starter() {
 				debug.log(msgObj);
 				data = eval('('+msgObj.data+')');
 				debug.log(data);
-				if ( l[data.user] === undefined) {
-					l[data.user] = [];
+				if (data.type == "refresh") {
+					if (data.pid === undefined) {
+						update();
+					} else {
+						update(data.pid);
+					}
+				} else if (data.type == "newAction"){
+					if ( l[data.user] === undefined) {
+						l[data.user] = [];
+					}
+					if ( l[data.user].length > 10) {
+						l[data.user].shift();
+					}
+					l[data.user].push(data.action);
+					updateChannel();
 				}
-				if ( l[data.user].length > 10) {
-					l[data.user].shift();
-				}
-				l[data.user].push({"action":data.action,"known":data.known});
-				updateChannel();
 			};
 			socket.onerror =  function(){
 				debug.log("channel error");
@@ -170,9 +168,7 @@ function starter() {
 }
 
 function ajaxAction(link) {
-	$.get(link,function (json,code){
-		refresh();
-	});
+	$.get(link);
 }
 
 function addEgg(pid) {

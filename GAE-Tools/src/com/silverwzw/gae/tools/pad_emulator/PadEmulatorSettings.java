@@ -78,6 +78,7 @@ final public class PadEmulatorSettings {
 	}
 	public void setBlockLevelUp(boolean bool) {
 		setSpec("blockLevelUp", bool);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public void setDungeonString(String dungeonStr) {
 		setSpec("LastDungeonRecieved", dungeonStr);
@@ -90,6 +91,7 @@ final public class PadEmulatorSettings {
 	}
 	public void setLookingForCertainEgg(boolean bool) {
 		setSpec("isLookingForCertainEgg", bool);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	@SuppressWarnings("unchecked")
 	public void addWantedEgges(String ... eggIDs) {
@@ -105,10 +107,12 @@ final public class PadEmulatorSettings {
 			}
 		}
 		setSpec("wantedEggs", (Object)cacheCopy);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public void cleanWantedEggs() {
 		setSpec("wantedEggs",(Object)new ArrayList<String>());
 		setLookingForCertainEgg(false);
+		//no need to broadcast channel here, since setLookingForCertainEgg method already does broadcast 
 	}
 	@SuppressWarnings("unchecked")
 	public Collection<String> WantedEggs() {
@@ -122,15 +126,18 @@ final public class PadEmulatorSettings {
 	}
 	public void acquireSaveLock() {
 		setSpec("notLocked", false);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public boolean isLocked() {
 		return !is("notLocked");
 	}
 	public void releaseSaveLock() {
 		setSpec("notLocked", true);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public void setDungeonMode(int mode) {
 		setSpec("DungeonMode", mode);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public int getDungeonMode() {
 		if (getSpec("DungeonMode") == null) {
@@ -182,6 +189,7 @@ final public class PadEmulatorSettings {
 	}
 	public void setInfStone(boolean b) {
 		setSpec("infStone",b);
+		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	public boolean isInfStone() {
 		return is("infStone");
