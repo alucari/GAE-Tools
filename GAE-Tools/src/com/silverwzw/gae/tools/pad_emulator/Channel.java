@@ -73,10 +73,7 @@ final public class Channel {
 
 final class RealTimeChannel implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		String token,clientID;
-		clientID = Channel.hash();
-		token = ChannelServiceFactory.getChannelService().createChannel(clientID);
 		resp.setContentType("application/json");
-		resp.getWriter().print("{\"token\":\"" + token + "\"}");
+		resp.getWriter().print("{\"token\":\"" + PadEmulatorSettings.channelToken(Channel.hash()) + "\"}");
 	}
 }

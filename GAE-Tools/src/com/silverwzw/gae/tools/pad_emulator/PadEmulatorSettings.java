@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
+import com.google.appengine.api.channel.ChannelServiceFactory;
+
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheManager;
@@ -205,6 +207,16 @@ final public class PadEmulatorSettings {
 	}
 	public static LogList log() {
 		return (LogList) getGeneral("log");
+	}
+	public static String channelToken(String hash) {
+		String token;
+		token = (String)getGeneral("channel-token-" + hash);
+		if(token != null) {
+			return token;
+		}
+		token = ChannelServiceFactory.getChannelService().createChannel(hash);
+		setGeneral("channel-token-" + hash,token);
+		return token;
 	}
 }
 
