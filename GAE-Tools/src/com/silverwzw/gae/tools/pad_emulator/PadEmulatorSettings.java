@@ -3,6 +3,7 @@ package com.silverwzw.gae.tools.pad_emulator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.google.appengine.api.channel.ChannelServiceFactory;
@@ -14,6 +15,24 @@ import net.sf.jsr107cache.CacheManager;
 final public class PadEmulatorSettings {
 	static Cache cache = null;
 	private String pid;
+
+	static HashMap<String,String> userMapGunghoUid;
+	static HashMap<String,String> userMapGunghoPid;
+	static HashMap<String,String> userMapGoogle;
+	static {
+		userMapGoogle = new HashMap<String,String>();
+		userMapGoogle.put("cbf9d8da00cdc95dcd017fe07028029f","silverwzw"); //silverwzw
+		userMapGoogle.put("36795a4756f4b90fac03d4dd82b28db4","tea"); //tea
+		userMapGoogle.put("361d39b1af4fa514bd48e43ad0bdcf0d","x"); //x
+		userMapGunghoPid = new HashMap<String,String>();
+		userMapGunghoUid = new HashMap<String,String>();
+		userMapGunghoPid.put("324151024", "tea");
+		userMapGunghoUid.put("B33ECFC8-F74D-4A88-A5D5-81183DAFC850", "tea");
+		userMapGunghoPid.put("324363124", "silverwzw");
+		userMapGunghoUid.put("0a78f1a0-f5a0-49ef-950e-e6205f5e9389", "silverwzw");
+		userMapGunghoPid.put("324224887", "x");
+		userMapGunghoUid.put("27C8DDB8-D23C-4345-94B6-805A5DD36A1F", "x");
+	}
 	@SuppressWarnings("unused")
 	private PadEmulatorSettings(){;}
 	PadEmulatorSettings(String playerId) {
@@ -208,18 +227,54 @@ final public class PadEmulatorSettings {
 	public static LogList log() {
 		return (LogList) getGeneral("log");
 	}
-	public static String channelToken(String hash) {
-		String token;
-		token = (String)getGeneral("channel-token-" + hash);
-		if(token != null) {
+	public static ChannelToken channelToken(String hash) {
+		ChannelToken token;
+		token = (ChannelToken)getGeneral("channel-token-" + hash);
+		if(token != null && !token.expired()) {
 			return token;
 		}
-		token = ChannelServiceFactory.getChannelService().createChannel(hash);
+		return forceChannelCreation(hash);
+	}
+	public static ChannelToken forceChannelCreation(String hash) {
+		ChannelToken token;
+		token = new ChannelToken(hash);
 		setGeneral("channel-token-" + hash,token);
 		return token;
 	}
 }
 
+@SuppressWarnings("serial")
+final class ChannelToken implements java.io.Serializable {
+	private String _tokenString;
+	private long _creation;
+	private long _duration;
+	ChannelToken(String hash, int time) {
+		create(hash,time);
+	}
+	ChannelToken(String hash) {
+		create(hash,720);
+	}
+	private void create(String hash,int time) {
+		if (time < 30) {
+			time = 720;
+		}
+		_tokenString = ChannelServiceFactory.getChannelService().createChannel(hash,time);
+		_creation = System.currentTimeMillis();
+		_duration = time;
+	}
+	public String tokenString() {
+		return _tokenString;
+	}
+	public long creation() {
+		return _creation;
+	}
+	public long duration() {
+		return _duration;
+	}
+	public boolean expired() {
+		return System.currentTimeMillis() > _creation + (_duration-3) *60 *1000;
+	}
+}
 @SuppressWarnings("serial")
 final class freqAccessEggs implements java.io.Serializable {
 	private int capacity;

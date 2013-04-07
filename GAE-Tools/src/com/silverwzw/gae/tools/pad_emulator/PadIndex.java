@@ -20,12 +20,12 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("infStone", new SetInfStone());
 		setAction("showLog", new ShowLog());
 		setAction("getChannelToken", new RealTimeChannel());
-		setDefaultAction(new controlPanel());
+		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
 		String hash;
 		hash = Channel.hash();
-		if (!Channel.userMapGoogle.containsKey(hash)) {
+		if (!PadEmulatorSettings.userMapGoogle.containsKey(hash)) {
 			resp.sendError(401,hash);
 			return false;
 		}
@@ -147,5 +147,19 @@ final class ShowLog implements ActionHandler {
 			resp.getWriter().println("<=" + ll.get(i).response);
 			resp.getWriter().println();
 		}
+	}
+}
+
+
+final class RealTimeChannel implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		resp.setContentType("application/json");
+		ChannelToken token;
+		if (req.getParameter("force")==null) {
+			token = PadEmulatorSettings.channelToken(Channel.hash());
+		} else {
+			token = PadEmulatorSettings.forceChannelCreation(Channel.hash());
+		}
+		resp.getWriter().print("{\"token\":\"" + token.tokenString() + "\",\"expires\":"+token.creation() + 60L * 1000 * token.duration()+"}");
 	}
 }

@@ -29,8 +29,13 @@ knownAction.push("save_decks");
 knownAction.push("login");
 knownAction.push("evolve_user_card");
 knownAction.push("play_gacha_cnt");
+knownAction.push("play_gacha");
+knownAction.push("request_friend");
 knownAction.push("get_user_mails");
 knownAction.push("confirm_level_up");
+knownAction.push("download_limited_bonus_data");
+knownAction.push("get_helpers");
+//get_ids_parameter
 
 function starter() {
 	var deamon;
@@ -104,67 +109,76 @@ function starter() {
 		setTimeout(deamon,300000);
 	};
 	
-	channel = function () {
-		l={};
-		updateChannel = function() {
-			var users=["silverwzw","x","tea"];
-			var i,j;
-			for (i = 0; i < users.length; i++) {
-				if (l[users[i]] === undefined) {
-					l[users[i]] = [];
-				}
+	actionLog={};
+	updateChannel = function() {
+		var users=["silverwzw","x","tea"];
+		var i,j;
+		for (i = 0; i < users.length; i++) {
+			if (actionLog[users[i]] === undefined) {
+				actionLog[users[i]] = [];
 			}
-			for (i = 0; i < users.length; i++) {
-				for (j = 0; j < l[users[i]].length && j < 10; j++) {
-					var a,html;
-					a = l[users[i]][l[users[i]].length-j-1];
-					if (knownAction.indexOf(a)>=0) {
-						html = a;
-					} else {
-						html = "<font color='red'>" + a + "</font>";
-					}
-					$("tr#channel"+j).find("td."+users[i])[0].innerHTML = html;
+		}
+		for (i = 0; i < users.length; i++) {
+			for (j = 0; j < actionLog[users[i]].length && j < 10; j++) {
+				var a,html;
+				a = actionLog[users[i]][actionLog[users[i]].length-j-1];
+				if (knownAction.indexOf(a)>=0) {
+					html = a;
+				} else {
+					html = "<font color='red'>" + a + "</font>";
 				}
+				$("tr#channel"+j).find("td."+users[i])[0].innerHTML = html;
 			}
-		};
-		$.get('/pad?action=getChannelToken',function(json,code){
-			var socket = (new goog.appengine.Channel(json.token)).open();
-			socket.onopen = function(){
-				debug.log("channel open");
-			};
-			socket.onmessage = function(msgObj){
-				var data;
-				debug.log(msgObj);
-				data = eval('('+msgObj.data+')');
-				debug.log(data);
-				if (data.type == "refresh") {
-					if (data.pid === undefined) {
-						update();
-					} else {
-						update(data.pid);
+		}
+	};
+	
+	channel = function (force) {
+		if (force === undefined || force != true) {
+			force = false;
+		}
+		$.get('/pad?action=getChannelToken' + (force?'&force':''), function(json,code){
+			(new goog.appengine.Channel(json.token)).open({
+				"onopen" : function(){
+					debug.log("channel open");
+				},
+				"onmessage" : function(msgObj){
+					var data;
+					debug.log(msgObj);
+					data = eval('('+msgObj.data+')');
+					debug.log(data);
+					if (data.type == "refresh") {
+						if (data.pid === undefined) {
+							update();
+						} else {
+							update(data.pid);
+						}
+					} else if (data.type == "newAction"){
+						if ( actionLog[data.user] === undefined) {
+							actionLog[data.user] = [];
+						}
+						if ( actionLog[data.user].length > 10) {
+							actionLog[data.user].shift();
+						}
+						actionLog[data.user].push(data.action);
+						updateChannel();
 					}
-				} else if (data.type == "newAction"){
-					if ( l[data.user] === undefined) {
-						l[data.user] = [];
+				},
+				"onerror" : function(e){
+					console.log("channel error");
+					console.log(e);
+					if(/Token(?:\s|\+)timed(?:\s|\+)out/i.exec(e.description) != null) {
+						channel(true);
 					}
-					if ( l[data.user].length > 10) {
-						l[data.user].shift();
-					}
-					l[data.user].push(data.action);
-					updateChannel();
+				},
+				"onclose" : function(){
+					debug.log("channel close");
 				}
-			};
-			socket.onerror =  function(){
-				debug.log("channel error");
-			};
-			socket.onclose = function(){
-				debug.log("channel close");
-			};
+			});
 		});
 	};
 	
 	deamon();
-	channel();
+	channel(false);  //try reusing an old channel resource.
 }
 
 function ajaxAction(link) {

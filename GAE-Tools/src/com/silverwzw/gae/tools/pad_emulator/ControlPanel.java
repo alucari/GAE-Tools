@@ -10,15 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.silverwzw.servlet.ActionHandler;
 
 
-final public class controlPanel implements ActionHandler {
+final public class ControlPanel implements ActionHandler {
 	static String sp = "&nbsp;";
-	static HashMap<String,String> users;
-	static {
-		users = new HashMap<String,String>();
-		users.put("324363124","silverwzw");
-		users.put("324151024","tea");
-		users.put("324224887", "x");
-	}
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		java.io.PrintWriter o;
 		int i;
@@ -28,7 +21,7 @@ final public class controlPanel implements ActionHandler {
 		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
-		for (Entry<String, String> e : users.entrySet()) {
+		for (Entry<String, String> e : PadEmulatorSettings.userMapGunghoPid.entrySet()) {
 			PadEmulatorSettings settings;
 			String pid,str;
 			int mode;
