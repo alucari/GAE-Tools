@@ -21,10 +21,11 @@ final public class controlPanel implements ActionHandler {
 	}
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		java.io.PrintWriter o;
+		int i;
 		
 		o = resp.getWriter();
 		
-		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/pad/pad.js'></script></head><body>");
+		o.println("<html><head><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<div><a href='#' id='trigger'>[auto update on/off]</a>&nbsp;&nbsp;&nbsp;<font id='countDown'></font></div><table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : users.entrySet()) {
@@ -69,8 +70,11 @@ final public class controlPanel implements ActionHandler {
 		for (String egg : freqEggs) {
 			o.println("document.write('[" + egg + "' + show(" + egg + ") + ']&nbsp;" +((++counter % 8 == 0)?"<br />')":"')"));
 		}
-		String calendar = "<iframe src='https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showCalendars=0&amp;showTz=0&amp;mode=AGENDA&amp;height=500&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=8k2qgo6ku4h30bjo0u6454fgv0%40group.calendar.google.com&amp;color=%232F6309&amp;ctz=America%2FNew_York' style=' border-width:0 ' width='800' height='500' frameborder='0' scrolling='no'></iframe>";
-		o.println("</script><br /><br />" + calendar + "</body></html>");
+		o.println("</script><table><tbody><tr><th width=150>tea</th><th width=150>x</th><th width=150>silverwzw</th></tr>");
+		for(i = 0; i < 10; i++) {
+			o.println("<tr id='channel" + i + "'><td class='tea'></td><td class='x'></td><td class='silverwzw'></td></tr>");
+		}
+		o.println("</tbody></table></body></html>");
 	}
 	final private static String td(String labelContent) {
 		return "<td>" + labelContent + "</td>";  

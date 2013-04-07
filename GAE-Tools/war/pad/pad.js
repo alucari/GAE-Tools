@@ -114,7 +114,59 @@ function starter() {
 		setTimeout(deamon,500);
 	};
 	
+	channel = function () {
+		l={};
+		updateChannel = function() {
+			var users=["silverwzw","x","tea"];
+			var i,j;
+			for (i = 0; i < users.length; i++) {
+				if (l[users[i]] === undefined) {
+					l[users[i]] = [];
+				}
+			}
+			for (i = 0; i < users.length; i++) {
+				for (j = 0; j < l[users[i]].length && j < 10; j++) {
+					var d,html;
+					d = l[users[i]][l[users[i]].length-j-1];
+					if (d.known) {
+						html = d.action;
+					} else {
+						html = "<font color='red'>" + d.action + "</font>";
+					}
+					$("tr#channel"+j).find("td."+users[i])[0].innerHTML = html;
+				}
+			}
+		};
+		$.get('/pad?action=getChannelToken',function(json,code){
+			var socket = (new goog.appengine.Channel(json.token)).open();
+			socket.onopen = function(){
+				debug.log("channel open");
+			};
+			socket.onmessage = function(msgObj){
+				var data;
+				debug.log(msgObj);
+				data = eval('('+msgObj.data+')');
+				debug.log(data);
+				if ( l[data.user] === undefined) {
+					l[data.user] = [];
+				}
+				if ( l[data.user].length > 10) {
+					l[data.user].shift();
+				}
+				l[data.user].push({"action":data.action,"known":data.known});
+				updateChannel();
+			};
+			socket.onerror =  function(){
+				debug.log("channel error");
+			};
+			socket.onclose = function(){
+				debug.log("channel close");
+			};
+		});
+	};
+	
 	deamon();
+	channel();
 }
 
 function ajaxAction(link) {

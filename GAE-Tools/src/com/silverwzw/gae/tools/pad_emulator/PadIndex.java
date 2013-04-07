@@ -1,28 +1,15 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
 
 import com.silverwzw.servlet.ActionHandler;
 import com.silverwzw.servlet.ActionRouterServlet;
 
 @SuppressWarnings("serial")
 public final class PadIndex extends ActionRouterServlet {
-	static ArrayList<String> userList;
-	static {
-		userList = new ArrayList<String>();
-		userList.add("cbf9d8da00cdc95dcd017fe07028029f"); //silverwzw
-		userList.add("36795a4756f4b90fac03d4dd82b28db4"); //tea
-		userList.add("361d39b1af4fa514bd48e43ad0bdcf0d"); //x
-	}
 	public PadIndex() {
 		setAction("showDungeon", new ShowDungeon());
 		setAction("doNotLvlUp", new NoLvlUp());
@@ -32,19 +19,13 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("resetEggList", new ResetEggList());
 		setAction("infStone", new SetInfStone());
 		setAction("showLog", new ShowLog());
+		setAction("getChannelToken", new RealTimeChannel());
 		setDefaultAction(new controlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-		MessageDigest digest;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			return false;
-		}
-		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
-		String hash = new String(Hex.encodeHex(digest.digest()));
-		if (!userList.contains(hash)) {
+		String hash;
+		hash = Channel.hash();
+		if (!Channel.userMapGoogle.containsKey(hash)) {
 			resp.sendError(401,hash);
 			return false;
 		}
