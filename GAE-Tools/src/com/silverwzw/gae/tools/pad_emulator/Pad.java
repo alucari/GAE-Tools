@@ -137,6 +137,7 @@ public class Pad extends SimpleServlet{
 		PadEmulatorSettings.log(req.getQueryString(), res);
 		if (actionIs("sneak_dungeon",req)) {
 			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
+			Channel.notifyByHash(settings.getHash(), "{\"type\":\"dungeon\",\"dungeon\":" + res + "");
 			Dungeon dungeon;
 			dungeon = new Dungeon(res);
 

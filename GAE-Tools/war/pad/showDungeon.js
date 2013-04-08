@@ -52,16 +52,16 @@ var refresh = function () {
 		$('#coin')[0].innerHTML = coin;
 		
 		for(i = 0; i < egg.length; i++) {
-			eggs += "[" + show(egg[i].id, "lv: " + egg[i].lv + (egg[i].plus?"+":"")) + (debug.on?("&nbsp;lv:" + egg[i].lv):"") + (egg[i].plus?"<font color='red'><b>PLUS</b></font>":"") + "],&nbsp;"
+			eggs += "[" + show(egg[i].id, "Lv: " + egg[i].lv + (egg[i].plus?"+":"")) + (debug.on?("&nbsp;Lv:" + egg[i].lv):"") + (egg[i].plus?"<font color='red'><b>PLUS</b></font>":"") + "],&nbsp;"
 		}
 		$('#egg')[0].innerHTML = eggs;
 		
 		for(i = 0; i < monsterD.length; i++) {
 			wave += "wave " + i + ":<br />";
 			for (j = 0; j < monsterD[i].length; j++) {
-				wave += show(monsterD[i][j].id, "type: " + monsterD[i][j].type + ", lv: " + monsterD[i][j].lv);
+				wave += show(monsterD[i][j].id, "Type: " + monsterD[i][j].type + ", Lv: " + monsterD[i][j].lv);
 				if (debug.on) {
-					wave += ",type=" + monsterD[i][j].type + ",lv=" + monsterD[i][j].lv + "&nbsp;";
+					wave += ", Type=" + monsterD[i][j].type + ", Lv=" + monsterD[i][j].lv + "&nbsp;";
 				}
 			}
 			wave += "<br />";

@@ -2,7 +2,6 @@ package com.silverwzw.gae.tools.pad_emulator;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +28,12 @@ final public class Channel {
 		for (String clientID : PadEmulatorSettings.userMapGoogle.keySet()) {
 			ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage(clientID, json));
 		}
+	}
+	final static void notifyByPid(String pid, String json) {
+		ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage((new PadEmulatorSettings(pid)).getHash(), json));
+	}
+	final static void notifyByHash(String hash, String json) {
+		ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage(hash, json));
 	}
 	final static String req2json(HttpServletRequest req) {
 		String action;

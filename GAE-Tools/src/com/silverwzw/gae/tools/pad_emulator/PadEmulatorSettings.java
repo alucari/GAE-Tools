@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.appengine.api.channel.ChannelServiceFactory;
 
@@ -241,7 +242,25 @@ final public class PadEmulatorSettings {
 		setGeneral("channel-token-" + hash,token);
 		return token;
 	}
+	private static String pid2hash(String pid) {
+		String name = userMapGunghoPid.get(pid);
+		for (Entry<String,String> e : userMapGoogle.entrySet()) {
+			if (e.getValue().equals(name)) {
+				return e.getKey();
+			}
+		}
+		throw new UserHashNotFoundException();
+	}
+	public String getPid() {
+		return pid;
+	}
+	public String getHash() {
+		return pid2hash(pid);
+	}
 }
+
+@SuppressWarnings("serial")
+final class UserHashNotFoundException extends RuntimeException {}
 
 @SuppressWarnings("serial")
 final class ChannelToken implements java.io.Serializable {

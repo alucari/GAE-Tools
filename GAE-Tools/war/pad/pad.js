@@ -40,8 +40,6 @@ knownAction.push("accept_friend_request");
 
 function starter() {
 	var deamon;
-	var update;
-	var updateUI;
 	
 	var ids = [];
 	var trs;
@@ -51,7 +49,7 @@ function starter() {
 		ids[ids.length] = trs[i].id; 
 	}
 	
-	updateUI = function (json, code) {
+	function updateUI(json, code) {
 		debug.log("json data for " + json.pid + " is loaded");
 		debug.log(json);
 		var tr;
@@ -90,7 +88,7 @@ function starter() {
 		tr.find('.eggs')[0].innerHTML = eggstr;
 	};
 	
-	update = function (id) {
+	function update(id) {
 		if (id === undefined) { // update all
 			for (var i = 0; i < ids.length; i++) {
 				debug.log("retrieving json data for " + ids[i]);
@@ -104,14 +102,14 @@ function starter() {
 	
 	refresh = update;
 	
-	deamon = function () {
+	function deamon () {
 		debug.log("deamon awake");
 		update();
 		setTimeout(deamon,300000);
 	};
 	
-	actionLog={};
-	updateChannel = function() {
+	var actionLog={};
+	function updateChannel() {
 		var users=["silverwzw","x","tea"];
 		var i,j;
 		for (i = 0; i < users.length; i++) {
@@ -133,18 +131,64 @@ function starter() {
 		}
 	};
 	
-	channel = function (force) {
+	function notify(dungeonW) {
+		console.log(dungeonW);
+		if (dungeonW === undefined) {
+			return;
+		}
+		if (!window.webkitNotifications) {
+			return; //not support
+		}
+		if (window.webkitNotifications.checkPermission() != 0) {
+			return; // no permission
+		}
+		var dungeonIcon = "";
+		var dungeonEggs = [];
+		var i,j;
+		var dungeonM,m,egg_str="",eggid_3digits;
+		for (i = 0; i < dungeonW.length; i++) {
+			dungeonM = dungeonW[i].monsters; 
+			for (j = 0; j < dungeonM.length; j++) {
+				m = dungeonM[j];
+				if (m.type > 0 && dungeonIcon == "") {
+					dungeonIcon = src(m.num);
+				}
+				if (m.item != "0" && m.item != "900") {
+					dungeonEggs.push(parseInt(m.item));
+				}
+			}
+		}
+		if (dungeonIcon == "") {
+			dungeonIcon = "http://" + unknowMonster.i;
+		}
+		for (i = 0; i < dungeonEggs.length; i++) {
+			m = getMonster(dungeonEggs[i]);
+			
+			if (dungeonEggs[i] < 10) {
+				eggid_3digits = "00";
+			} else if (dungeonEggs[i] < 100) {
+				eggid_3digits = "0";
+			} else {
+				eggid_3digits = "";
+			}
+			eggid_3digits += dungeonEggs[i];
+			egg_str += '[' + eggid_3digits + '] ' + m.r + ' ' + m.n + ' - (' + m.a + ')' + m.s + '\n';
+		}
+		window.webkitNotifications.createNotification(dungeonIcon,'Reward',egg_str).show();
+	};
+	
+	function channel(force) {
 		if (force === undefined || force != true) {
 			force = false;
 		}
 		$.get('/pad?action=getChannelToken' + (force?'&force':''), function(json,code){
 			(new goog.appengine.Channel(json.token)).open({
 				"onopen" : function(){
-					debug.log("channel open");
+					console.log("channel open");
 				},
 				"onmessage" : function(msgObj){
 					var data;
-					debug.log(msgObj);
+					console.log(msgObj);
 					data = eval('('+msgObj.data+')');
 					debug.log(data);
 					if (data.type == "refresh") {
@@ -162,6 +206,8 @@ function starter() {
 						}
 						actionLog[data.user].push(data.action);
 						updateChannel();
+					} else if (data.type == "dungeon") {
+						notify(data.dungeon.waves);
 					}
 				},
 				"onerror" : function(e){
@@ -172,7 +218,7 @@ function starter() {
 					}
 				},
 				"onclose" : function(){
-					debug.log("channel close");
+					console.log("channel close");
 				}
 			});
 		});

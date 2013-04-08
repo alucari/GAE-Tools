@@ -41,7 +41,7 @@ final public class ShowDungeon implements ActionHandler {
 		i = 1;
 		count = 0;
 		
-		o.println("<html><head><script src='/pad/monster.js'></script></head><body>");
+		o.println("<html><head><title>Silverwzw's Puzzle & Dragon Cracker - Dungeon lookup</title><script src=\"/pad/monsterDB.js\"><script src='/pad/monster.js'></script></head><body>");
 		
 		enm = "";
 		itm = "";
