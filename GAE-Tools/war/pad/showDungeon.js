@@ -14,7 +14,7 @@ var refresh = function () {
 	} catch (e) {
 		return;
 	}
-	url='http://tools.silverwzw.com/pad?action=getJSON&dungeon&pid='+id;
+	url='/pad?action=getJSON&dungeon&pid='+id;
 	$.get(url, function(json,code){
 		debug.log(json);
 		if (json == null) {

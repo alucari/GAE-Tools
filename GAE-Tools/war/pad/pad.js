@@ -35,7 +35,7 @@ knownAction.push("get_user_mails");
 knownAction.push("confirm_level_up");
 knownAction.push("download_limited_bonus_data");
 knownAction.push("get_helpers");
-//get_ids_parameter
+knownAction.push("get_ids_parameter");
 
 function starter() {
 	var deamon;
