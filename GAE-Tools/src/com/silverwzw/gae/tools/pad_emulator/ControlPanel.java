@@ -29,7 +29,7 @@ final public class ControlPanel implements ActionHandler {
 			settings = new PadEmulatorSettings(pid);
 			o.print("<tr id=\"" + pid + "\" class='inforow'>");
 			o.print(td(pid));
-			o.print(td(e.getValue()));
+			o.print(settings.getHash().equals(Channel.hash())?td(e.getValue(),"notification"):td(e.getValue()));
 			mode = settings.getDungeonMode();
 			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]","Baddie Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]", "Weak Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]","Mask Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]","Disable all");
 			o.print(td(str));
@@ -71,6 +71,9 @@ final public class ControlPanel implements ActionHandler {
 	}
 	final private static String td(String labelContent) {
 		return "<td>" + labelContent + "</td>";  
+	}
+	final private static String td(String labelContent,String id) {
+		return "<td id=" + id + ">" + labelContent + "</td>";  
 	}
 	final private static String a(String link, String content) {
 		return a(link,content,"_top");

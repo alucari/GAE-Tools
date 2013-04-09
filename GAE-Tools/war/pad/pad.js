@@ -146,12 +146,16 @@ function starter() {
 		var dungeonEggs = [];
 		var i,j;
 		var dungeonM,m,egg_str="",eggid_3digits;
+		var lockIcon = false;
 		for (i = 0; i < dungeonW.length; i++) {
 			dungeonM = dungeonW[i].monsters; 
 			for (j = 0; j < dungeonM.length; j++) {
 				m = dungeonM[j];
-				if (m.type > 0 && dungeonIcon == "") {
-					dungeonIcon = src(m.num);
+				if (m.type > 0 && !lockIcon) {
+					if (m.type > 1) {
+						lockIcon = true;
+					}
+					dungeonIcon = src(m.num);	
 				}
 				if (m.item != "0" && m.item != "900") {
 					dungeonEggs.push(parseInt(m.item));
@@ -208,6 +212,10 @@ function starter() {
 						updateChannel();
 					} else if (data.type == "dungeon") {
 						notify(data.dungeon.waves);
+					} else if (data.type == "newVersion") {
+						if (confirm("a new version has just been deployed by Silverwzw.\n\nClick OK to refresh\nClick Cancel to stay on current version.")) {
+							window.location.reload();
+						}
 					}
 				},
 				"onerror" : function(e){
@@ -226,6 +234,10 @@ function starter() {
 	
 	deamon();
 	channel(false);  //try reusing an old channel resource.
+	
+	if (window.webkitNotifications.checkPermission() != 0) {
+		$("#notification")[0].innerHTML += "<input type='submit' value='Notification' onclick='webkitNotifications.requestPermission();' />";
+	}
 }
 
 function ajaxAction(link) {

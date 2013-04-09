@@ -20,6 +20,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("infStone", new SetInfStone());
 		setAction("showLog", new ShowLog());
 		setAction("getChannelToken", new RealTimeChannel());
+		setAction("newVersion", new broadcastNewVersion());
 		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
@@ -161,5 +162,11 @@ final class RealTimeChannel implements ActionHandler {
 			token = PadEmulatorSettings.forceChannelCreation(Channel.hash());
 		}
 		resp.getWriter().print("{\"token\":\"" + token.tokenString() + "\",\"expires\":"+token.creation() + 60L * 1000 * token.duration()+"}");
+	}
+}
+
+final class broadcastNewVersion implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		Channel.broadcast("{\"type\":\"newVersion\"}");
 	}
 }
