@@ -6,11 +6,11 @@
 			<role-name>*</role-name></auth-constraint></security-constraint><welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list><servlet>
-		<servlet-name>cc98top10</servlet-name>
-		<servlet-class>com.silverwzw.gae.tools.cc98.CC98top10</servlet-class>
+		<servlet-name>cc98redirect</servlet-name>
+		<servlet-class>com.silverwzw.gae.tools.rss.CC98Redirect</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>cc98top10</servlet-name>
+		<servlet-name>cc98redirect</servlet-name>
 		<url-pattern>/cc98top10</url-pattern>
 	</servlet-mapping>
 	
@@ -83,4 +83,9 @@
 		<servlet-name>PAD_UI_INDEX</servlet-name>
 		<url-pattern>/pad</url-pattern></servlet-mapping>
 	
-	</web-app>
+	<servlet>
+		<servlet-class>com.silverwzw.gae.tools.rss.Rss</servlet-class>
+		<servlet-name>Rss</servlet-name></servlet>
+	<servlet-mapping>
+		<servlet-name>Rss</servlet-name>
+		<url-pattern>/rss</url-pattern></servlet-mapping></web-app>

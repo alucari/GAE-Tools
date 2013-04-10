@@ -3,7 +3,7 @@ START=$1
 END=$2
 COUNTER=$(($1-1))
 
-echo '['
+echo '{'
 while [ "$COUNTER" -lt "${END:-681}" ]; do
 	COUNTER=$(($COUNTER+1))
 	HTML=$(wget http://zh.pad.wikia.com/wiki/$COUNTER -O - | sed 's/\/\*/<!--CM-->/g'| sed 's/$/<!--NL-->/g')
@@ -18,4 +18,4 @@ while [ "$COUNTER" -lt "${END:-681}" ]; do
 		echo ','
 	fi
 done
-echo ']'
+echo '}'

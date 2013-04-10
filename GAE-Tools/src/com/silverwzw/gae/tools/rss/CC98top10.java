@@ -1,4 +1,4 @@
-package com.silverwzw.gae.tools.cc98;
+package com.silverwzw.gae.tools.rss;
 
 import java.io.IOException;
 
@@ -18,10 +18,9 @@ import net.sf.jsr107cache.CacheManager;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.silverwzw.servlet.SimpleServlet;
+import com.silverwzw.servlet.ActionHandler;
 
-@SuppressWarnings("serial")
-public class CC98top10 extends SimpleServlet {
+public class CC98top10 implements ActionHandler {
 	private Cache cache;
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		try {
@@ -81,7 +80,7 @@ public class CC98top10 extends SimpleServlet {
 			String rss;
 			
 			rss = "";
-			url = new URL(SecretTunnelURL.get());
+			url = new URL(SecretTunnelURL.cc98());
 			line = "";
 			
 			try {

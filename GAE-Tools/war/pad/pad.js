@@ -213,7 +213,7 @@ function starter() {
 					} else if (data.type == "dungeon") {
 						notify(data.dungeon.waves);
 					} else if (data.type == "newVersion") {
-						if (confirm("a new version has just been deployed by Silverwzw.\n\nClick OK to refresh\nClick Cancel to stay on current version.")) {
+						if (confirm("a new version has just been deployed by Silverwzw.\n\nClick OK to refresh\nClick Cancel to stay on current version this time.")) {
 							window.location.reload();
 						}
 					}
