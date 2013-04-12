@@ -146,6 +146,33 @@ final public class PadEmulatorSettings {
 			return new ArrayList<String>();
 		}
 	}
+	public void setQuickResponse(boolean b) {
+		setSpec("quickResponse", b);
+		Channel.broadcast(Channel.refreshjson(pid));
+	}
+	public boolean isQuickResponseOpen() {
+		return is("quickResponse");
+	}
+	public void lastAction(String action) {
+		setSpec("lastAction",action);
+	}
+	public String lastAction() {
+		return (String)getSpec("lastAction");
+	}
+	public void player_data(String d) {
+		setSpec("player_data",d);
+	}
+	public String player_data() {
+		return (String) getSpec("player_data");
+	}
+	public void setCountDown() {
+		setSpec("countDown",System.currentTimeMillis());
+	}
+	public boolean countDownExpires() {
+		long b = (Long) getSpec("countDown");
+		return (System.currentTimeMillis() - b) > 5500;
+	}
+	/*
 	public void acquireSaveLock() {
 		setSpec("notLocked", false);
 		Channel.broadcast(Channel.refreshjson(pid));
@@ -156,7 +183,7 @@ final public class PadEmulatorSettings {
 	public void releaseSaveLock() {
 		setSpec("notLocked", true);
 		Channel.broadcast(Channel.refreshjson(pid));
-	}
+	}*/
 	public void setDungeonMode(int mode) {
 		setSpec("DungeonMode", mode);
 		Channel.broadcast(Channel.refreshjson(pid));

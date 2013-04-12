@@ -57,7 +57,7 @@ function starter() {
 		tr = $('tr#' + json.pid);;
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
-		updateElement(json.safeLock,tr.find('.isLocked')[0]);
+		updateElement(json.isQuickResponse,tr.find('.isQuickResponse')[0]);
 		updateElement(json.infStone,tr.find('.isInfStone')[0]);
 		if ((""+json.pid) == "324363124" && debug.autoRelease && json.safeLock) {
 			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
@@ -131,8 +131,8 @@ function starter() {
 		}
 	};
 	
-	function notify(dungeonW) {
-		console.log(dungeonW);
+	function notify(dungeonW,pid) {
+		debug.log(dungeonW);
 		if (dungeonW === undefined) {
 			return;
 		}
@@ -178,7 +178,15 @@ function starter() {
 			eggid_3digits += dungeonEggs[i];
 			egg_str += '[' + eggid_3digits + '] ' + m.r + ' ' + m.n + ' - (' + m.a + ')' + m.s + '\n';
 		}
-		window.webkitNotifications.createNotification(dungeonIcon,'Reward',egg_str).show();
+		var ntfy;
+		ntfy = window.webkitNotifications.createNotification(dungeonIcon,'Reward',egg_str);
+		ntfy.onclick = function () {
+			window.open('/pad/showDungeon.html?pid='+pid,'dungeon_view');
+		};
+		ntfy.show();
+		setTimeout(function(){
+			ntfy.close();
+		},30000);
 	};
 	
 	function channel(force) {
@@ -188,11 +196,11 @@ function starter() {
 		$.get('/pad?action=getChannelToken' + (force?'&force':''), function(json,code){
 			(new goog.appengine.Channel(json.token)).open({
 				"onopen" : function(){
-					console.log("channel open");
+					debug.log("channel open");
 				},
 				"onmessage" : function(msgObj){
 					var data;
-					console.log(msgObj);
+					debug.log(msgObj);
 					data = eval('('+msgObj.data+')');
 					debug.log(data);
 					if (data.type == "refresh") {
@@ -211,7 +219,7 @@ function starter() {
 						actionLog[data.user].push(data.action);
 						updateChannel();
 					} else if (data.type == "dungeon") {
-						notify(data.dungeon.waves);
+						notify(data.dungeon.waves,data.pid);
 					} else if (data.type == "newVersion") {
 						if (confirm("a new version has just been deployed by Silverwzw.\n\nClick OK to refresh\nClick Cancel to stay on current version this time.")) {
 							window.location.reload();

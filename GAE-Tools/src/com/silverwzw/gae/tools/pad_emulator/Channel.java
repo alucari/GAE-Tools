@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.binary.Hex;
 
 final public class Channel {
 

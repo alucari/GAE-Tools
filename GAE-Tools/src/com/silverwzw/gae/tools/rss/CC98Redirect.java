@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.silverwzw.servlet.SimpleServlet;
 
+@SuppressWarnings("serial")
 public class CC98Redirect extends SimpleServlet {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setStatus(301);

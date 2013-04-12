@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="E:/Steven/CODE/jar/servlet.jar"/>
+	<classpathentry kind="lib" path="E:/Steven/CODE/jar/commons-codec/commons-codec-1.7.jar" sourcepath="E:/Steven/CODE/jar/commons-codec/commons-codec-1.7-sources.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

@@ -20,7 +20,7 @@ final public class ControlPanel implements ActionHandler {
 		
 		o.println("<html><head><title>Silverwzw's Puzzle & Dragon Cracker - control panle</title><script src=\"/pad/monsterDB.js\"></script><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Quick Response</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (Entry<String, String> e : PadEmulatorSettings.userMapGunghoPid.entrySet()) {
 			PadEmulatorSettings settings;
 			String pid,str;
@@ -38,7 +38,7 @@ final public class ControlPanel implements ActionHandler {
 			o.print(td(font(settings.isInfStone()?"Y":"N","isInfStone") + sp + ajax("/pad?action=infStone&enable=1&pid=" + pid,"[+]") + ajax("/pad?action=infStone&enable=0&pid=" + pid,"[-]")));
 			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
 
-			o.print(td(font(settings.isLocked()?"Y":"N","isLocked") + ajax("/pad?action=lookForEggs&release=1&pid=" + pid,"[C]")));
+			o.print(td(font(settings.isQuickResponseOpen()?"Y":"N","isQuickResponse") + ajax("/pad?action=quickResponse&enable=1&pid=" + pid,"[+]")+ajax("/pad?action=quickResponse&enable=0&pid=" + pid,"[-]")));
 			o.print(td(font(settings.isLookingForCertainEgg()?"Y":"N","isLookingForCertainEgg") + sp + ajax("/pad?action=lookForEggs&start=1&pid="+pid,"[!+]") + ajax("/pad?action=lookForEggs&stop=1&pid="+pid,"[-]")));
 			o.print("<td>");
 			str = "";

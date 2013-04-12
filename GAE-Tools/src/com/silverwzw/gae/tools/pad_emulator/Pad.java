@@ -88,11 +88,6 @@ public class Pad extends SimpleServlet{
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon",req) && settings.isLocked()) {
-			resp.getWriter().print("{\"res\":98}");
-			return;
-		}
-		
 		if (actionIs("sneak_dungeon_ack",req) && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
 			Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
 			boolean find_one_egg;
@@ -105,10 +100,7 @@ public class Pad extends SimpleServlet{
 			}
 			if (!find_one_egg) {
 				resp.getWriter().print("{\"res\":96}");
-				settings.acquireSaveLock();
 				return;
-			} else {
-				settings.setLookingForCertainEgg(false);
 			}
 		}
 		
@@ -120,6 +112,14 @@ public class Pad extends SimpleServlet{
 		if (actionIs("do_continue_ack",req) && settings.isInfStone()) {
 			resp.getWriter().print("{\"res\":0}");
 			return;
+		}
+		
+
+		if (actionIs("get_player_data",req)) {
+			if (settings.lastAction().equals("sneak_dungeon") && settings.isQuickResponseOpen() && settings.player_data()!=null && !settings.countDownExpires()) {
+				resp.getWriter().print(settings.player_data());
+				return;
+			}
 		}
 		
 		conn.connect();
@@ -137,7 +137,7 @@ public class Pad extends SimpleServlet{
 		PadEmulatorSettings.log(req.getQueryString(), res);
 		if (actionIs("sneak_dungeon",req)) {
 			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
-			Channel.notifyByHash(settings.getHash(), "{\"type\":\"dungeon\",\"dungeon\":" + res + "}");
+			Channel.notifyByHash(settings.getHash(), "{\"type\":\"dungeon\",\"pid\":\"" + settings.getPid() + "\",\"dungeon\":" + res + "}");
 			Dungeon dungeon;
 			dungeon = new Dungeon(res);
 
@@ -149,6 +149,11 @@ public class Pad extends SimpleServlet{
 			Matcher m = pattern.matcher(res);
 			res = m.replaceAll(",\"msg\":\"Silverwzw-");
 		}
+		if (actionIs("get_player_data",req)) {
+			settings.player_data(res);
+			settings.setCountDown();
+		}
+		settings.lastAction(req.getParameter("action"));
 		resp.getWriter().print(res);
 	}
 	private boolean actionIs(String actionName,HttpServletRequest req) {
