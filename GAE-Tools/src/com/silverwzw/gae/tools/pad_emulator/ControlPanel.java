@@ -31,15 +31,25 @@ final public class ControlPanel implements ActionHandler {
 			o.print(td(pid));
 			o.print(settings.getHash().equals(Channel.hash())?td(e.getValue(),"notification"):td(e.getValue()));
 			mode = settings.getDungeonMode();
-			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]","Baddie Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]", "Weak Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]","Mask Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[-]","Disable all");
+			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]","Baddie Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]", "Weak Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]","Mask Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[N]","Disable all");
 			o.print(td(str));
 			
 			o.print(td(a("/pad/showDungeon.html?pid=" + pid, "show", "dungeon_view")));
-			o.print(td(font(settings.isInfStone()?"Y":"N","isInfStone") + sp + ajax("/pad?action=infStone&enable=1&pid=" + pid,"[+]") + ajax("/pad?action=infStone&enable=0&pid=" + pid,"[-]")));
-			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!+]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[-]")));
+			o.print(td(font(settings.isInfStone()?"Y":"N","isInfStone") + sp + ajax("/pad?action=infStone&enable=1&pid=" + pid,"[Y]") + ajax("/pad?action=infStone&enable=0&pid=" + pid,"[N]")));
+			o.print(td(font(settings.isBlockLevelUp()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!Y!]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[N]")));
 
-			o.print(td(font(settings.isQuickResponseOpen()?"Y":"N","isQuickResponse") + ajax("/pad?action=quickResponse&enable=1&pid=" + pid,"[+]")+ajax("/pad?action=quickResponse&enable=0&pid=" + pid,"[-]")));
-			o.print(td(font(settings.isLookingForCertainEgg()?"Y":"N","isLookingForCertainEgg") + sp + ajax("/pad?action=lookForEggs&start=1&pid="+pid,"[!+]") + ajax("/pad?action=lookForEggs&stop=1&pid="+pid,"[-]")));
+			o.print(td(font(settings.isQuickResponseOpen()?"Y":"N","isQuickResponse") + ajax("/pad?action=quickResponse&enable=1&pid=" + pid,"[!Y!]")+ajax("/pad?action=quickResponse&enable=0&pid=" + pid,"[N]")));
+			String eggTypeS;
+			int eggTypeI;
+			eggTypeI = settings.isLookingForCertainEgg();
+			if (eggTypeI == 1){
+				eggTypeS = "Y";
+			} else if (eggTypeI == 2){
+				eggTypeS = "P";
+			} else {
+				eggTypeS = "N";
+			}
+			o.print(td(font(eggTypeS,"isLookingForCertainEgg") + sp + ajax("/pad?action=lookForEggs&mode=1&pid="+pid,"[!Y!]") + ajax("/pad?action=lookForEggs&mode=2&pid="+pid,"[!P!]") + ajax("/pad?action=lookForEggs&mode=0&pid="+pid,"[N]")));
 			o.print("<td>");
 			str = "";
 			for (String egg : settings.WantedEggs()) {

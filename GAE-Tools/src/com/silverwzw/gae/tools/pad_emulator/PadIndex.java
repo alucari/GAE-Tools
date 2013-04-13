@@ -109,13 +109,9 @@ final class LookForEggs implements ActionHandler {
 		if (req.getParameter("clean")!=null) {
 			settings.cleanWantedEggs();
 		}
-		if (req.getParameter("start")!=null) {
-			settings.setLookingForCertainEgg(true);
+		if (req.getParameter("mode")!=null) {
+			settings.setLookingForCertainEgg(Integer.parseInt(req.getParameter("mode")));
 		}
-		if (req.getParameter("stop")!=null) {
-			settings.setLookingForCertainEgg(false);
-		}
-		
 		if (req.getParameter("ajax") == null) {
 			resp.sendRedirect("/pad");
 		} else {

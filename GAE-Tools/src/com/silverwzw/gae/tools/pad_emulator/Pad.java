@@ -22,6 +22,8 @@ import com.silverwzw.servlet.SimpleServlet;
 @SuppressWarnings("serial")
 public class Pad extends SimpleServlet{ 
 	private static Pattern pattern = Pattern.compile(",\\s*\"msg\"\\s*:\"");
+	private static Pattern pitem = Pattern.compile("\"item\"\\s*?:\\s*?\"(\\d+?)\"");
+	private static Pattern pitemv = Pattern.compile("\"pval\"\\s*?:\\s*?[1-9]+?");
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		PadEmulatorSettings settings;
@@ -88,16 +90,25 @@ public class Pad extends SimpleServlet{
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon_ack",req) && settings.isLookingForCertainEgg() && !settings.WantedEggs().isEmpty()) {
-			Matcher mitm = Pattern.compile("\"item\"\\s*?:\"(\\d+?)\"").matcher(settings.getDungeonString());
+		if (actionIs("sneak_dungeon_ack",req) && settings.isLookingForCertainEgg()!=0 && !settings.WantedEggs().isEmpty()) {
 			boolean find_one_egg;
 			find_one_egg = false;
-			while(mitm.find()) {
-				if (settings.WantedEggs().contains(mitm.group(1))) {
+			
+			if (settings.isLookingForCertainEgg() == 1) {
+				Matcher mitm = pitem.matcher(settings.getDungeonString());
+				while(mitm.find()) {
+					if (settings.WantedEggs().contains(mitm.group(1))) {
+						find_one_egg = true;
+						break;
+					}
+				}
+			} else if (settings.isLookingForCertainEgg() == 2) {
+				Matcher mitmpval = pitemv.matcher(settings.getDungeonString());
+				if (mitmpval.find()) {
 					find_one_egg = true;
-					break;
 				}
 			}
+			
 			if (!find_one_egg) {
 				resp.getWriter().print("{\"res\":96}");
 				return;
@@ -118,6 +129,7 @@ public class Pad extends SimpleServlet{
 		if (actionIs("get_player_data",req)) {
 			if (settings.lastAction().equals("sneak_dungeon") && settings.isQuickResponseOpen() && settings.player_data()!=null && !settings.countDownExpires()) {
 				resp.getWriter().print(settings.player_data());
+				settings.setCountDown();
 				return;
 			}
 		}
@@ -153,7 +165,9 @@ public class Pad extends SimpleServlet{
 			settings.player_data(res);
 			settings.setCountDown();
 		}
-		settings.lastAction(req.getParameter("action"));
+		if (settings != null) { //in case this is a login action 
+			settings.lastAction(req.getParameter("action"));
+		}
 		resp.getWriter().print(res);
 	}
 	private boolean actionIs(String actionName,HttpServletRequest req) {

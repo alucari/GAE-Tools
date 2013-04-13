@@ -108,11 +108,11 @@ final public class PadEmulatorSettings {
 	public String getDungeonString() {
 		return (String)getSpec("LastDungeonRecieved");
 	}
-	public boolean isLookingForCertainEgg() {
-		return is("isLookingForCertainEgg");
+	public int isLookingForCertainEgg() {
+		return (Integer)getSpec("isLookingForCertainEgg");
 	}
-	public void setLookingForCertainEgg(boolean bool) {
-		setSpec("isLookingForCertainEgg", bool);
+	public void setLookingForCertainEgg(int mode) {
+		setSpec("isLookingForCertainEgg", mode);
 		Channel.broadcast(Channel.refreshjson(pid));
 	}
 	@SuppressWarnings("unchecked")
@@ -133,7 +133,7 @@ final public class PadEmulatorSettings {
 	}
 	public void cleanWantedEggs() {
 		setSpec("wantedEggs",(Object)new ArrayList<String>());
-		setLookingForCertainEgg(false);
+		setLookingForCertainEgg(0);
 		//no need to broadcast channel here, since setLookingForCertainEgg method already does broadcast 
 	}
 	@SuppressWarnings("unchecked")
@@ -170,7 +170,7 @@ final public class PadEmulatorSettings {
 	}
 	public boolean countDownExpires() {
 		long b = (Long) getSpec("countDown");
-		return (System.currentTimeMillis() - b) > 5500;
+		return (System.currentTimeMillis() - b) > 30500;
 	}
 	/*
 	public void acquireSaveLock() {

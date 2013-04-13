@@ -31,7 +31,7 @@ public final class GetJSON implements ActionHandler {
 		}
 		
 		eggs = (Collection<String>)settings.WantedEggs();
-		json = "{\"pid\":" + uid + ",\"isBlockLevelUp\":" + b2s(settings.isBlockLevelUp()) + ",\"isLookingForCertainEgg\":" + b2s(settings.isLookingForCertainEgg()) + ",\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
+		json = "{\"pid\":" + uid + ",\"isBlockLevelUp\":" + b2s(settings.isBlockLevelUp()) + ",\"isLookingForCertainEgg\":" + settings.isLookingForCertainEgg() + ",\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
 		for (String egg : eggs) {
 			json += egg;
 			i++;

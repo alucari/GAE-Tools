@@ -10,7 +10,6 @@ debug.log = function (obj) {
 	}
 }
 debug.on = false;
-debug.autoRelease = false;
 
 var refresh;
 
@@ -56,13 +55,24 @@ function starter() {
 
 		tr = $('tr#' + json.pid);;
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
-		updateElement(json.isLookingForCertainEgg,tr.find('.isLookingForCertainEgg')[0]);
-		updateElement(json.isQuickResponse,tr.find('.isQuickResponse')[0]);
 		updateElement(json.infStone,tr.find('.isInfStone')[0]);
-		if ((""+json.pid) == "324363124" && debug.autoRelease && json.safeLock) {
-			$.get("/pad?action=lookForEggs&release=1&pid=324363124&ajax",function(){;});
+		updateElement(json.isQuickResponse,tr.find('.isQuickResponse')[0]);
+		var modeElement = tr.find('.isLookingForCertainEgg')[0];
+		switch (json.isLookingForCertainEgg) {
+			case 0:
+				modeElement.parentElement.bgColor = "FF7373";
+				modeElement.innerHTML = "N";
+				break;
+			case 1:
+				modeElement.parentElement.bgColor = "3CFF3C";
+				modeElement.innerHTML = "Y";
+				break;
+			case 2:
+				modeElement.parentElement.bgColor = "F1F11A";
+				modeElement.innerHTML = "P";
+				break;
 		}
-		var modeElement = tr.find('.dungeonMode')[0];
+		modeElement = tr.find('.dungeonMode')[0];
 		switch (json.dungeonMode){
 			case 1:
 				modeElement.parentElement.bgColor = "3CFF3C";
