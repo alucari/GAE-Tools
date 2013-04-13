@@ -157,7 +157,12 @@ final public class PadEmulatorSettings {
 		setSpec("lastAction",action);
 	}
 	public String lastAction() {
-		return (String)getSpec("lastAction");
+		String ret;
+		ret = (String)getSpec("lastAction");
+		if (ret == null) {
+			ret = "";
+		}
+		return ret;
 	}
 	public void player_data(String d) {
 		setSpec("player_data",d);
@@ -169,8 +174,12 @@ final public class PadEmulatorSettings {
 		setSpec("countDown",System.currentTimeMillis());
 	}
 	public boolean countDownExpires() {
-		long b = (Long) getSpec("countDown");
-		return (System.currentTimeMillis() - b) > 30500;
+		Long ts;
+		ts = (Long) getSpec("countDown");
+		if (ts == null) {
+			return true;
+		}
+		return (System.currentTimeMillis() - (long)ts) > 30500;
 	}
 	/*
 	public void acquireSaveLock() {
