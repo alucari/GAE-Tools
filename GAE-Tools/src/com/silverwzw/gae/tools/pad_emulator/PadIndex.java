@@ -20,7 +20,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("infStone", new SetInfStone());
 		setAction("showLog", new ShowLog());
 		setAction("getChannelToken", new RealTimeChannel());
-		setAction("quickResponse", new quickResponse());
+		setAction("newVersion", new broadcastNewVersion());
 		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
@@ -31,25 +31,6 @@ public final class PadIndex extends ActionRouterServlet {
 			return false;
 		}
 		return true;
-	}
-}
-
-final class quickResponse implements ActionHandler {
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		PadEmulatorSettings settings;
-		settings = new PadEmulatorSettings(req.getParameter("pid"));
-		if (req.getParameter("enable").equals("1")) {
-			settings.setQuickResponse(true);
-		}
-		if (req.getParameter("enable").equals("0")) {
-			settings.setQuickResponse(false);
-		}
-		if (req.getParameter("ajax") == null) {
-			resp.sendRedirect("/pad");
-		} else {
-			resp.setContentType("application/json");
-			resp.getWriter().print(settings.isQuickResponseOpen()?"true":"false");
-		}
 	}
 }
 

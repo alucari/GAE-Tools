@@ -90,31 +90,6 @@ public class Pad extends SimpleServlet{
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon_ack",req) && settings.isLookingForCertainEgg()!=0 && !settings.WantedEggs().isEmpty()) {
-			boolean find_one_egg;
-			find_one_egg = false;
-			
-			if (settings.isLookingForCertainEgg() == 1) {
-				Matcher mitm = pitem.matcher(settings.getDungeonString());
-				while(mitm.find()) {
-					if (settings.WantedEggs().contains(mitm.group(1))) {
-						find_one_egg = true;
-						break;
-					}
-				}
-			} else if (settings.isLookingForCertainEgg() == 2) {
-				Matcher mitmpval = pitemv.matcher(settings.getDungeonString());
-				if (mitmpval.find()) {
-					find_one_egg = true;
-				}
-			}
-			
-			if (!find_one_egg) {
-				resp.getWriter().print("{\"res\":96}");
-				return;
-			}
-		}
-		
 		if (actionIs("do_continue",req) && settings.isInfStone()) {
 			resp.getWriter().print("{\"res\":0,\"rid\":\"515dce31e0532\"}");
 			return;
@@ -123,15 +98,6 @@ public class Pad extends SimpleServlet{
 		if (actionIs("do_continue_ack",req) && settings.isInfStone()) {
 			resp.getWriter().print("{\"res\":0}");
 			return;
-		}
-		
-
-		if (actionIs("get_player_data",req)) {
-			if (settings.lastAction().equals("sneak_dungeon") && settings.isQuickResponseOpen() && settings.player_data()!=null && !settings.countDownExpires()) {
-				resp.getWriter().print(settings.player_data());
-				settings.setCountDown();
-				return;
-			}
 		}
 		
 		conn.connect();
@@ -147,9 +113,42 @@ public class Pad extends SimpleServlet{
 			res += '\n' + line;
 		}
 		PadEmulatorSettings.log(req.getQueryString(), res);
+		
 		if (actionIs("sneak_dungeon",req)) {
-			(new PadEmulatorSettings(req.getParameter("pid"))).setDungeonString(res);
+			
+			//save dungeon string for debug
+			settings.setDungeonString(res);
+			//notify the client
 			Channel.notifyByHash(settings.getHash(), "{\"type\":\"dungeon\",\"pid\":\"" + settings.getPid() + "\",\"dungeon\":" + res + "}");
+			
+			boolean enter_dungeon;
+			enter_dungeon = false;
+			
+			//block the msg if egg hunting is on and not found desired egg
+			if (settings.isLookingForCertainEgg() == 1  && !settings.WantedEggs().isEmpty()) {
+				Matcher mitm = pitem.matcher(settings.getDungeonString());
+				while(mitm.find()) {
+					if (settings.WantedEggs().contains(mitm.group(1))) {
+						enter_dungeon = true;
+						break;
+					}
+				}
+			} else if (settings.isLookingForCertainEgg() == 2) {
+				Matcher mitmpval = pitemv.matcher(settings.getDungeonString());
+				if (mitmpval.find()) {
+					enter_dungeon = true;
+				}
+			} else {
+				enter_dungeon = true;
+			}
+			
+			if (!enter_dungeon) {
+				resp.getWriter().print("{\"res\":96}");
+				return;
+			}
+			
+			//modify the dungeon content if a dungeon Mode is specified
+			
 			Dungeon dungeon;
 			dungeon = new Dungeon(res);
 
@@ -157,16 +156,11 @@ public class Pad extends SimpleServlet{
 				res = dungeon.modDungeon(settings.getDungeonMode());
 			}
 		}
+		
+		//set the flag
 		if (actionIs("get_player_data",req)) {
 			Matcher m = pattern.matcher(res);
-			res = m.replaceAll(",\"msg\":\"Silverwzw-");
-		}
-		if (actionIs("get_player_data",req)) {
-			settings.player_data(res);
-			settings.setCountDown();
-		}
-		if (settings != null) { //in case this is a login action 
-			settings.lastAction(req.getParameter("action"));
+			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\n");
 		}
 		resp.getWriter().print(res);
 	}
