@@ -31,7 +31,7 @@ public class Pad extends SimpleServlet{
 		
 		
 		// POST method have highest priority, should be handled before any req.getParameter call
-		String urlStr, modQs;
+		String urlStr;
 		HttpURLConnection conn;
 		HashMap<String,String> c2sHeader;
 		Enumeration<?> enumer;
@@ -39,9 +39,7 @@ public class Pad extends SimpleServlet{
 		enumer = req.getHeaderNames();
 		c2sHeader = new HashMap<String,String>();
 		
-		modQs = agent(req.getQueryString());
-		target = isApple(modQs)?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
-		urlStr = target + '?' + modQs;
+		urlStr = agent(req.getQueryString());
 		conn = (HttpURLConnection) (new URL(urlStr)).openConnection();
 		
 		String method; 
@@ -174,25 +172,38 @@ public class Pad extends SimpleServlet{
 	private boolean actionIs(String actionName,HttpServletRequest req) {
 		return req.getParameter("action").equals(actionName);
 	}
-	private boolean isApple(String qs){
-		if (qs.indexOf("dev=iPad3,4") >= 0) {
-			return true;
-		}
-		if (qs.indexOf("dev=iPhone5,1") >= 0) {
-			return true;
-		}
-		//if (qs.indexOf("pid=324151024")>=0) {
-			//return true;
-		//}
-		if (qs.indexOf("pid=324224887")>=0) {
-			return true;
-		}
-		return false;
-	}
 	private String agent(String qs) {
-		if (qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
-			return "action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB";
+		String target;
+		boolean apple;
+		
+		
+		if ((new PadEmulatorSettings("324151024")).agentOn() && qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
+			qs = "action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB";
 		}
-		return qs;
+		
+		
+		if (qs.contains("pid=324151024")) {
+			//agent is android
+			apple = !((new PadEmulatorSettings("324151024")).agentOn());
+		} else if (qs.contains("pid=324363124")) {
+			//agent is apple
+			apple = (new PadEmulatorSettings("324363124")).agentOn();
+		} else if (qs.contains("pid=324224887")) {
+			//agent is android
+			apple = !((new PadEmulatorSettings("324224887")).agentOn());
+		} else if (qs.contains("B33ECFC8-F74D-4A88-A5D5-81183DAFC850")) {
+			apple = true;
+		} else if (qs.contains("27C8DDB8-D23C-4345-94B6-805A5DD36A1F")) {
+			apple = true;
+		} else if (qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
+			apple = false;
+		} else {
+			throw new IdNotRecognizeException();
+		}
+		target = apple ? "http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
+		return target + "?" + qs;
 	}
 }
+
+@SuppressWarnings("serial")
+final class IdNotRecognizeException extends RuntimeException{};

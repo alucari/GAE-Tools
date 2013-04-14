@@ -40,7 +40,7 @@ public final class GetJSON implements ActionHandler {
 			}
 			json += ',';
 		}
-		json += "\"dungeonMode\":" + settings.getDungeonMode() + ",\"infStone\":" + b2s(settings.isInfStone()) + '}';
+		json += "\"agentOn\":" + b2s(settings.agentOn()) + ",\"dungeonMode\":" + settings.getDungeonMode() + ",\"infStone\":" + b2s(settings.isInfStone()) + '}';
 		resp.getWriter().print(json);
 	}
 	final private String b2s(boolean b) {

@@ -21,6 +21,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("showLog", new ShowLog());
 		setAction("getChannelToken", new RealTimeChannel());
 		setAction("newVersion", new broadcastNewVersion());
+		setAction("agent", new agent());
 		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
@@ -161,5 +162,27 @@ final class RealTimeChannel implements ActionHandler {
 final class broadcastNewVersion implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		Channel.broadcast("{\"type\":\"newVersion\"}");
+	}
+}
+
+final class agent implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (req.getParameter("pid") == null) {
+			return;
+		} else {
+			PadEmulatorSettings settings = new PadEmulatorSettings(req.getParameter("pid"));
+			if (req.getParameter("on").equals("true")) {
+				settings.agentOn(true);
+			} else if (req.getParameter("on").equals("false")) {
+				settings.agentOn(false);
+			}
+
+			if (req.getParameter("ajax") == null) {
+				resp.sendRedirect("/pad");
+			} else {
+				resp.setContentType("application/json");
+				resp.getWriter().print(settings.agentOn()?"true":"false");
+			}
+		}
 	}
 }

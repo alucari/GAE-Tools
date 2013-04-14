@@ -56,6 +56,7 @@ function starter() {
 		tr = $('tr#' + json.pid);;
 		updateElement(json.isBlockLevelUp,tr.find('.isBlockLevelUp')[0]);
 		updateElement(json.infStone,tr.find('.isInfStone')[0]);
+		updateElement(json.agentOn,tr.find('.agentOn')[0]);
 		var modeElement = tr.find('.isLookingForCertainEgg')[0];
 		switch (json.isLookingForCertainEgg) {
 			case 0:

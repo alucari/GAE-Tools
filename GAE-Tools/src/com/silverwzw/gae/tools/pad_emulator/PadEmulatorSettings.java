@@ -106,6 +106,18 @@ final public class PadEmulatorSettings {
 		}
 		return ts;
 	}
+	public boolean agentOn() {
+		Boolean b;
+		b = (Boolean)getSpec("agentOn");
+		if (b == null) {
+			return false;
+		}
+		return b;
+	}
+	public void agentOn(Boolean b) {
+		setSpec("agentOn",b);
+		Channel.broadcast(Channel.refreshjson(pid));
+	}
 	public boolean isBlockLevelUp() {
 		return is("blockLevelUp");
 	}
