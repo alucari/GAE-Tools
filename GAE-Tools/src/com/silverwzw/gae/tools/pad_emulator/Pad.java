@@ -177,7 +177,7 @@ public class Pad extends SimpleServlet{
 		boolean apple;
 		
 		
-		if ((new PadEmulatorSettings("324151024")).agentOn() && qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
+		if ((new PadEmulatorSettings("324151024")).agentOn() && qs.contains("31fed252-c432-4ba7-b544-7375e06b8e81")) {
 			qs = "action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB";
 		}
 		
