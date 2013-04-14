@@ -95,6 +95,17 @@ final public class PadEmulatorSettings {
 			return (boolean)b;
 		}
 	}
+	public void lastFailedTS(String ts) {
+		setSpec("fts",ts);
+	}
+	public String lastFailedTS() {
+		String ts;
+		ts = (String)getSpec("fts");
+		if (ts == null) {
+			return "";
+		}
+		return ts;
+	}
 	public boolean isBlockLevelUp() {
 		return is("blockLevelUp");
 	}

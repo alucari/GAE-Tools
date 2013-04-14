@@ -29,10 +29,9 @@ public class Pad extends SimpleServlet{
 		PadEmulatorSettings settings;
 		String target;
 		
-		target = isApple(req)?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
 		
 		// POST method have highest priority, should be handled before any req.getParameter call
-		String urlStr;
+		String urlStr, modQs;
 		HttpURLConnection conn;
 		HashMap<String,String> c2sHeader;
 		Enumeration<?> enumer;
@@ -40,7 +39,9 @@ public class Pad extends SimpleServlet{
 		enumer = req.getHeaderNames();
 		c2sHeader = new HashMap<String,String>();
 		
-		urlStr = target + '?' + req.getQueryString();
+		modQs = agent(req.getQueryString());
+		target = isApple(modQs)?"http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
+		urlStr = target + '?' + modQs;
 		conn = (HttpURLConnection) (new URL(urlStr)).openConnection();
 		
 		String method; 
@@ -100,6 +101,11 @@ public class Pad extends SimpleServlet{
 			return;
 		}
 		
+		if (actionIs("sneak_dungeon",req) && settings.lastFailedTS().equals(req.getParameter("time"))) {
+			resp.getWriter().print("{\"res\":96}");
+			return;
+		}
+		
 		conn.connect();
 		String res, line;
 		
@@ -112,7 +118,7 @@ public class Pad extends SimpleServlet{
 		while ((line = reader.readLine()) != null) {
 			res += '\n' + line;
 		}
-		PadEmulatorSettings.log(req.getQueryString(), res);
+		PadEmulatorSettings.log(urlStr, res);
 		
 		if (actionIs("sneak_dungeon",req)) {
 			
@@ -143,7 +149,8 @@ public class Pad extends SimpleServlet{
 			}
 			
 			if (!enter_dungeon) {
-				resp.getWriter().print("{\"res\":96}");
+				settings.lastFailedTS(req.getParameter("time"));
+				resp.getWriter().print("{\"res\":100}");
 				return;
 			}
 			
@@ -160,27 +167,32 @@ public class Pad extends SimpleServlet{
 		//set the flag
 		if (actionIs("get_player_data",req)) {
 			Matcher m = pattern.matcher(res);
-			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\n");
+			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\\\n");
 		}
 		resp.getWriter().print(res);
 	}
 	private boolean actionIs(String actionName,HttpServletRequest req) {
 		return req.getParameter("action").equals(actionName);
 	}
-	private boolean isApple(HttpServletRequest req){
-		String qs = req.getQueryString();
+	private boolean isApple(String qs){
 		if (qs.indexOf("dev=iPad3,4") >= 0) {
 			return true;
 		}
 		if (qs.indexOf("dev=iPhone5,1") >= 0) {
 			return true;
 		}
-		if (qs.indexOf("pid=324151024")>=0) {
-			return true;
-		}
+		//if (qs.indexOf("pid=324151024")>=0) {
+			//return true;
+		//}
 		if (qs.indexOf("pid=324224887")>=0) {
 			return true;
 		}
 		return false;
+	}
+	private String agent(String qs) {
+		if (qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
+			return "action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB";
+		}
+		return qs;
 	}
 }
