@@ -35,7 +35,10 @@ knownAction.push("confirm_level_up");
 knownAction.push("download_limited_bonus_data");
 knownAction.push("get_helpers");
 knownAction.push("get_ids_parameter");
+knownAction.push("get_id_parameter");
 knownAction.push("accept_friend_request");
+knownAction.push("get_user_mail");
+knownAction.push("delete_user_mail");
 
 function starter() {
 	var deamon;

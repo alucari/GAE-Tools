@@ -27,7 +27,6 @@ public class Pad extends SimpleServlet{
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		PadEmulatorSettings settings;
-		String target;
 		
 		
 		// POST method have highest priority, should be handled before any req.getParameter call
@@ -200,7 +199,7 @@ public class Pad extends SimpleServlet{
 		} else {
 			throw new IdNotRecognizeException();
 		}
-		target = apple ? "http://api-na-pad.gungho.jp/api.php":"http://api-na-adr-pad.gungho.jp/api.php";
+		target = apple ? "http://api-na-pad.gungho.jp/api.php" : "http://api-na-adr-pad.gungho.jp/api.php";
 		return target + "?" + qs;
 	}
 }
