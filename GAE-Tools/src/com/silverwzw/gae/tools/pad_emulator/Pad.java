@@ -128,7 +128,10 @@ public class Pad extends SimpleServlet{
 			enter_dungeon = false;
 			
 			//block the msg if egg hunting is on and not found desired egg
-			if (settings.isLookingForCertainEgg() == 1  && !settings.WantedEggs().isEmpty()) {
+			//mode 0: nothing happens
+			//mode 1: egg list enabled
+			//mode 2: egg list and plus egg enabled
+			if (settings.isLookingForCertainEgg() != 0  && !settings.WantedEggs().isEmpty()) { // look for eggs in list in mode 1 and 2
 				Matcher mitm = pitem.matcher(settings.getDungeonString());
 				while(mitm.find()) {
 					if (settings.WantedEggs().contains(mitm.group(1))) {
@@ -136,13 +139,12 @@ public class Pad extends SimpleServlet{
 						break;
 					}
 				}
-			} else if (settings.isLookingForCertainEgg() == 2) {
+			}
+			if (settings.isLookingForCertainEgg() == 2) { //look for plug eggs in mode 2
 				Matcher mitmpval = pitemv.matcher(settings.getDungeonString());
 				if (mitmpval.find()) {
 					enter_dungeon = true;
 				}
-			} else {
-				enter_dungeon = true;
 			}
 			
 			if (!enter_dungeon) {
