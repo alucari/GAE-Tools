@@ -1,13 +1,19 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.google.appengine.api.channel.ChannelServiceFactory;
+import org.apache.commons.codec.binary.Hex;
+
+import com.google.appengine.api.users.UserServiceFactory;
 
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
@@ -16,28 +22,115 @@ import net.sf.jsr107cache.CacheManager;
 final public class PadEmulatorSettings {
 	static Cache cache = null;
 	private String pid;
-
-	static HashMap<String,String> userMapGunghoUid;
-	static HashMap<String,String> userMapGunghoPid;
-	static HashMap<String,String> userMapGoogle;
+	
+	//inner exceptions
+	@SuppressWarnings("serial")
+	final public static class PlayerIdNotRecognizeException extends RuntimeException {};
+	@SuppressWarnings("serial")
+	final public static class UserHashNotFoundException extends RuntimeException {};
+	
+	private static HashMap<String,String> pid2name;
+	private static HashMap<String,String> pid2uid;
+	private static HashMap<String,String> pid2google;
+	private static HashMap<String,Agent> pid2agent;
+	private static HashMap<String,Boolean> pid2dev;
+	
 	static {
-		userMapGoogle = new HashMap<String,String>();
-		userMapGoogle.put("cbf9d8da00cdc95dcd017fe07028029f","silverwzw"); //silverwzw
-		userMapGoogle.put("36795a4756f4b90fac03d4dd82b28db4","tea"); //tea
-		userMapGoogle.put("361d39b1af4fa514bd48e43ad0bdcf0d","x"); //x
-		userMapGunghoPid = new HashMap<String,String>();
-		userMapGunghoUid = new HashMap<String,String>();
-		userMapGunghoPid.put("324151024", "tea");
-		userMapGunghoUid.put("B33ECFC8-F74D-4A88-A5D5-81183DAFC850", "tea");
-		userMapGunghoPid.put("324363124", "silverwzw");
-		userMapGunghoUid.put("0a78f1a0-f5a0-49ef-950e-e6205f5e9389", "silverwzw");
-		userMapGunghoPid.put("324224887", "x");
-		userMapGunghoUid.put("27C8DDB8-D23C-4345-94B6-805A5DD36A1F", "x");
+		
+		pid2name = new HashMap<String,String>();
+		pid2name.put("324151024", "tea");
+		pid2name.put("324363124", "silverwzw");
+		pid2name.put("324224887", "x");
+		
+
+		pid2google = new HashMap<String,String>();
+		pid2google.put("324151024", "36795a4756f4b90fac03d4dd82b28db4");//tea
+		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
+		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x
+		
+
+		pid2uid = new HashMap<String,String>();
+		pid2uid.put("324151024", "B33ECFC8-F74D-4A88-A5D5-81183DAFC850");
+		pid2uid.put("324363124", "0a78f1a0-f5a0-49ef-950e-e6205f5e9389");
+		pid2uid.put("324224887", "27C8DDB8-D23C-4345-94B6-805A5DD36A1F");
+		
+
+		pid2agent = new HashMap<String,Agent>();
+		pid2agent.put("324151024", new Agent("31fed252-c432-4ba7-b544-7375e06b8e81","action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB",false));
+		
+		pid2dev = new HashMap<String,Boolean>();
+		pid2dev.put("324151024", (Boolean)true);
+		pid2dev.put("324363124", (Boolean)false);
+		pid2dev.put("324224887", (Boolean)true);
+		
 	}
+	
+	@SuppressWarnings("serial")
+	final public static class Agent implements java.io.Serializable {
+		private String agentUid;
+		private boolean isApple;
+		private String agentString;
+		Agent(String agentUid,String agentString, boolean isApple) {
+			this.isApple = isApple;
+			this.agentString = agentString;
+			this.agentUid = agentUid;
+		}
+		public boolean isApple() {
+			return isApple;
+		}
+		public String agentString() {
+			return agentString;
+		}
+		public String agentUid(){
+			return agentUid;
+		}
+	};
+
+	@SuppressWarnings("serial")
+	final private static class freqAccessEggs implements java.io.Serializable {
+		private int capacity;
+		private LinkedList<String> list;
+		freqAccessEggs(int c) {
+			if (c < 1) {
+				c = 1;
+			} else if (c > 64) {
+				c = 64;
+			}
+			capacity = c;
+			list = new LinkedList<String>();
+		}
+		boolean mtf(String eggnumber) {
+			boolean ret;
+			ret = list.remove(eggnumber);
+			list.addFirst(eggnumber);
+			if (list.size() > capacity) {
+				list.removeLast();
+			}
+			return ret;
+		}
+		Iterable<String> collection() {
+			return (Iterable<String>)list;
+		}
+	};
+	
+	
 	@SuppressWarnings("unused")
 	private PadEmulatorSettings(){;}
 	PadEmulatorSettings(String playerId) {
-		pid = playerId;
+		
+		if (pid2uid.containsKey(playerId)) {
+			pid = playerId;
+			return;
+		} else if (pid2uid.containsValue(playerId)){
+			for (Entry<String,String> e : pid2uid.entrySet()) {
+				if (e.getValue().equals(playerId)) {
+					pid = e.getKey();
+					return;
+				}
+			}
+		} else {
+			throw new PlayerIdNotRecognizeException();
+		}
 	}
 	private static Object get(String itemName, String settingPid) {
 		String key;
@@ -132,7 +225,12 @@ final public class PadEmulatorSettings {
 		return (String)getSpec("LastDungeonRecieved");
 	}
 	public int isLookingForCertainEgg() {
-		return (Integer)getSpec("isLookingForCertainEgg");
+		Integer i;
+		i = (Integer) getSpec("isLookingForCertainEgg");
+		if (i == null) {
+			return 1;
+		}
+		return (int)i;
 	}
 	public void setLookingForCertainEgg(int mode) {
 		setSpec("isLookingForCertainEgg", mode);
@@ -240,111 +338,77 @@ final public class PadEmulatorSettings {
 	public static LogList log() {
 		return (LogList) getGeneral("log");
 	}
-	public static ChannelToken channelToken(String hash) {
-		ChannelToken token;
-		token = (ChannelToken)getGeneral("channel-token-" + hash);
-		if(token != null && !token.expired()) {
-			return token;
-		}
-		return forceChannelCreation(hash);
+	public static Channel.ChannelToken getToken(String hash) {
+		return (Channel.ChannelToken) getGeneral("channel-token-" + hash);
 	}
-	public static ChannelToken forceChannelCreation(String hash) {
-		ChannelToken token;
-		token = new ChannelToken(hash);
-		setGeneral("channel-token-" + hash,token);
-		return token;
+	public static void setToken(String hash, Channel.ChannelToken token) {
+		setGeneral("channel-token-" + hash, token);
 	}
-	private static String pid2hash(String pid) {
-		String name = userMapGunghoPid.get(pid);
-		for (Entry<String,String> e : userMapGoogle.entrySet()) {
-			if (e.getValue().equals(name)) {
-				return e.getKey();
-			}
-		}
-		throw new UserHashNotFoundException();
-	}
-	public String getPid() {
+	final public String getPid() {
 		return pid;
 	}
-	public String getHash() {
-		return pid2hash(pid);
+	final public String getHash() {
+		return pid2google.get(pid);
 	}
-}
-
-@SuppressWarnings("serial")
-final class UserHashNotFoundException extends RuntimeException {}
-
-@SuppressWarnings("serial")
-final class ChannelToken implements java.io.Serializable {
-	private String _tokenString;
-	private long _creation;
-	private long _duration;
-	ChannelToken(String hash, int time) {
-		create(hash,time);
+	final public String getName() {
+		return pid2name.get(pid);
 	}
-	ChannelToken(String hash) {
-		create(hash,720);
+	final public String getUid() {
+		return pid2uid.get(pid);
 	}
-	private void create(String hash,int time) {
-		if (time < 30) {
-			time = 720;
+	final public static String currentUserHash() {
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			assert false : "NoSuchAlgorithmException";
+			return null;
 		}
-		_tokenString = ChannelServiceFactory.getChannelService().createChannel(hash,time);
-		_creation = System.currentTimeMillis();
-		_duration = time;
+		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
+		return new String(Hex.encodeHex(digest.digest()));
 	}
-	public String tokenString() {
-		return _tokenString;
+	final public static Collection<String> googleCollection() {
+		return pid2google.values();
 	}
-	public long creation() {
-		return _creation;
+	final public static Set<String> pidSet() {
+		return pid2name.keySet();
 	}
-	public long duration() {
-		return _duration;
+	final public Agent getAgent() {
+		return pid2agent.get(pid);
 	}
-	public boolean expired() {
-		return System.currentTimeMillis() > _creation + (_duration-3) *60 *1000;
-	}
-}
-@SuppressWarnings("serial")
-final class freqAccessEggs implements java.io.Serializable {
-	private int capacity;
-	private LinkedList<String> list;
-	freqAccessEggs(int c) {
-		if (c < 1) {
-			c = 1;
-		} else if (c > 64) {
-			c = 64;
+	final public boolean devIsApple() {
+		if (agentOn() && getAgent()!=null) {
+			return getAgent().isApple();
+		} else {
+			return pid2dev.get(pid);
 		}
-		capacity = c;
-		list = new LinkedList<String>();
 	}
-	boolean mtf(String eggnumber) {
-		boolean ret;
-		ret = list.remove(eggnumber);
-		list.addFirst(eggnumber);
-		if (list.size() > capacity) {
-			list.removeLast();
+	final static Agent detectActiveAgentByQueryString(String qs) {
+		if (!qs.contains("action=login")) { //only work with login action
+			return null;
 		}
-		return ret;
-	}
-	Iterable<String> collection() {
-		return (Iterable<String>)list;
-	}
-}
-
-@SuppressWarnings("serial")
-final class Log implements java.io.Serializable{
-	public String request;
-	public String response;
-	Log(String req,String resp) {
-		request = req;
-		response = resp;
+		for (Entry<String,Agent> e : pid2agent.entrySet()) {
+			boolean agentOn;
+			agentOn = (new PadEmulatorSettings(e.getKey())).agentOn();
+			if (agentOn && qs.contains(e.getValue().agentUid())) {
+				return e.getValue();
+			}
+		}
+		return null;
 	}
 }
 
 @SuppressWarnings("serial")
 final class LogList implements java.io.Serializable{
+	final static public class Log implements java.io.Serializable{
+		public String request;
+		public String response;
+		Log(String req,String resp) {
+			request = req;
+			response = resp;
+		}
+	}
 	private Log[] ll;
 	private int index;
 	private int length;

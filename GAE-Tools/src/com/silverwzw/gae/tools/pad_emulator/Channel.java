@@ -1,31 +1,16 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelServiceFactory;
-import com.google.appengine.api.users.UserServiceFactory;
-import org.apache.commons.codec.binary.Hex;
 
 final public class Channel {
 
-	final static String hash() {
-		MessageDigest digest;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			assert false : "NoSuchAlgorithmException";
-			return null;
-		}
-		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
-		return new String(Hex.encodeHex(digest.digest()));
-	}
+
 	final static void broadcast(String json) {
-		for (String clientID : PadEmulatorSettings.userMapGoogle.keySet()) {
+		for (String clientID : PadEmulatorSettings.googleCollection()) {
 			ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage(clientID, json));
 		}
 	}
@@ -40,9 +25,9 @@ final public class Channel {
 		String user;
 		action = req.getParameter("action");
 		if (req.getParameter("pid") != null) {
-			user = PadEmulatorSettings.userMapGunghoPid.get(req.getParameter("pid"));
+			user = (new PadEmulatorSettings(req.getParameter("pid"))).getName();
 		} else {
-			user = PadEmulatorSettings.userMapGunghoUid.get(req.getParameter("u"));
+			user = (new PadEmulatorSettings(req.getParameter("u"))).getName();
 		}
 		if (user == null) {
 			user = "unknown[" + (req.getParameter("pid") != null ? req.getParameter("pid") : req.getParameter("u")) + "]";
@@ -54,5 +39,54 @@ final public class Channel {
 	}
 	final static String refreshjson(String pid){
 		return "{\"type\":\"refresh\",\"pid\":\"" + pid+ "\"}";
+	}
+	
+	@SuppressWarnings("serial")
+	final public static class ChannelToken implements java.io.Serializable {
+		private String _tokenString;
+		private long _creation;
+		private long _duration;
+		ChannelToken(String hash, int time) {
+			create(hash,time);
+		}
+		ChannelToken(String hash) {
+			create(hash,720);
+		}
+		private void create(String hash,int time) {
+			if (time < 30) {
+				time = 720;
+			}
+			_tokenString = ChannelServiceFactory.getChannelService().createChannel(hash,time);
+			_creation = System.currentTimeMillis();
+			_duration = time;
+		}
+		public String tokenString() {
+			return _tokenString;
+		}
+		public long creation() {
+			return _creation;
+		}
+		public long duration() {
+			return _duration;
+		}
+		public boolean expired() {
+			return System.currentTimeMillis() > _creation + (_duration-3) *60 *1000;
+		}
+	}
+	
+
+	public static ChannelToken channelToken(String hash) {
+		ChannelToken token;
+		token = PadEmulatorSettings.getToken(hash);
+		if(token != null && !token.expired()) {
+			return token;
+		}
+		return forceChannelCreation(hash);
+	}
+	public static ChannelToken forceChannelCreation(String hash) {
+		ChannelToken token;
+		token = new ChannelToken(hash);
+		PadEmulatorSettings.setToken(hash,token);
+		return token;
 	}
 }

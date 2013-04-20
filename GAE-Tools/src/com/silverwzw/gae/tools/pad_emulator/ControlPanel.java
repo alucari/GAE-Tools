@@ -1,9 +1,6 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,15 +18,14 @@ final public class ControlPanel implements ActionHandler {
 		o.println("<html><head><title>Silverwzw's Puzzle & Dragon Cracker - control panle</title><script src=\"/pad/monsterDB.js\"></script><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<table border=\"1\"><tbody>");
 		o.println("<tr><th>ID</th><th>name</th><th>agent</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
-		for (Entry<String, String> e : PadEmulatorSettings.userMapGunghoPid.entrySet()) {
+		for (String pid : PadEmulatorSettings.pidSet()) {
 			PadEmulatorSettings settings;
-			String pid,str;
+			String str;
 			int mode;
-			pid = e.getKey();
 			settings = new PadEmulatorSettings(pid);
 			o.print("<tr id=\"" + pid + "\" class='inforow'>");
 			o.print(td(pid));
-			o.print(settings.getHash().equals(Channel.hash())?td(e.getValue(),"notification"):td(e.getValue()));
+			o.print(settings.getHash().equals(PadEmulatorSettings.currentUserHash())?td(settings.getName(),"notification"):td(settings.getName()));
 			o.print(td(font(settings.agentOn()?"Y":"N","agentOn") + sp + ajax("/pad?action=agent&on=true&pid="+pid,"[+]","trun on") + ajax("/pad?action=agent&on=false&pid="+pid,"[-]","trun off")));
 			mode = settings.getDungeonMode();
 			str = font("Mode "+ ((Integer) mode).toString() ,"dungeonMode") + sp + sp + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=1","[1]","Baddie Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=2","[2]", "Weak Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=3","[3]","Mask Mode") + ajax("/pad?action=dungeonMode&pid="+pid+"&mode=0","[N]","Disable all");

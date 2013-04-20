@@ -21,9 +21,13 @@ import com.silverwzw.servlet.SimpleServlet;
 
 @SuppressWarnings("serial")
 public class Pad extends SimpleServlet{ 
-	private static Pattern pattern = Pattern.compile(",\\s*\"msg\"\\s*:\"");
+	private static Pattern pmsg = Pattern.compile(",\\s*\"msg\"\\s*:\"");
 	private static Pattern pitem = Pattern.compile("\"item\"\\s*?:\\s*?\"(\\d+?)\"");
 	private static Pattern pitemv = Pattern.compile("\"pval\"\\s*?:\\s*?[1-9]+?");
+	private static Pattern pfindid = Pattern.compile("&(?:u|pid)=([0-9A-Fa-f\\-]+)");
+
+	@SuppressWarnings("serial")
+	final static class NoIdFoundException extends RuntimeException{};
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		PadEmulatorSettings settings;
@@ -125,7 +129,9 @@ public class Pad extends SimpleServlet{
 			Channel.notifyByHash(settings.getHash(), "{\"type\":\"dungeon\",\"pid\":\"" + settings.getPid() + "\",\"dungeon\":" + res + "}");
 			
 			boolean enter_dungeon;
-			enter_dungeon = false;
+			// initial value, if not looking for eggs, enter_gundeon will be true(always enter dungeon )
+			//otherwise false unless certain condition meet and got set to true (code below).
+			enter_dungeon = !(settings.isLookingForCertainEgg()!=0); 
 			
 			//block the msg if egg hunting is on and not found desired egg
 			//mode 0: nothing happens
@@ -165,7 +171,7 @@ public class Pad extends SimpleServlet{
 		
 		//set the flag
 		if (actionIs("get_player_data",req)) {
-			Matcher m = pattern.matcher(res);
+			Matcher m = pmsg.matcher(res);
 			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\\\n");
 		}
 		resp.getWriter().print(res);
@@ -173,38 +179,23 @@ public class Pad extends SimpleServlet{
 	private boolean actionIs(String actionName,HttpServletRequest req) {
 		return req.getParameter("action").equals(actionName);
 	}
-	private String agent(String qs) {
+	final private static String agent(String qs) {
 		String target;
-		boolean apple;
+		PadEmulatorSettings.Agent agent;
 		
-		
-		if ((new PadEmulatorSettings("324151024")).agentOn() && qs.contains("31fed252-c432-4ba7-b544-7375e06b8e81")) {
-			qs = "action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB";
+		agent = PadEmulatorSettings.detectActiveAgentByQueryString(qs);
+		if (agent!=null) {
+			qs = agent.agentString();
 		}
-		
-		
-		if (qs.contains("pid=324151024")) {
-			//agent is android
-			apple = !((new PadEmulatorSettings("324151024")).agentOn());
-		} else if (qs.contains("pid=324363124")) {
-			//agent is apple
-			apple = (new PadEmulatorSettings("324363124")).agentOn();
-		} else if (qs.contains("pid=324224887")) {
-			//agent is android
-			apple = !((new PadEmulatorSettings("324224887")).agentOn());
-		} else if (qs.contains("B33ECFC8-F74D-4A88-A5D5-81183DAFC850")) {
-			apple = true;
-		} else if (qs.contains("27C8DDB8-D23C-4345-94B6-805A5DD36A1F")) {
-			apple = true;
-		} else if (qs.contains("0a78f1a0-f5a0-49ef-950e-e6205f5e9389")) {
-			apple = false;
-		} else {
-			throw new IdNotRecognizeException();
-		}
-		target = apple ? "http://api-na-pad.gungho.jp/api.php" : "http://api-na-adr-pad.gungho.jp/api.php";
+
+		target = (new PadEmulatorSettings(getId(qs))).devIsApple() ? "http://api-na-pad.gungho.jp/api.php" : "http://api-na-adr-pad.gungho.jp/api.php";
 		return target + "?" + qs;
 	}
+	final private static String getId(String qs) {
+		Matcher m = pfindid.matcher(qs);
+		if (!m.find()) {
+			throw new NoIdFoundException();
+		}
+		return m.group(1);
+	}
 }
-
-@SuppressWarnings("serial")
-final class IdNotRecognizeException extends RuntimeException{};
