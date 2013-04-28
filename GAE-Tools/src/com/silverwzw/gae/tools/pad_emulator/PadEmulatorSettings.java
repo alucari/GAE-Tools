@@ -41,11 +41,13 @@ final public class PadEmulatorSettings {
 		pid2name.put("324151024", "tea");
 		pid2name.put("324363124", "silverwzw");
 		pid2name.put("324224887", "x");
+		pid2name.put("324427796", "Tester");
 		
 
 		pid2google = new HashMap<String,String>();
 		pid2google.put("324151024", "36795a4756f4b90fac03d4dd82b28db4");//tea
 		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
+		pid2google.put("324427796", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
 		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x
 		
 
@@ -53,15 +55,18 @@ final public class PadEmulatorSettings {
 		pid2uid.put("324151024", "B33ECFC8-F74D-4A88-A5D5-81183DAFC850");
 		pid2uid.put("324363124", "0a78f1a0-f5a0-49ef-950e-e6205f5e9389");
 		pid2uid.put("324224887", "27C8DDB8-D23C-4345-94B6-805A5DD36A1F");
+		pid2uid.put("324427796", "6bcd1fb7-656b-419d-b67f-ba80ec08a6ca");
 		
 
 		pid2agent = new HashMap<String,Agent>();
-		pid2agent.put("324151024", new Agent("31fed252-c432-4ba7-b544-7375e06b8e81","action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=CB2F7DBB",false));
+		pid2agent.put("324151024", new Agent("31fed252-c432-4ba7-b544-7375e06b8e81","action=login&t=0&v=5.00&u=B33ECFC8-F74D-4A88-A5D5-81183DAFC850&dev=iPad3,4&osv=6.0&key=DB3B1815",false));
+		pid2agent.put("324427796", new Agent("0a78f1a0-f5a0-49ef-950e-e6205f5e9389","action=login&t=1&v=5.01&u=6bcd1fb7-656b-419d-b67f-ba80ec08a6ca&dev=occam&osv=4.2.2&key=3933658F",false));
 		
 		pid2dev = new HashMap<String,Boolean>();
 		pid2dev.put("324151024", (Boolean)true);
 		pid2dev.put("324363124", (Boolean)false);
 		pid2dev.put("324224887", (Boolean)true);
+		pid2dev.put("324427796", (Boolean)false);
 		
 	}
 	
@@ -368,11 +373,21 @@ final public class PadEmulatorSettings {
 		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
 		return new String(Hex.encodeHex(digest.digest()));
 	}
-	final public static Collection<String> googleCollection() {
-		return pid2google.values();
+	private static Set<String> _cachedGoogleSet;
+	final public static Set<String> googleSet() {
+		if (_cachedGoogleSet == null) {
+			Set<String> tmp; //be careful to multi-thread sync problem, first create object then assign.
+			tmp = new HashSet<String>();
+			tmp.addAll(pid2google.values());
+			_cachedGoogleSet = tmp;
+		}
+		return _cachedGoogleSet;
 	}
 	final public static Set<String> pidSet() {
 		return pid2name.keySet();
+	}
+	final public static Collection<String> nameCollection() {
+		return pid2name.values();
 	}
 	final public Agent getAgent() {
 		return pid2agent.get(pid);
@@ -396,6 +411,16 @@ final public class PadEmulatorSettings {
 			}
 		}
 		return null;
+	}
+	final public String getBonus() {
+		String s = (String)getSpec("bonus");
+		if (s == null) {
+			return "";
+		}
+		return s;
+	}
+	final public void setBonus(String b) {
+		setSpec("bonus", b);
 	}
 }
 

@@ -51,6 +51,8 @@ function starter() {
 		ids[ids.length] = trs[i].id; 
 	}
 	
+	daily();
+	
 	function updateUI(json, code) {
 		debug.log("json data for " + json.pid + " is loaded");
 		debug.log(json);
@@ -123,7 +125,7 @@ function starter() {
 	
 	var actionLog={};
 	function updateChannel() {
-		var users=["silverwzw","x","tea"];
+		var users=["silverwzw","x","tea","Tester"];
 		var i,j;
 		for (i = 0; i < users.length; i++) {
 			if (actionLog[users[i]] === undefined) {
@@ -223,6 +225,11 @@ function starter() {
 							update(data.pid);
 						}
 					} else if (data.type == "newAction"){
+						if (data.action == "download_limited_bonus_data") {
+							setTimeout(function () {
+								window.location.reload();
+							}, 3000);
+						}
 						if ( actionLog[data.user] === undefined) {
 							actionLog[data.user] = [];
 						}
@@ -277,6 +284,30 @@ function addEgg(pid) {
 		eggstr += "&egg=" + ids[i];
 	}
 	ajaxAction("/pad?action=lookForEggs&ajax&pid=" + pid + eggstr);
+}
+
+function daily() {
+	var bonuses = $(".bonus");
+	var bonus2img = {
+		5 : "http://images3.wikia.nocookie.net/__cb20120730043459/pad/zh/images/4/40/257i.png",
+		6 : "http://images2.wikia.nocookie.net/__cb20120806030355/pad/zh/images/3/3a/260i.png",
+		2 : "http://images4.wikia.nocookie.net/__cb20120410075218/pad/zh/images/3/36/178i.png",
+		4 : "http://images2.wikia.nocookie.net/__cb20120730043509/pad/zh/images/3/39/254i.png",
+		3 : "http://images2.wikia.nocookie.net/__cb20120420150012/pad/zh/images/d/d9/181i.png",
+	};
+	var i,j,d,bonus,str;
+	for (i = 0; i < bonuses.length; i++) {
+		bonus = bonuses[i];
+		if (bonus.innerHTML == "") {
+			continue;
+		}
+		d = eval("(" + bonus.innerHTML + ")");
+		str = "";
+		for (j = 0; j < d.length; j++) {
+			str += d[j].t + "<img src='" + bonus2img[d[j].d] + "' width='60px' height='60px'>&nbsp;";
+		}
+		bonus.innerHTML = str;
+	}
 }
 
 $(document).ready(starter);

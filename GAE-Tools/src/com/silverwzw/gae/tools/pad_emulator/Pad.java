@@ -26,7 +26,6 @@ public class Pad extends SimpleServlet{
 	private static Pattern pitemv = Pattern.compile("\"pval\"\\s*?:\\s*?[1-9]+?");
 	private static Pattern pfindid = Pattern.compile("&(?:u|pid)=([0-9A-Fa-f\\-]+)");
 
-	@SuppressWarnings("serial")
 	final static class NoIdFoundException extends RuntimeException{};
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -174,9 +173,13 @@ public class Pad extends SimpleServlet{
 			Matcher m = pmsg.matcher(res);
 			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\\\n");
 		}
+		
+		if (actionIs("download_limited_bonus_data",req)) {
+			Bonus.saveData(req.getParameter("pid"), res);
+		}
 		resp.getWriter().print(res);
 	}
-	private boolean actionIs(String actionName,HttpServletRequest req) {
+	final private static boolean actionIs(String actionName,HttpServletRequest req) {
 		return req.getParameter("action").equals(actionName);
 	}
 	final private static String agent(String qs) {

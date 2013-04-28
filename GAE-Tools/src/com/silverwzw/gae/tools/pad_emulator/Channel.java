@@ -10,7 +10,7 @@ final public class Channel {
 
 
 	final static void broadcast(String json) {
-		for (String clientID : PadEmulatorSettings.googleCollection()) {
+		for (String clientID : PadEmulatorSettings.googleSet()) {
 			ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage(clientID, json));
 		}
 	}
@@ -28,9 +28,6 @@ final public class Channel {
 			user = (new PadEmulatorSettings(req.getParameter("pid"))).getName();
 		} else {
 			user = (new PadEmulatorSettings(req.getParameter("u"))).getName();
-		}
-		if (user == null) {
-			user = "unknown[" + (req.getParameter("pid") != null ? req.getParameter("pid") : req.getParameter("u")) + "]";
 		}
 		return "{\"type\":\"newAction\",\"action\":\"" + action + "\",\"user\":\"" + user + "\"}";
 	}

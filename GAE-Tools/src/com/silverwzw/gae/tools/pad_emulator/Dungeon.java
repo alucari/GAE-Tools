@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 final public class Dungeon {
 	public String DungeonString;
 	static Pattern p = Pattern.compile("\"hash\"\\s*:\"([0-9a-zA-Z]*)\"");
+
+	@SuppressWarnings("serial")
+	final static class HashNotFoundException extends RuntimeException {};
 	public Dungeon(String dungeonString) {
 		DungeonString = dungeonString;
 	}
@@ -45,6 +48,3 @@ final public class Dungeon {
 		}
 	}
 }
-
-@SuppressWarnings("serial")
-final class HashNotFoundException extends RuntimeException {}

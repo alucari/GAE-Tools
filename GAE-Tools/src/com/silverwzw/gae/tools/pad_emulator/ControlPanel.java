@@ -17,7 +17,7 @@ final public class ControlPanel implements ActionHandler {
 		
 		o.println("<html><head><title>Silverwzw's Puzzle & Dragon Cracker - control panle</title><script src=\"/pad/monsterDB.js\"></script><script src=\"/pad/monster.js\"></script><script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script><script src='/_ah/channel/jsapi'></script><script src='/pad/pad.js'></script></head><body>");
 		o.println("<table border=\"1\"><tbody>");
-		o.println("<tr><th>ID</th><th>name</th><th>agent</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>ID</th><th>name</th><th>agent</th><th>Mode</th><th>Dungeon</th><th>Resolve</th><th>Level Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th><th>Daily Dragon</th></tr>");
 		for (String pid : PadEmulatorSettings.pidSet()) {
 			PadEmulatorSettings settings;
 			String str;
@@ -60,6 +60,7 @@ final public class ControlPanel implements ActionHandler {
 			o.print("<a href='#' onclick='addEgg(" + pid + ");'>[+]</a>");
 			o.print(ajax("/pad?action=lookForEggs&clean=1&pid="+ pid,"[C]"));
 			o.print("</td>");
+			o.print("<td class='bonus'>" + settings.getBonus() + "</td>");
 			o.print("</tr>");
 		}
 		o.println("</tbody></table>");
@@ -69,9 +70,17 @@ final public class ControlPanel implements ActionHandler {
 		for (String egg : freqEggs) {
 			o.println("document.write('[" + egg + "' + show(" + egg + ") + ']&nbsp;" +((++counter % 8 == 0)?"<br />')":"')"));
 		}
-		o.println("</script><hr /><table><tbody><tr><th width=150>tea</th><th width=150>x</th><th width=150>silverwzw</th></tr>");
+		o.print("</script><hr /><table><tbody><tr>");
+		for (String name : PadEmulatorSettings.nameCollection()) {
+			o.print("<th width=150>" +name + "</th>");
+		}
+		o.print("</tr>");
 		for(i = 0; i < 10; i++) {
-			o.println("<tr id='channel" + i + "'><td class='tea'></td><td class='x'></td><td class='silverwzw'></td></tr>");
+			o.print("<tr id='channel" + i + "'>");
+			for (String name : PadEmulatorSettings.nameCollection()) {
+				o.print("<td class='" + name + "'></td>");
+			}
+			o.println("</tr>");
 		}
 		o.println("</tbody></table></body></html>");
 	}
