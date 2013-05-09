@@ -2,6 +2,7 @@ package com.silverwzw.gae.tools.log;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,20 +11,30 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.*;
 
-import com.silverwzw.servlet.SimpleServlet;
+import com.silverwzw.servlet.ActionHandler;
+import com.silverwzw.servlet.ActionRouterServlet;
 
 @SuppressWarnings("serial")
-public class Log extends SimpleServlet {
-	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException{
-		String kind;
-		kind = req.getParameter("kind"); 
-		if (kind == null) {
-			resp.sendError(400, "incomplete request");
-			return;
-		}
-		if (req.getParameter("read")==null) {
+public class Log extends ActionRouterServlet {
+	public Log() {
+		ActionHandler ah;
+		ah = new WriteActionHandler();
+		setDefaultAction(ah);
+		setAction("write",ah);
+		setAction("read",new ReadActionHandler());
+		setAction("delete",new DeleteActionHandler());
+	}
+	private class WriteActionHandler implements ActionHandler {
+		public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+			String kind;
 			Entity log;
 			Map<?, ?> pmap;
+			kind = req.getParameter("kind"); 
+			
+			if (kind == null) {
+				throw new KindNotFoundException();
+			}
+			
 			log = new Entity(kind);
 
 			pmap = req.getParameterMap();
@@ -39,12 +50,20 @@ public class Log extends SimpleServlet {
 				log.setProperty("timestamp", System.currentTimeMillis());
 			}
 			DatastoreServiceFactory.getDatastoreService().put(log);
-			return;
-		} else {
+		}
+	};
+	private class ReadActionHandler implements ActionHandler {
+		public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+			String kind;
 			Query q;
 			PreparedQuery pq;
 			boolean isfirstline;
 			ArrayList<String> headline;
+
+			kind = req.getParameter("kind"); 
+			if (kind == null) {
+				throw new KindNotFoundException();
+			}
 			
 			q = new Query(kind);
 			headline = new ArrayList<String>();
@@ -101,6 +120,25 @@ public class Log extends SimpleServlet {
 				resp.getWriter().println(line);
 			}
 		}
-	}
-
+	};
+	private class DeleteActionHandler implements ActionHandler {
+		public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+			if (!com.google.appengine.api.users.UserServiceFactory.getUserService().isUserAdmin()) {
+				throw new DeleteOpertaionCalledByNonAdmin();
+			}
+			String kind;
+			LinkedList<Key> llk;
+			kind = req.getParameter("kind"); 
+			if (kind == null) {
+				throw new KindNotFoundException();
+			}
+			llk = new LinkedList<Key>();
+			for (Entity ent : DatastoreServiceFactory.getDatastoreService().prepare(new Query(kind)).asIterable()) {
+				llk.add(ent.getKey());
+			}
+			DatastoreServiceFactory.getDatastoreService().delete(llk);
+		}
+	};
+	public class KindNotFoundException extends RuntimeException {};
+	public class DeleteOpertaionCalledByNonAdmin extends RuntimeException {};
 }
