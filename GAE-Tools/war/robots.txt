@@ -1,0 +1,6 @@
+User-agent: Googlebot
+Allow: /index.html
+Disallow: /
+
+User-agent: *
+Disallow: /
