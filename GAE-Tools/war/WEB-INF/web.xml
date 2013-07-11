@@ -6,14 +6,7 @@
 		<auth-constraint>
 			<role-name>*</role-name></auth-constraint></security-constraint><welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-	</welcome-file-list><servlet>
-		<servlet-name>cc98redirect</servlet-name>
-		<servlet-class>com.silverwzw.gae.tools.rss.CC98Redirect</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>cc98redirect</servlet-name>
-		<url-pattern>/cc98top10</url-pattern>
-	</servlet-mapping>
+	</welcome-file-list>
 	
  <servlet>
   <servlet-name>SystemServiceServlet</servlet-name>
@@ -27,37 +20,7 @@
   <servlet-name>SystemServiceServlet</servlet-name>
   <url-pattern>/_ah/spi/*</url-pattern>
  </servlet-mapping>
- <servlet>
- 	<servlet-name>RespLookup</servlet-name>
- 	<servlet-class>com.silverwzw.gae.tools.resplookup.RespLookup</servlet-class></servlet>
- <servlet-mapping>
- 	<servlet-name>RespLookup</servlet-name>
- 	<url-pattern>/resplookup</url-pattern></servlet-mapping>
- <servlet>
- 	<servlet-name>jmp</servlet-name>
- 	<servlet-class>com.silverwzw.gae.tools.jmp.Jmp</servlet-class></servlet>
- <servlet-mapping>
- 	<servlet-name>jmp</servlet-name>
- 	<url-pattern>/jmp</url-pattern></servlet-mapping>
- 
- <servlet>
- 	<servlet-name>login</servlet-name>
- 	<servlet-class>com.silverwzw.gae.tools.Login</servlet-class></servlet><servlet-mapping>
- 	<url-pattern>/login</url-pattern>
- 	<servlet-name>login</servlet-name></servlet-mapping>
-	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.log.Log</servlet-class>
-		<servlet-name>Log</servlet-name></servlet>
-	<servlet-mapping>
-		<servlet-name>Log</servlet-name>
-		<url-pattern>/log</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>pac</servlet-name>
-		<servlet-class>com.silverwzw.gae.tools.pac.Pac</servlet-class></servlet>
-	<servlet-mapping>
-		<servlet-name>pac</servlet-name>
-		<url-pattern>/pac</url-pattern></servlet-mapping>
+
 	<servlet>
 		<servlet-class>com.silverwzw.gae.tools.pad_emulator.Pad</servlet-class>
 		<servlet-name>PAD</servlet-name></servlet>
@@ -97,10 +60,4 @@
 	<servlet-mapping>
 		<servlet-name>PAD_UI_INDEX</servlet-name>
 		<url-pattern>/pad</url-pattern></servlet-mapping>
-	
-	<servlet>
-		<servlet-class>com.silverwzw.gae.tools.rss.Rss</servlet-class>
-		<servlet-name>Rss</servlet-name></servlet>
-	<servlet-mapping>
-		<servlet-name>Rss</servlet-name>
-		<url-pattern>/rss</url-pattern></servlet-mapping></web-app>
+</web-app>
