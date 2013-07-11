@@ -57,15 +57,13 @@ final public class PadEmulatorSettings {
 	private static HashMap<String,Boolean> pid2fullfunction;
 	
 	static {
-		String zackPid="100000000";
-		String zackUid="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
 		
 		pid2name = new HashMap<String,String>();
 		pid2name.put("324151024", "tea");
 		pid2name.put("188433641", "tea-JPN");
 		pid2name.put("324363124", "silverwzw");
 		pid2name.put("324224887", "x");
-		pid2name.put(zackPid, "zack");
+		pid2name.put("325508200", "zack");
 		
 
 		pid2google = new HashMap<String,String>();
@@ -73,7 +71,7 @@ final public class PadEmulatorSettings {
 		pid2google.put("188433641", "36795a4756f4b90fac03d4dd82b28db4");//tea-JPN
 		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
 		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x147adec278ccd4cbe74a22258c91fd08
-		pid2google.put(zackPid, "147adec278ccd4cbe74a22258c91fd08");
+		pid2google.put("325508200", "147adec278ccd4cbe74a22258c91fd08");
 
 		
 
@@ -82,7 +80,7 @@ final public class PadEmulatorSettings {
 		pid2uid.put("188433641", "82EA5B93-776B-4270-B3DB-0E79FD1FBECB");
 		pid2uid.put("324363124", "10f99255-ac82-432a-bdb7-c1db221b6497");
 		pid2uid.put("324224887", "27C8DDB8-D23C-4345-94B6-805A5DD36A1F");
-		pid2uid.put(zackPid, zackUid);
+		pid2uid.put("325508200", "C6976003-F229-4E87-8C3A-F896EC8B25B0");
 		
 
 		pid2agent = new HashMap<String,Agent>();
@@ -94,7 +92,7 @@ final public class PadEmulatorSettings {
 		pid2dev.put("324363124", (Boolean)false);
 		pid2dev.put("324224887", (Boolean)true);
 		pid2dev.put("188433641", (Boolean)true);
-		pid2dev.put(zackPid, (Boolean)true);
+		pid2dev.put("325508200", (Boolean)true);
 		
 
 		pid2reg = new HashMap<String,Boolean>();
@@ -102,14 +100,14 @@ final public class PadEmulatorSettings {
 		pid2reg.put("324363124", (Boolean)true);
 		pid2reg.put("324224887", (Boolean)true);
 		pid2reg.put("188433641", (Boolean)false);
-		pid2reg.put(zackPid, (Boolean)true);
+		pid2reg.put("325508200", (Boolean)true);
 		
 		pid2fullfunction = new HashMap<String,Boolean>();
 		pid2fullfunction.put("324151024", (Boolean)true);
 		pid2fullfunction.put("324363124", (Boolean)true);
 		pid2fullfunction.put("324224887", (Boolean)true);
 		pid2fullfunction.put("188433641", (Boolean)true);
-		pid2fullfunction.put(zackPid, (Boolean)false);
+		pid2fullfunction.put("325508200", (Boolean)false);
 		
 		storage = StorageLayerFactory.googleCacheAndDatastore("PadSettings");
 	}
@@ -763,29 +761,29 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("4-紧急地城");
 		}
 		
-		//146-152,311-312,303-304 double weekly
-		if ((dungeon >= 146 && dungeon <= 152) || (dungeon <= 312 && dungeon >= 311) || (dungeon <= 304 && dungeon >= 303)){
+		//146-152,311-312,301-305 double weekly
+		if ((dungeon >= 146 && dungeon <= 152) || (dungeon <= 312 && dungeon >= 311) || (dungeon <= 305 && dungeon >= 301)){
 			return utf82iso8859_1("5-双周地城");
 		}
 		
-		//176,158,163-164
-		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164)){
+		//176,158,163-164,169,307
+		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307){
 			return utf82iso8859_1("6-降临地城");
 		}
 		
-		//187-188
-		if ((dungeon >= 187 && dungeon <=188) || dungeon == 198 || dungeon == 341 || dungeon == 317){
-			return utf82iso8859_1("7-活动地城");
+		//187-188,308
+		if ((dungeon >= 187 && dungeon <=188) || dungeon == 198 || dungeon == 341 || dungeon == 317 || dungeon == 308){
+			return utf82iso8859_1("7-合作地城");
 		}
 		
-		//133, 135
-		if (dungeon == 133 || dungeon == 135 || dungeon == 329) {
+		//133, 135, 330, 190
+		if (dungeon == 133 || dungeon == 135 || dungeon == 329 || dungeon == 330 || dungeon == 190) {
 			return utf82iso8859_1("8-限定地城");
 		}
 		
-		//306
-		if (dungeon == 306) {
-			return utf82iso8859_1("9-问卷地城");
+		//306,162,165-168,170
+		if (dungeon == 306 || dungeon == 162 || (dungeon <= 168 && dungeon >= 165) || dungeon == 170) {
+			return utf82iso8859_1("9-活动地城");
 		}
 		
 		return utf82iso8859_1("未分类");
