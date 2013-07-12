@@ -8,7 +8,7 @@ function padtime2timestamp(padtime, pid) {
 	if (jp_ids.indexOf(pid) != -1) { //is JP region
 		offset = "GMT+0900";
 	} else {
-		j = (new Date()).getTimezoneOffset()/60 + 3;
+		j = (new Date()).getTimezoneOffset()/60 + 0;
 		j = (j<10) ? ("0" + j) : ("" + j);
 		offset = "GMT-" + j + "00";
 	}

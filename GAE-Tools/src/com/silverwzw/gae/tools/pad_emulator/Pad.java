@@ -33,13 +33,7 @@ public class Pad extends SimpleServlet{
 	
 	static {
 		String pids,reg;
-		Iterator<String> iter;
-		iter = PadEmulatorSettings.pidSet().iterator();
-		pids = "(?:" + iter.next();
-		while (iter.hasNext()) {
-			pids += "|" + iter.next();
-		}
-		pids += ")";
+		pids = "(?:" + "324363124" + ")";
 		reg = "(?<=\\{\"v\":\\d,\"pid\":" + pids + ",\"name\":\"[^\"]{0,60}\",\"lv\":\\d{1,3},\"card\":)\\d+,\"clv\":\\d+(?=,\"slv\":\\d+,\"at\":\\d+,\"acctime\":\"\\d+\",\"plus\":\\[\\d{1,2},\\d{1,2},\\d{1,2},\\d{1,2}\\],\"fri\":\\d+,\"friMax\":\\d+\\})";
 		psuperfriendcard = Pattern.compile(reg);
 		reg = "(?<=\\{\"v\":\\d,\"pid\":" + pids + ",\"name\":\"[^\"]{0,60}\",\"lv\":\\d{1,3},\"card\":\\d{1,3},\"clv\":\\d{1,2},\"slv\":\\d{1,2},\"at\":\\d{1,2},\"acctime\":\"\\d{12}\",\"plus\":\\[)\\d{1,2},\\d{1,2},\\d{1,2}(?=,\\d{1,2}\\],\"fri\":\\d+,\"friMax\":\\d+\\})";

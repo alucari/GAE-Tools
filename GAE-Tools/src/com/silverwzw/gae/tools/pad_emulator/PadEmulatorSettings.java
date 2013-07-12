@@ -28,8 +28,6 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserServiceFactory;
 
-
-
 final public class PadEmulatorSettings {
 	static StorageLayer storage;
 	private String pid;
@@ -59,55 +57,29 @@ final public class PadEmulatorSettings {
 	static {
 		
 		pid2name = new HashMap<String,String>();
-		pid2name.put("324151024", "tea");
-		pid2name.put("188433641", "tea-JPN");
-		pid2name.put("324363124", "silverwzw");
-		pid2name.put("324224887", "x");
-		pid2name.put("325508200", "zack");
+		pid2name.put("325392103", "kangkang");
 		
 
 		pid2google = new HashMap<String,String>();
-		pid2google.put("324151024", "36795a4756f4b90fac03d4dd82b28db4");//tea
-		pid2google.put("188433641", "36795a4756f4b90fac03d4dd82b28db4");//tea-JPN
-		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
-		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x147adec278ccd4cbe74a22258c91fd08
-		pid2google.put("325508200", "147adec278ccd4cbe74a22258c91fd08");
+		pid2google.put("325392103", "42e2aa8000fd253a6477706cb02609d1");
 
 		
 
 		pid2uid = new HashMap<String,String>();
-		pid2uid.put("324151024", "B33ECFC8-F74D-4A88-A5D5-81183DAFC850");
-		pid2uid.put("188433641", "82EA5B93-776B-4270-B3DB-0E79FD1FBECB");
-		pid2uid.put("324363124", "10f99255-ac82-432a-bdb7-c1db221b6497");
-		pid2uid.put("324224887", "27C8DDB8-D23C-4345-94B6-805A5DD36A1F");
-		pid2uid.put("325508200", "C6976003-F229-4E87-8C3A-F896EC8B25B0");
+		pid2uid.put("325392103", "F681F5B4-16B0-4CF6-928D-693746BA7838");
 		
 
 		pid2agent = new HashMap<String,Agent>();
-		pid2agent.put("324151024", new Agent("31fed252-c432-4ba7-b544-7375e06b8e81", "324151024", false));
-		pid2agent.put("324363124", new Agent("01d97c68-8c5e-44bc-86b1-c1faa033de89", "324363124", false));
 
 		pid2dev = new HashMap<String,Boolean>();
-		pid2dev.put("324151024", (Boolean)true);
-		pid2dev.put("324363124", (Boolean)false);
-		pid2dev.put("324224887", (Boolean)true);
-		pid2dev.put("188433641", (Boolean)true);
-		pid2dev.put("325508200", (Boolean)true);
+		pid2dev.put("325392103", (Boolean)true);
 		
 
 		pid2reg = new HashMap<String,Boolean>();
-		pid2reg.put("324151024", (Boolean)true);
-		pid2reg.put("324363124", (Boolean)true);
-		pid2reg.put("324224887", (Boolean)true);
-		pid2reg.put("188433641", (Boolean)false);
-		pid2reg.put("325508200", (Boolean)true);
+		pid2reg.put("325392103", (Boolean)true);
 		
 		pid2fullfunction = new HashMap<String,Boolean>();
-		pid2fullfunction.put("324151024", (Boolean)true);
-		pid2fullfunction.put("324363124", (Boolean)true);
-		pid2fullfunction.put("324224887", (Boolean)true);
-		pid2fullfunction.put("188433641", (Boolean)true);
-		pid2fullfunction.put("325508200", (Boolean)false);
+		pid2fullfunction.put("325392103", (Boolean)false);
 		
 		storage = StorageLayerFactory.googleCacheAndDatastore("PadSettings");
 	}

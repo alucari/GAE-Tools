@@ -153,13 +153,14 @@ final public class ControlPanel implements ActionHandler {
 		o.println("</tbody></table><br />");
 		
 		//===========Statistics================
+		/*
 		o.print("<table><tbody><tr><td><h3>Statistics:</h3></td><td>&emsp;</td>");
 		o.print("<td><form action='/pad' method='GET' target='stat'><input type='hidden' name='action' value='stat' /><input type='hidden' name='do' value='dung' />Query Dungeon:");
 		o.print(Statistics.getDungeonList(-1, "<select id='dung' name='dung'>"));
 		o.print("<input type='submit' value='Submit'/></form></td>");
 		o.print("<script>function check_eggID() {if (/^[1-9]\\d{0,2}$/.exec($('input#egg')[0].value.trim()) != null) {return true;} else {alert('Invalid Egg ID!');return false;}};</script>");
 		o.print("<td>&emsp;</td><td><form action='/pad' onsubmit='return check_eggID();' method='GET'  target='stat'><input type='hidden' name='action' value='stat' /><input type='hidden' name='do' value='egg'/>Query Egg: <input type='text' name='egg' id='egg' size=5/><input type='submit' value='Submit'/></form></td></tr></tbody></table>");
-		
+		*/
 		//===========Monster Lookup============
 		o.print(Statistics.mlookup());
 		

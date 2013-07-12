@@ -75,6 +75,6 @@ final public class Proxy extends SimpleServlet{
 
 		resp.setContentType(conn.getContentType());
 		
-		resp.getWriter().print(str.replaceAll("api-(?:na-)?(?:adr-)?pad\\.gungho\\.jp","tools\\.silverwzw\\.com"));
+		resp.getWriter().print(str.replaceAll("api-(?:na-)?(?:adr-)?pad\\.gungho\\.jp","pad\\.silverwzw\\.com"));
 	}
 }
