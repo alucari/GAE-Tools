@@ -4,9 +4,11 @@ package com.silverwzw.gae.tools.pad_emulator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
@@ -91,6 +93,25 @@ final public class Statistics implements ActionHandler {
 					eggID = Integer.parseInt(currentQueryingEgg);
 				}
 				queryResult = PadEmulatorSettings.StatisticFunction.queryEgg(eggID);
+			} else if (req.getParameter("do").equals("append")) {
+				int dung, floor, plus;
+				Collection<Integer> eggs;
+				String[] eggArr;
+				
+				dung = Integer.parseInt(req.getParameter("dung"));
+				floor = Integer.parseInt(req.getParameter("floor"));
+				plus = Integer.parseInt(req.getParameter("plus"));
+				
+				eggArr = req.getParameter("egg").split(",");
+				
+				eggs = new LinkedList<Integer>();
+				
+				for (int i = 0; i < eggArr.length; i++) {
+					eggs.add(Integer.parseInt(eggArr[i]));
+				}
+				
+				PadEmulatorSettings.StatisticFunction.log(dung, floor, eggs, plus);
+				return;
 			}
 			if (req.getParameter("ajax") != null) {
 				resp.setHeader("Content-Type","application/json; charset=utf-8");
