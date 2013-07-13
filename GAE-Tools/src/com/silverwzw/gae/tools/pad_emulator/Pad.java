@@ -169,7 +169,23 @@ public class Pad extends SimpleServlet{
 			Map<String, Integer> huntEggs;
 			
 			eggs = settings.dungeon.eggs();
-			PadEmulatorSettings.StatisticFunction.log(Integer.parseInt(req.getParameter("dung")), Integer.parseInt(req.getParameter("floor")), settings.dungeon.eggs(), settings.dungeon.pval());
+			
+			String connStr = "http://tools.silverwzw.com/pad?action=stat&do=append";
+			connStr += "&dung=" + req.getParameter("dung");
+			connStr += "&floor=" + req.getParameter("floor");
+			connStr += "&plus=" + settings.dungeon.pval();
+			connStr += "&eggs=";
+			
+			(new URL(connStr)).openConnection().connect();
+			
+			Iterator<Integer> iter = eggs.iterator();
+			while (iter.hasNext()) {
+				connStr += iter.next();
+				if (iter.hasNext()) {
+					connStr += ",";
+				}
+			}
+			
 			huntEggs = settings.eggHunting.huntEggMap();
 			
 			if (conditionNumber > 0 && !huntEggs.isEmpty()) {
