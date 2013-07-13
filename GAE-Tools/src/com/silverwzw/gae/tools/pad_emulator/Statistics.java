@@ -102,7 +102,7 @@ final public class Statistics implements ActionHandler {
 				floor = Integer.parseInt(req.getParameter("floor"));
 				plus = Integer.parseInt(req.getParameter("plus"));
 				
-				eggArr = req.getParameter("egg").split(",");
+				eggArr = req.getParameter("eggs").split(",");
 				
 				eggs = new LinkedList<Integer>();
 				
