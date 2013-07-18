@@ -250,8 +250,57 @@ final class AdminConsole implements ActionHandler {
 			resp.sendError(401, "This page is for admin only.");
 			return;
 		}
+		
 		String html = "";
-		html += "=======Admins========<br>";
+		
+		if (req.getParameter("append") != null) {
+			switch (req.getParameter("append")) {
+				case "admins":
+					PadEmulatorSettings.adminGoogleSet.add(req.getParameter("k"));
+					break;
+				case "names":
+					PadEmulatorSettings.pid2name.put(req.getParameter("k"), req.getParameter("v"));
+					break;
+				case "google":
+					PadEmulatorSettings.pid2google.put(req.getParameter("k"), req.getParameter("v"));
+					break;
+				case "devices":
+					PadEmulatorSettings.pid2dev.put(req.getParameter("k"), (Boolean)req.getParameter("v").toLowerCase().equals("apple"));
+					break;
+				case "server":
+					PadEmulatorSettings.pid2reg.put(req.getParameter("k"), (Boolean)req.getParameter("v").toLowerCase().equals("usa"));
+					break;
+				case "function":
+					PadEmulatorSettings.pid2fullfunction.put(req.getParameter("k"), (Boolean)req.getParameter("v").toUpperCase().equals("ALL-ENABLE"));
+					break;
+			}
+			PadEmulatorSettings.saveMeta();
+		} else if (req.getParameter("remove") != null) {
+			switch (req.getParameter("remove")) {
+				case "admins":
+					PadEmulatorSettings.adminGoogleSet.remove(req.getParameter("k"));
+					break;
+				case "names":
+					PadEmulatorSettings.pid2name.remove(req.getParameter("k"));
+					break;
+				case "google":
+					PadEmulatorSettings.pid2google.remove(req.getParameter("k"));
+					break;
+				case "devices":
+					PadEmulatorSettings.pid2dev.remove(req.getParameter("k"));
+					break;
+				case "server":
+					PadEmulatorSettings.pid2reg.remove(req.getParameter("k"));
+					break;
+				case "function":
+					PadEmulatorSettings.pid2fullfunction.remove(req.getParameter("k"));
+					break;
+			}
+			PadEmulatorSettings.saveMeta();	
+		}
+		
+		
+		html += "=======admins========<br>";
 		for (String hash : PadEmulatorSettings.adminGoogleSet) {
 			html += hash + "<br />";
 		}

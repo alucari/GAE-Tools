@@ -97,20 +97,17 @@ public class Pad extends SimpleServlet{
 			out.close();
 		}
 		// POST done;
-		
-		Channel.broadcast(Channel.req2json(req));
-		if (req.getParameter("pid") != null) {
-			Channel.notifyByPid(req.getParameter("pid"), Channel.req2json(req));
-		} else if (req.getParameter("u") != null) {
-			Channel.notifyByPid(PadEmulatorSettings.instance(req.getParameter("u")).userInfo.getPid(), Channel.req2json(req));
-		}
-		
+
 		if (req.getParameter("pid") != null) { 
 			settings = new PadEmulatorSettings(req.getParameter("pid"));
 		} else {
 			settings = new PadEmulatorSettings(req.getParameter("u"));
 		}
 		
+		Channel.broadcast(Channel.req2json(req));
+		if (!PadEmulatorSettings.isAdmin(settings.userInfo.getHash())) {
+			Channel.notifyByPid(settings.userInfo.getPid(), Channel.req2json(req));
+		}
 
 		resp.setHeader("Content-Type", "text/html; charset=UTF-8");
 		

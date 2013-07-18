@@ -48,76 +48,123 @@ final public class PadEmulatorSettings {
 		UserHashNotFoundException(Exception e) {super(e);};
 	};
 	
-	public static HashMap<String,String> pid2name;
-	public static HashMap<String,String> pid2uid;
-	public static HashMap<String,String> pid2google;
-	private static HashMap<String,Agent> pid2agent;
-	public static HashMap<String,Boolean> pid2dev;
-	public static HashMap<String,Boolean> pid2reg;
-	public static HashMap<String,Boolean> pid2fullfunction;
+	public static Map<String,String> pid2name;
+	public static Map<String,String> pid2uid;
+	public static Map<String,String> pid2google;
+	private static Map<String,Agent> pid2agent;
+	public static Map<String,Boolean> pid2dev;
+	public static Map<String,Boolean> pid2reg;
+	public static Map<String,Boolean> pid2fullfunction;
 	public static Set<String> adminGoogleSet;
 	
 	static {
 		
-		pid2name = new HashMap<String,String>();
-		pid2name.put("324151024", "tea");
-		pid2name.put("188433641", "tea-JPN");
-		pid2name.put("324363124", "silverwzw");
-		pid2name.put("324224887", "x");
-		pid2name.put("325508200", "zack");
-		
-
-		pid2google = new HashMap<String,String>();
-		pid2google.put("324151024", "36795a4756f4b90fac03d4dd82b28db4");//tea
-		pid2google.put("188433641", "36795a4756f4b90fac03d4dd82b28db4");//tea-JPN
-		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
-		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x
-		pid2google.put("325508200", "147adec278ccd4cbe74a22258c91fd08");
-
-		
-
-		pid2uid = new HashMap<String,String>();
-		pid2uid.put("324151024", "B33ECFC8-F74D-4A88-A5D5-81183DAFC850");
-		pid2uid.put("188433641", "82EA5B93-776B-4270-B3DB-0E79FD1FBECB");
-		pid2uid.put("324363124", "10f99255-ac82-432a-bdb7-c1db221b6497");
-		pid2uid.put("324224887", "27C8DDB8-D23C-4345-94B6-805A5DD36A1F");
-		pid2uid.put("325508200", "C6976003-F229-4E87-8C3A-F896EC8B25B0");
-		
-
 		pid2agent = new HashMap<String,Agent>();
 		pid2agent.put("324151024", new Agent("31fed252-c432-4ba7-b544-7375e06b8e81", "324151024", false));
 		pid2agent.put("324363124", new Agent("01d97c68-8c5e-44bc-86b1-c1faa033de89", "324363124", false));
 
-		pid2dev = new HashMap<String,Boolean>();
-		pid2dev.put("324151024", (Boolean)true);
-		pid2dev.put("324363124", (Boolean)false);
-		pid2dev.put("324224887", (Boolean)true);
-		pid2dev.put("188433641", (Boolean)true);
-		pid2dev.put("325508200", (Boolean)true);
-		
-
-		pid2reg = new HashMap<String,Boolean>();
-		pid2reg.put("324151024", (Boolean)true);
-		pid2reg.put("324363124", (Boolean)true);
-		pid2reg.put("324224887", (Boolean)true);
-		pid2reg.put("188433641", (Boolean)false);
-		pid2reg.put("325508200", (Boolean)true);
-		
-		pid2fullfunction = new HashMap<String,Boolean>();
-		pid2fullfunction.put("324151024", (Boolean)true);
-		pid2fullfunction.put("324363124", (Boolean)true);
-		pid2fullfunction.put("324224887", (Boolean)true);
-		pid2fullfunction.put("188433641", (Boolean)true);
-		pid2fullfunction.put("325508200", (Boolean)false);
-		
-		adminGoogleSet = new HashSet<String>();
-		adminGoogleSet.add("cbf9d8da00cdc95dcd017fe07028029f"); //silverwzw
-		adminGoogleSet.add("36795a4756f4b90fac03d4dd82b28db4"); //tea
-		adminGoogleSet.add("361d39b1af4fa514bd48e43ad0bdcf0d"); //x
-		
 		storage = StorageLayerFactory.googleCacheAndDatastore("PadSettings");
+		
+		loadMeta();
+		
 	}
 	
+	final public static synchronized void saveMeta() {
+		String s = "";
+		for (Entry<String,String> e : pid2name.entrySet()) {
+			s += e.getKey() + '`' + e.getValue() + ';';
+		}
+		setGeneral("pid2name",s);
+		s = "";
+		for (Entry<String,String> e : pid2google.entrySet()) {
+			s += e.getKey() + '`' + e.getValue() + ';';
+		}
+		setGeneral("pid2google",s);
+		s = "";
+		for (Entry<String,String> e : pid2uid.entrySet()) {
+			s += e.getKey() + '`' + e.getValue() + ';';
+		}
+		setGeneral("pid2uid",s);
+		s = "";
+		for (Entry<String,Boolean> e : pid2dev.entrySet()) {
+			s += e.getKey() + '`' + (e.getValue()?'t':'f') + ';';
+		}
+		setGeneral("pid2dev",s);
+		s = "";
+		for (Entry<String,Boolean> e : pid2reg.entrySet()) {
+			s += e.getKey() + '`' + (e.getValue()?'t':'f') + ';';
+		}
+		setGeneral("pid2reg",s);
+		s = "";
+		for (Entry<String,Boolean> e : pid2fullfunction.entrySet()) {
+			s += e.getKey() + '`' + (e.getValue()?'t':'f') + ';';
+		}
+		setGeneral("pid2fullfunction",s);
+		s = "";
+		for (String hash : adminGoogleSet) {
+			s += hash + ";";
+		}
+		setGeneral("adminGoogleSet",s);
+	}
+	final public static synchronized void loadMeta() {
+		String s;
+		s = (String) getGeneral("pid2name");
+		pid2name = new HashMap<String,String>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2name.put(pn.split("`")[0], pn.split("`")[1]);
+		}
+		s = (String) getGeneral("pid2uid");
+		pid2uid = new HashMap<String,String>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2uid.put(pn.split("`")[0], pn.split("`")[1]);
+		}
+		s = (String) getGeneral("pid2google");
+		pid2google = new HashMap<String,String>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2google.put(pn.split("`")[0], pn.split("`")[1]);
+		}
+		s = (String) getGeneral("pid2dev");
+		pid2dev = new HashMap<String,Boolean>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2dev.put(pn.split("`")[0], (Boolean)(pn.split("`")[1].equals("t") ? true : false));
+		}
+		s = (String) getGeneral("pid2reg");
+		pid2reg = new HashMap<String,Boolean>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2reg.put(pn.split("`")[0], (Boolean)(pn.split("`")[1].equals("t") ? true : false));
+		}
+		s = (String) getGeneral("pid2fullfunction");
+		pid2fullfunction = new HashMap<String,Boolean>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			pid2fullfunction.put(pn.split("`")[0], (Boolean)(pn.split("`")[1].equals("t") ? true : false));
+		}
+		s = (String) getGeneral("adminGoogleSet");
+		adminGoogleSet = new HashSet<String>();
+		for (String pn : s.split(";")) {
+			if (pn.equals("")) {
+				continue;
+			}
+			adminGoogleSet.add(pn);
+		}
+	}
 	@SuppressWarnings("serial")
 	final public static class Agent implements java.io.Serializable {
 		private String agentUid;
