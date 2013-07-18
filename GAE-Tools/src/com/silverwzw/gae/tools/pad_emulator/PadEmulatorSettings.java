@@ -756,8 +756,8 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("3-条件地城");
 		}
 		
-		//122-126,327 Emergency
-		if ((dungeon >= 122 && dungeon <= 127) || dungeon == 327 || dungeon == 134){
+		//122-126,326-327 Emergency
+		if ((dungeon >= 122 && dungeon <= 127) || (dungeon >= 326 && dungeon <= 327) || dungeon == 134){
 			return utf82iso8859_1("4-紧急地城");
 		}
 		
@@ -766,8 +766,8 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("5-双周地城");
 		}
 		
-		//176,158,163-164,169,307
-		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307 || dungeon == 318){
+		//176,158,163-164,169,307,332,334
+		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307 || dungeon == 318 || dungeon == 332 || dungeon == 334){
 			return utf82iso8859_1("6-降临地城");
 		}
 		
