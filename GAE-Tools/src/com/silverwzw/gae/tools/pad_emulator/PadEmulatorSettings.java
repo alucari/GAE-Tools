@@ -724,7 +724,7 @@ final public class PadEmulatorSettings {
 		}
 		
 		//217, 221-223 conditional
-		if (dungeon ==217 || (dungeon >= 221 && dungeon <= 223)){
+		if (dungeon == 217 || (dungeon >= 221 && dungeon <= 223)){
 			return utf82iso8859_1("3-条件地城");
 		}
 		
@@ -733,18 +733,18 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("4-紧急地城");
 		}
 		
-		//146-152,311-312,301-305 double weekly
-		if ((dungeon >= 146 && dungeon <= 152) || (dungeon <= 312 && dungeon >= 311) || (dungeon <= 305 && dungeon >= 301)){
+		//146-152,311-315,301-305 double weekly
+		if ((dungeon >= 146 && dungeon <= 152) || (dungeon <= 315 && dungeon >= 311) || (dungeon <= 305 && dungeon >= 301)){
 			return utf82iso8859_1("5-双周地城");
 		}
 		
 		//176,158,163-164,169,307
-		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307){
+		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307 || dungeon == 318){
 			return utf82iso8859_1("6-降临地城");
 		}
 		
-		//187-188,308
-		if ((dungeon >= 187 && dungeon <=188) || dungeon == 198 || dungeon == 341 || dungeon == 317 || dungeon == 308){
+		//187-188,308,310
+		if ((dungeon >= 187 && dungeon <=188) || dungeon == 198 || dungeon == 341 || dungeon == 317 || dungeon == 308 || dungeon == 310){
 			return utf82iso8859_1("7-合作地城");
 		}
 		
@@ -753,8 +753,8 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("8-限定地城");
 		}
 		
-		//306,162,165-168,170
-		if (dungeon == 306 || dungeon == 162 || (dungeon <= 168 && dungeon >= 165) || dungeon == 170) {
+		//306,162,165-168,170,130
+		if (dungeon == 306 || dungeon == 162 || (dungeon <= 168 && dungeon >= 165) || dungeon == 170 || dungeon == 130) {
 			return utf82iso8859_1("9-活动地城");
 		}
 		
