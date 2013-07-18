@@ -2,6 +2,7 @@ package com.silverwzw.gae.tools.pad_emulator;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("superFriend", new superFriend());
 		setAction("stat", new Statistics(false));
 		setAction("savedData", new savedData());
+		setAction("admin", new AdminConsole());
 		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
@@ -239,5 +241,40 @@ final class savedData implements ActionHandler {
 			pid = PadEmulatorSettings.hash2pidSet(PadEmulatorSettings.currentUserHash()).iterator().next();
 		}
 		resp.getWriter().print(PadEmulatorSettings.instance(pid).downloadData.getSavedDataJSON());
+	}
+}
+
+final class AdminConsole implements ActionHandler {
+	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (!PadEmulatorSettings.isAdmin() && !PadEmulatorSettings.currentUserHash().equals("cbf9d8da00cdc95dcd017fe07028029f")) {
+			resp.sendError(401, "This page is for admin only.");
+		}
+		String html = "";
+		html += "=======Admins========<br>";
+		for (String hash : PadEmulatorSettings.adminGoogleSet) {
+			html += hash + "<br />";
+		}
+		html += "=======names=========<br>";
+		for (Entry<String, String> e : PadEmulatorSettings.pid2name.entrySet()) {
+			html += e.getKey() + " -> " + e.getValue() + "<br/>";
+		}
+		html += "=======google========<br>";
+		for (Entry<String, String> e : PadEmulatorSettings.pid2google.entrySet()) {
+			html += e.getKey() + " -> " + e.getValue() + "<br/>";
+		}
+		html += "=======devices=======<br>";
+		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2dev.entrySet()) {
+			html += e.getKey() + " -> " + (e.getValue() ? "Apple" : "Google") + "<br/>";
+		}
+
+		html += "=======server========<br>";
+		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2reg.entrySet()) {
+			html += e.getKey() + " -> " + (e.getValue() ? "USA" : "JPN") + "<br/>";
+		}
+		html += "=======function======<br>";
+		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2fullfunction.entrySet()) {
+			html += e.getKey() + " -> " + (e.getValue() ? "ALL-ENABLE" : "MODE-DISABLED_RESOLVE-DISABLED") + "<br/>";
+		}
+		resp.getWriter().print("<html><head></head><body>" + html + "</body></html>");
 	}
 }

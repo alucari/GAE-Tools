@@ -48,14 +48,14 @@ final public class PadEmulatorSettings {
 		UserHashNotFoundException(Exception e) {super(e);};
 	};
 	
-	private static HashMap<String,String> pid2name;
-	private static HashMap<String,String> pid2uid;
-	private static HashMap<String,String> pid2google;
+	public static HashMap<String,String> pid2name;
+	public static HashMap<String,String> pid2uid;
+	public static HashMap<String,String> pid2google;
 	private static HashMap<String,Agent> pid2agent;
-	private static HashMap<String,Boolean> pid2dev;
-	private static HashMap<String,Boolean> pid2reg;
-	private static HashMap<String,Boolean> pid2fullfunction;
-	private static Set<String> adminGoogleSet;
+	public static HashMap<String,Boolean> pid2dev;
+	public static HashMap<String,Boolean> pid2reg;
+	public static HashMap<String,Boolean> pid2fullfunction;
+	public static Set<String> adminGoogleSet;
 	
 	static {
 		
@@ -806,6 +806,12 @@ final public class PadEmulatorSettings {
 	}
 	final public static Set<String> hash2pidSet() {
 		return hash2pidSet(PadEmulatorSettings.currentUserHash());
+	}
+	final public static boolean isAdmin() {
+		return isAdmin(PadEmulatorSettings.currentUserHash());
+	}
+	final public static boolean isAdmin(String hash) {
+		return adminGoogleSet.contains(hash);
 	}
 	final public static String utf82iso8859_1(String utf8) throws UnsupportedEncodingException {
 		return new String(utf8.getBytes("UTF-8"),"ISO-8859-1");
