@@ -53,7 +53,6 @@ final public class PadEmulatorSettings {
 	private static HashMap<String,Boolean> pid2dev;
 	private static HashMap<String,Boolean> pid2reg;
 	private static HashMap<String,Boolean> pid2fullfunction;
-	private static Set<String> adminGoogleSet;
 	
 	static {
 		
