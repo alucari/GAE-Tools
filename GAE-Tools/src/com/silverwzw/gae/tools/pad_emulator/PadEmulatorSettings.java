@@ -633,6 +633,9 @@ final public class PadEmulatorSettings {
 			assert false : "NoSuchAlgorithmException";
 			return null;
 		}
+		if (UserServiceFactory.getUserService().getCurrentUser() == null) {
+			return "";
+		}
 		digest.update((UserServiceFactory.getUserService().getCurrentUser().getUserId() + "silverwzw-Anti-Rainbow-Table-Salt").getBytes());
 		return new String(Hex.encodeHex(digest.digest()));
 	}

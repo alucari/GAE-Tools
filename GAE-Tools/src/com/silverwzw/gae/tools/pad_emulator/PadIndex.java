@@ -248,6 +248,7 @@ final class AdminConsole implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		if (!PadEmulatorSettings.isAdmin() && !PadEmulatorSettings.currentUserHash().equals("cbf9d8da00cdc95dcd017fe07028029f")) {
 			resp.sendError(401, "This page is for admin only.");
+			return;
 		}
 		String html = "";
 		html += "=======Admins========<br>";

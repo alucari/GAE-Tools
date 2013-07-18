@@ -11,7 +11,9 @@ final public class Channel {
 
 	final static void broadcast(String json) {
 		for (String clientID : PadEmulatorSettings.googleSet()) {
-			ChannelServiceFactory.getChannelService().sendMessage(new ChannelMessage(clientID, json));
+			if (PadEmulatorSettings.adminGoogleSet.contains(clientID) || clientID.equals(PadEmulatorSettings.currentUserHash())) {
+				notifyByHash(clientID, json);
+			}
 		}
 	}
 	final static void notifyByPid(String pid, String json) {

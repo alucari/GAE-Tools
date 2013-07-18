@@ -53,26 +53,23 @@ final public class ControlPanel implements ActionHandler {
 				for (String s : myPid) {
 					script += "window['myPid'].push('" + s + "');";
 				}
-				script += "window['users'] = [";
+				script += "window['users'] = [];";
 				
 				
 				Collection<String> jpuserlist;
 				Set<Entry<String,String>> userlist;
 				jpuserlist = new HashSet<String>();
 				userlist = PadEmulatorSettings.pid2nameEntrySet();
-				i = 0;
+				
 				for (Entry<String, String> e : userlist) {
-					i++;
-					script += "'" + e.getValue() + "'";
-					if (i != userlist.size()) {
-						script += ',';
+					if (PadEmulatorSettings.isAdmin() || PadEmulatorSettings.instance(e.getKey()).userInfo.getHash().equals(PadEmulatorSettings.currentUserHash())) {
+						script += "window['users'].push('" + e.getValue() + "');";
 					}
 					if (!PadEmulatorSettings.instance(e.getKey()).userInfo.regionIsUS()) {
 						jpuserlist.add(e.getKey());
 					}
 				}
-				script += "];" +
-						"window['jp_ids'] = [";
+				script += "window['jp_ids'] = [";
 				i = 0;
 				for (String name : jpuserlist) {
 					i++;
@@ -81,19 +78,17 @@ final public class ControlPanel implements ActionHandler {
 						script += ',';
 					}
 				}
-				i = 0;
 				script += "];";
-				script += "window['ids']=[";
+				
+				script += "window['ids']=[];";
 				Set<String> pidSet;
 				pidSet = PadEmulatorSettings.pidSet();
 				for (String pid : pidSet) {
-					i++;
-					script += "'" + pid + "'";
-					if (i != pidSet.size()) {
-						script += ',';
+					if (PadEmulatorSettings.isAdmin() || PadEmulatorSettings.instance(pid).userInfo.getHash().equals(PadEmulatorSettings.currentUserHash())) {
+						script += "window['ids'].push('" + pid + "');";
 					}
 				}
-				script += "];</script>";
+				script += "</script>";
 		
 				o.print(script + "</head><body>");
 		
@@ -106,6 +101,9 @@ final public class ControlPanel implements ActionHandler {
 			String str;
 			int mode;
 			settings = new PadEmulatorSettings(pid);
+			if (!settings.userInfo.getHash().equals(PadEmulatorSettings.currentUserHash()) && !PadEmulatorSettings.isAdmin()) {
+				continue;
+			}
 			o.print("<tr class='inforow pid" + pid+"'>");
 			o.print(td(a("/pad/showPlayer.html?pid=" + pid, settings.userInfo.getName(), "player_view"),"name notification"));
 			o.print(td("","sta"));
@@ -170,19 +168,21 @@ final public class ControlPanel implements ActionHandler {
 		o.println("<div id='tl'></div>");
 		
 		//===========Action Log=================
-		o.print("<hr /><table><tbody><tr>");
-		for (String name : PadEmulatorSettings.nameCollection()) {
-			o.print("<th width=150>" +name + "</th>");
-		}
-		o.print("</tr>");
-		for(i = 0; i < 10; i++) {
-			o.print("<tr id='channel" + i + "'>");
+		if (PadEmulatorSettings.isAdmin()) {
+			o.print("<hr /><table><tbody><tr>");
 			for (String name : PadEmulatorSettings.nameCollection()) {
-				o.print("<td class='" + name + "'></td>");
+				o.print("<th width=150>" +name + "</th>");
 			}
-			o.println("</tr>");
+			o.print("</tr>");
+			for(i = 0; i < 10; i++) {
+				o.print("<tr id='channel" + i + "'>");
+				for (String name : PadEmulatorSettings.nameCollection()) {
+					o.print("<td class='" + name + "'></td>");
+				}
+				o.println("</tr>");
+			}
+			o.println("</tbody></table>");
 		}
-		o.println("</tbody></table>");
 		
 		//===========HTML end===================
 		o.print("</body></html>");

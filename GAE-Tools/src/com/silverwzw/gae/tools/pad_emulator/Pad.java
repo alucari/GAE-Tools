@@ -99,6 +99,11 @@ public class Pad extends SimpleServlet{
 		// POST done;
 		
 		Channel.broadcast(Channel.req2json(req));
+		if (req.getParameter("pid") != null) {
+			Channel.notifyByPid(req.getParameter("pid"), Channel.req2json(req));
+		} else if (req.getParameter("u") != null) {
+			Channel.notifyByPid(PadEmulatorSettings.instance(req.getParameter("u")).userInfo.getPid(), Channel.req2json(req));
+		}
 		
 		if (req.getParameter("pid") != null) { 
 			settings = new PadEmulatorSettings(req.getParameter("pid"));
