@@ -55,6 +55,7 @@ final public class PadEmulatorSettings {
 	private static HashMap<String,Boolean> pid2dev;
 	private static HashMap<String,Boolean> pid2reg;
 	private static HashMap<String,Boolean> pid2fullfunction;
+	private static Set<String> adminGoogleSet;
 	
 	static {
 		
@@ -70,7 +71,7 @@ final public class PadEmulatorSettings {
 		pid2google.put("324151024", "36795a4756f4b90fac03d4dd82b28db4");//tea
 		pid2google.put("188433641", "36795a4756f4b90fac03d4dd82b28db4");//tea-JPN
 		pid2google.put("324363124", "cbf9d8da00cdc95dcd017fe07028029f");//silverwzw
-		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x147adec278ccd4cbe74a22258c91fd08
+		pid2google.put("324224887", "361d39b1af4fa514bd48e43ad0bdcf0d"); //x
 		pid2google.put("325508200", "147adec278ccd4cbe74a22258c91fd08");
 
 		
@@ -108,6 +109,11 @@ final public class PadEmulatorSettings {
 		pid2fullfunction.put("324224887", (Boolean)true);
 		pid2fullfunction.put("188433641", (Boolean)true);
 		pid2fullfunction.put("325508200", (Boolean)false);
+		
+		adminGoogleSet = new HashSet<String>();
+		adminGoogleSet.add("cbf9d8da00cdc95dcd017fe07028029f"); //silverwzw
+		adminGoogleSet.add("36795a4756f4b90fac03d4dd82b28db4"); //tea
+		adminGoogleSet.add("361d39b1af4fa514bd48e43ad0bdcf0d"); //x
 		
 		storage = StorageLayerFactory.googleCacheAndDatastore("PadSettings");
 	}
