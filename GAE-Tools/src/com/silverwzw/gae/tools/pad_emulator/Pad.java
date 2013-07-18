@@ -176,8 +176,6 @@ public class Pad extends SimpleServlet{
 			connStr += "&plus=" + settings.dungeon.pval();
 			connStr += "&eggs=";
 			
-			(new URL(connStr)).openConnection().connect();
-			
 			Iterator<Integer> iter = eggs.iterator();
 			while (iter.hasNext()) {
 				connStr += iter.next();
@@ -185,6 +183,8 @@ public class Pad extends SimpleServlet{
 					connStr += ",";
 				}
 			}
+			
+			(new URL(connStr)).openConnection().connect();
 			
 			huntEggs = settings.eggHunting.huntEggMap();
 			
