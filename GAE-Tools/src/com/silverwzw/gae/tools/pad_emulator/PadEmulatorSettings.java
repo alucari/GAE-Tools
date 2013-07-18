@@ -53,6 +53,7 @@ final public class PadEmulatorSettings {
 	private static HashMap<String,Boolean> pid2dev;
 	private static HashMap<String,Boolean> pid2reg;
 	private static HashMap<String,Boolean> pid2fullfunction;
+	private static Set<String> adminGoogleSet;
 	
 	static {
 		
@@ -62,7 +63,6 @@ final public class PadEmulatorSettings {
 
 		pid2google = new HashMap<String,String>();
 		pid2google.put("325392103", "42e2aa8000fd253a6477706cb02609d1");
-
 		
 
 		pid2uid = new HashMap<String,String>();
@@ -80,6 +80,7 @@ final public class PadEmulatorSettings {
 		
 		pid2fullfunction = new HashMap<String,Boolean>();
 		pid2fullfunction.put("325392103", (Boolean)false);
+		
 		
 		storage = StorageLayerFactory.googleCacheAndDatastore("PadSettings");
 	}
@@ -769,6 +770,9 @@ final public class PadEmulatorSettings {
 			}
 		}
 		return pids;
+	}
+	final public static Set<String> hash2pidSet() {
+		return hash2pidSet(PadEmulatorSettings.currentUserHash());
 	}
 	final public static String utf82iso8859_1(String utf8) throws UnsupportedEncodingException {
 		return new String(utf8.getBytes("UTF-8"),"ISO-8859-1");
