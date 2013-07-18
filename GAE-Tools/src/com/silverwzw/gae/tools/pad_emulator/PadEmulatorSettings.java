@@ -804,6 +804,9 @@ final public class PadEmulatorSettings {
 		}
 		return pids;
 	}
+	final public static Set<String> hash2pidSet() {
+		return hash2pidSet(PadEmulatorSettings.currentUserHash());
+	}
 	final public static String utf82iso8859_1(String utf8) throws UnsupportedEncodingException {
 		return new String(utf8.getBytes("UTF-8"),"ISO-8859-1");
 	}
