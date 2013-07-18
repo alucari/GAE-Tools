@@ -788,6 +788,16 @@ final public class PadEmulatorSettings {
 		
 		return utf82iso8859_1("Œ¥∑÷¿‡");
 	}
+	final public static Set<String> hash2pidSet(String hash) {
+		Set<String> pids;
+		pids = new HashSet<String>();
+		for (Entry<String,String> e : pid2google.entrySet()) {
+			if (e.getValue().equals(hash)) {
+				pids.add(e.getKey());
+			}
+		}
+		return pids;
+	}
 	final public static String utf82iso8859_1(String utf8) throws UnsupportedEncodingException {
 		return new String(utf8.getBytes("UTF-8"),"ISO-8859-1");
 	}

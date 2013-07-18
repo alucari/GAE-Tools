@@ -233,6 +233,11 @@ final class superFriend implements ActionHandler {
 final class savedData implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("application/json");
-		resp.getWriter().print(PadEmulatorSettings.instance(req.getParameter("pid")).downloadData.getSavedDataJSON());
+		String pid;
+		pid = req.getParameter("pid");
+		if (pid == null) {
+			pid = PadEmulatorSettings.hash2pidSet(PadEmulatorSettings.currentUserHash()).iterator().next();
+		}
+		resp.getWriter().print(PadEmulatorSettings.instance(pid).downloadData.getSavedDataJSON());
 	}
 }
