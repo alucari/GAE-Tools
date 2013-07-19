@@ -4,13 +4,19 @@ function updateElement(b,el) {
 }
 
 function padtime2timestamp(padtime, pid) {
-	var offset,j;
+	var offset,j,t;
 	if (jp_ids.indexOf(pid) != -1) { //is JP region
 		offset = "GMT+0900";
 	} else {
-		j = (new Date()).getTimezoneOffset()/60 + 3;
-		j = (j<10) ? ("0" + j) : ("" + j);
-		offset = "GMT-" + j + "00";
+		t = (new Date()).getTimezoneOffset();
+		j = Math.floor(t/60) *100 + t % 60 + tzadj[pid];
+		if (j >= 0) {
+			j = '-' + ((j<1000) ? ("0" + j) : ("" + j));
+		} else {
+			j = -j;
+			j = "+" + ((j < 1000) ? ("0" + j) : ("" + j));
+		}
+		offset = "GMT" + j;
 	}
 	
 	return Date.parse("20" + padtime.substring(0,2) + " " + padtime.substring(2,4) + " "  + padtime.substring(4,6) + " " + padtime.substring(6,8) + ":" + padtime.substring(8,10) + ":"  + padtime.substring(10,12) + " " + offset);
