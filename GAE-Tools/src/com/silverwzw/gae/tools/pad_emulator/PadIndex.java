@@ -261,6 +261,9 @@ final class AdminConsole implements ActionHandler {
 				case "names":
 					PadEmulatorSettings.pid2name.put(req.getParameter("k"), req.getParameter("v"));
 					break;
+				case "uids":
+					PadEmulatorSettings.pid2uid.put(req.getParameter("k"), req.getParameter("v"));
+					break;
 				case "google":
 					PadEmulatorSettings.pid2google.put(req.getParameter("k"), req.getParameter("v"));
 					break;
@@ -282,6 +285,9 @@ final class AdminConsole implements ActionHandler {
 					break;
 				case "names":
 					PadEmulatorSettings.pid2name.remove(req.getParameter("k"));
+					break;
+				case "uids":
+					PadEmulatorSettings.pid2uid.remove(req.getParameter("k"));
 					break;
 				case "google":
 					PadEmulatorSettings.pid2google.remove(req.getParameter("k"));
@@ -306,6 +312,10 @@ final class AdminConsole implements ActionHandler {
 		}
 		html += "=======names=========<br>";
 		for (Entry<String, String> e : PadEmulatorSettings.pid2name.entrySet()) {
+			html += e.getKey() + " -> " + e.getValue() + "<br/>";
+		}
+		html += "=======uids==========<br>";
+		for (Entry<String, String> e : PadEmulatorSettings.pid2uid.entrySet()) {
 			html += e.getKey() + " -> " + e.getValue() + "<br/>";
 		}
 		html += "=======google========<br>";
