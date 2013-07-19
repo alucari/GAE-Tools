@@ -88,6 +88,11 @@ final public class ControlPanel implements ActionHandler {
 						script += "window['ids'].push('" + pid + "');";
 					}
 				}
+				
+				script += "window['tzadj']={};";
+				for (Entry<String, Integer> e : PadEmulatorSettings.pid2tzadj.entrySet()) {
+					script += "window['tzadj']['" + e.getKey() + "']=" + e.getValue() + ";";
+				}
 				script += "</script>";
 		
 				o.print(script + "</head><body>");

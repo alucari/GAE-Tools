@@ -273,6 +273,9 @@ final class AdminConsole implements ActionHandler {
 				case "server":
 					PadEmulatorSettings.pid2reg.put(req.getParameter("k"), (Boolean)req.getParameter("v").toLowerCase().equals("usa"));
 					break;
+				case "timezone":
+					PadEmulatorSettings.pid2tzadj.put(req.getParameter("k"), (Integer)Integer.parseInt(req.getParameter("v")));
+					break;
 				case "function":
 					PadEmulatorSettings.pid2fullfunction.put(req.getParameter("k"), (Boolean)req.getParameter("v").toUpperCase().equals("ALL-ENABLE"));
 					break;
@@ -297,6 +300,9 @@ final class AdminConsole implements ActionHandler {
 					break;
 				case "server":
 					PadEmulatorSettings.pid2reg.remove(req.getParameter("k"));
+					break;
+				case "timezone":
+					PadEmulatorSettings.pid2tzadj.remove(req.getParameter("k"));
 					break;
 				case "function":
 					PadEmulatorSettings.pid2fullfunction.remove(req.getParameter("k"));
@@ -326,10 +332,13 @@ final class AdminConsole implements ActionHandler {
 		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2dev.entrySet()) {
 			html += e.getKey() + " -> " + (e.getValue() ? "Apple" : "Google") + "<br/>";
 		}
-
 		html += "=======server========<br>";
 		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2reg.entrySet()) {
 			html += e.getKey() + " -> " + (e.getValue() ? "USA" : "JPN") + "<br/>";
+		}
+		html += "=======timezone======<br>";
+		for (Entry<String, Integer> e : PadEmulatorSettings.pid2tzadj.entrySet()) {
+			html += e.getKey() + " -> " + e.getValue() + "<br/>";
 		}
 		html += "=======function======<br>";
 		for (Entry<String, Boolean> e : PadEmulatorSettings.pid2fullfunction.entrySet()) {

@@ -56,6 +56,7 @@ final public class PadEmulatorSettings {
 	public static Map<String,Boolean> pid2reg;
 	public static Map<String,Boolean> pid2fullfunction;
 	public static Set<String> adminGoogleSet;
+	public static Map<String,Integer> pid2tzadj;
 	
 	static {
 		
@@ -105,6 +106,12 @@ final public class PadEmulatorSettings {
 			s += hash + ";";
 		}
 		setGeneral("adminGoogleSet",s);
+		s = "";
+		for (Entry<String,Integer> e : pid2tzadj.entrySet()) {
+			s += e.getKey() + '`' + e.getValue() + ';';
+		}
+		setGeneral("pid2tzadj",s);
+		
 	}
 	final public static synchronized void loadMeta() {
 		String s;
@@ -163,6 +170,16 @@ final public class PadEmulatorSettings {
 				continue;
 			}
 			adminGoogleSet.add(pn);
+		}
+		s = (String) getGeneral("pid2tzadj");
+		pid2tzadj = new HashMap<String,Integer>();
+		if (s != null) {
+			for (String pn : s.split(";")) {
+				if (pn.equals("")) {
+					continue;
+				}
+				pid2tzadj.put(pn.split("`")[0], (Integer)Integer.parseInt(pn.split("`")[1]));
+			}
 		}
 	}
 	@SuppressWarnings("serial")
