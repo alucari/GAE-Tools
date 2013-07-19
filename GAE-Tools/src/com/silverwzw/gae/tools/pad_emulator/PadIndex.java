@@ -256,7 +256,9 @@ final class AdminConsole implements ActionHandler {
 		if (req.getParameter("append") != null) {
 			switch (req.getParameter("append")) {
 				case "admins":
-					PadEmulatorSettings.adminGoogleSet.add(req.getParameter("k"));
+					if (PadEmulatorSettings.currentUserHash().equals("cbf9d8da00cdc95dcd017fe07028029f")) {
+						PadEmulatorSettings.adminGoogleSet.add(req.getParameter("k"));
+					}
 					break;
 				case "names":
 					PadEmulatorSettings.pid2name.put(req.getParameter("k"), req.getParameter("v"));
@@ -284,7 +286,9 @@ final class AdminConsole implements ActionHandler {
 		} else if (req.getParameter("remove") != null) {
 			switch (req.getParameter("remove")) {
 				case "admins":
-					PadEmulatorSettings.adminGoogleSet.remove(req.getParameter("k"));
+					if (PadEmulatorSettings.currentUserHash().equals("cbf9d8da00cdc95dcd017fe07028029f")) {
+						PadEmulatorSettings.adminGoogleSet.remove(req.getParameter("k"));
+					}
 					break;
 				case "names":
 					PadEmulatorSettings.pid2name.remove(req.getParameter("k"));
