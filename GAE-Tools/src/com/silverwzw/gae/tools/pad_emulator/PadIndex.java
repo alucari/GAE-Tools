@@ -1,6 +1,8 @@
 package com.silverwzw.gae.tools.pad_emulator;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -9,6 +11,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.silverwzw.gae.tools.pad_emulator.PadEmulatorSettings.LockEntry;
 import com.silverwzw.servlet.ActionHandler;
 import com.silverwzw.servlet.ActionRouterServlet;
 
@@ -29,6 +32,7 @@ public final class PadIndex extends ActionRouterServlet {
 		setAction("stat", new Statistics(false));
 		setAction("savedData", new savedData());
 		setAction("admin", new AdminConsole());
+		setAction("lock", new Lock());
 		setDefaultAction(new ControlPanel());
 	}
 	public boolean preServ(HttpServletRequest req, HttpServletResponse resp) throws IOException{
@@ -182,7 +186,7 @@ final class RealTimeChannel implements ActionHandler {
 
 final class broadcastNewVersion implements ActionHandler {
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		Channel.broadcast("{\"type\":\"newVersion\"}");
+		Channel.broadcastByWebUser("{\"type\":\"newVersion\"}");
 	}
 }
 
@@ -350,4 +354,32 @@ final class AdminConsole implements ActionHandler {
 		}
 		resp.getWriter().print("<html><head></head><body>" + html + "</body></html>");
 	}
+}
+
+final class Lock implements ActionHandler {
+
+	public void serv(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		String id="324363124";
+		if (req.getParameter("id") != null) {
+			id = req.getParameter("id");
+		}
+		if (req.getParameter("lock")!=null) {
+			PadEmulatorSettings.systemLockDown();
+		}
+		LockEntry lockEntry = PadEmulatorSettings.instance(id).lockEntry();
+		if (req.getParameter("acq")!=null) {
+			resp.getWriter().println("acquire: " + (PadEmulatorSettings.instance(id).lockEntry().acquire()?"success":"fail"));
+			Channel.broadcastLock(id, lockEntry);
+		}
+		if (req.getParameter("override") != null) {
+			lockEntry.override(!(req.getParameter("override") == "false" || req.getParameter("override") == "clear"));
+			Channel.broadcastLock(id, lockEntry);
+		}
+		resp.getWriter().println("Name: " + PadEmulatorSettings.instance(id).userInfo.getName() + "<br />");
+		resp.getWriter().println("Lock Count: " + lockEntry.lockDownCount() + "<br />");
+		resp.getWriter().println("Release Time: " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date(lockEntry.releaseTime())) + "<br />");
+		resp.getWriter().println("Override: " + (lockEntry.isOverride()?"true":"false") + "<br />");
+	}
+	
 }

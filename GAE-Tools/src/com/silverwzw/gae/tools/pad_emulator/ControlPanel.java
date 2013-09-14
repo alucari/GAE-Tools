@@ -93,6 +93,11 @@ final public class ControlPanel implements ActionHandler {
 				for (Entry<String, Integer> e : PadEmulatorSettings.pid2tzadj.entrySet()) {
 					script += "window['tzadj']['" + e.getKey() + "']=" + e.getValue() + ";";
 				}
+				
+				script += "window['lock_interval'] = " + PadEmulatorSettings.LockEntry.interval()+ ";";
+				script += "window['lock_ban'] = " + PadEmulatorSettings.LockEntry.ban()+ ";";
+				script += "window['lock_rec'] = " + PadEmulatorSettings.LockEntry.rec()+ ";";
+				script += "window['lock_max'] = " + PadEmulatorSettings.LockEntry.max()+ ";";
 				script += "</script>";
 		
 				o.print(script + "</head><body>");
@@ -100,7 +105,7 @@ final public class ControlPanel implements ActionHandler {
 		//==========HTML body==================
 		//==========Main table=================
 		o.println("<table border=\"1\"><tbody>");
-		o.println("<tr><th>name</th><th>sta</th><th>agent</th>" + (fullFunction ? "<th>Mode</th>" : "<!--no mode-->") + "<th>Dungeon</th>" + (fullFunction ? "<th>Resolve</th>":"<!--no resolve-->") + "<th>Level Lock</th><th>Super Friend</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
+		o.println("<tr><th>name</th><th>sta</th><th>agent</th>" + (fullFunction ? "<th>Mode</th>" : "<!--no mode-->") + "<th>Dungeon</th>" + (fullFunction ? "<th>Resolve</th>":"<!--no resolve-->") + "<th>Level Lock</th><th>Super Friend</th><th>Dungeon Lock</th><th>Egg Hunting</th><th>Wanted Eggs</th></tr>");
 		for (String pid : PadEmulatorSettings.pidSet()) {
 			PadEmulatorSettings settings;
 			String str;
@@ -123,7 +128,7 @@ final public class ControlPanel implements ActionHandler {
 			o.print(fullFunction?td(str):"<!--no resolve-->");
 			o.print(td(font(settings.blockLvlUp.does()?"Y":"N","isBlockLevelUp")  + sp + ajax("/pad?action=doNotLvlUp&pid=" + pid, "[!Y!]") + ajax("/pad?action=doNotLvlUp&release=1&pid=" + pid, "[N]")));
 			o.print(td(font("","superFriend") + "<a href='#' onclick='superFriend(" + pid + ");'>[+]</a>" + ajax("/pad?action=superFriend&clear=1&pid=" + pid, "[C]")));
-			
+			o.print(td(font("<script>window['lock'][\"" + pid + "\"] = {\"count\":" + settings.lockEntry().lockDownCount() + ",\"time\":"+settings.lockEntry().releaseTime()+"};</script>","dungeonLock")));
 			String eggTypeS;
 			int eggTypeI;
 			eggTypeI = settings.eggHunting.getMode();

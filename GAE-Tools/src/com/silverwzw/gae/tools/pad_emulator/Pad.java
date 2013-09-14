@@ -52,7 +52,12 @@ public class Pad extends SimpleServlet{
 		NoIdFoundException(Exception e){super(e);};
 	};
 	public void serv(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
+		
+		if (PadEmulatorSettings.isSystemLockDown()) {
+			resp.getWriter().print("{\"res\":98}");
+			return;
+		}
+		
 		PadEmulatorSettings settings;
 		
 		
@@ -104,7 +109,7 @@ public class Pad extends SimpleServlet{
 			settings = new PadEmulatorSettings(req.getParameter("u"));
 		}
 		
-		Channel.broadcast(Channel.req2json(req));
+		Channel.broadcastByWebUser(Channel.req2json(req));
 		if (!PadEmulatorSettings.isAdmin(settings.userInfo.getHash())) {
 			Channel.notifyByPid(settings.userInfo.getPid(), Channel.req2json(req));
 		}
@@ -134,12 +139,24 @@ public class Pad extends SimpleServlet{
 			return;
 		}
 		
-		if (actionIs("sneak_dungeon",req) && settings.lastFailedTS.get().equals(req.getParameter("time"))) {
-			resp.getWriter().print("{\"res\":96}");
-			return;
+		if (actionIs("sneak_dungeon",req)) {
+			if (settings.lastFailedTS.get().equals(req.getParameter("time"))) {
+				resp.getWriter().print("{\"res\":96}");
+				return;
+			}
+			boolean acquireRes = settings.lockEntry().acquire(); 
+			Channel.broadcastLock(settings.userInfo.getPid(), settings.lockEntry());
+			if (!acquireRes) {
+				resp.getWriter().print("{\"res\":97}");
+				return;
+			}
 		}
 		
-		conn.connect();
+		try {
+			conn.connect();
+		} catch (IOException e){
+			PadEmulatorSettings.systemLockDown();
+		}
 		String res, line;
 		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
@@ -201,6 +218,8 @@ public class Pad extends SimpleServlet{
 			
 			//set the dungeon content based on the dungeon Mode
 			res = settings.dungeon.moddedDungeon();
+			settings.lockEntry().full();
+			Channel.broadcastLock(settings.userInfo.getPid(), settings.lockEntry());
 		}
 		
 		//set the flag

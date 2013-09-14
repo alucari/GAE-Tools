@@ -72,6 +72,7 @@ knownAction.push("download_enemy_skill_data");
 knownAction.push("download_dungeon_data");
 
 var bonus = {};
+window['lock'] = {};
 
 function starter() {
 	var i,deamon;
@@ -214,8 +215,49 @@ function starter() {
 		});
 	};
 	
+	function updateLock(json) {
+		if (json != undefined && json != null) {
+			debug.log(json);
+			lock[json.pid].count = json.count;
+			lock[json.pid].time = json.time - json.now + (new Date()).valueOf();
+		}
+
+		for (i = 0; i < ids.length; i++) {
+			id = ids[i];
+			
+			var el,estCount,estTime;
+			var cT;
+			cT = (new Date()).valueOf();
+			if (lock[id].count < 0) {
+				if (lock[id].time > cT) {
+					estCount = lock[id].count;
+					estTime = lock[id].time - cT;
+				} else {
+					estCount = lock_rec + Math.floor((cT - lock[id].time) / lock_interval) ;
+					estTime = (lock_interval - (cT - lock[id].time) % lock_interval);
+				}
+			} else {
+				estCount = lock[id].count + Math.floor((cT - lock[id].time + lock_interval) / lock_interval) ;
+				estTime = (lock_interval - (cT - lock[id].time + lock_interval) % lock_interval);
+			}
+			
+			if (estCount >= lock_max) {
+				estTime = 0;
+				estCount = lock_max;
+			}
+			el = $('tr.pid' + id).find(".dungeonLock")[0];
+			el.innerHTML="Count: " + (estCount<0?0:estCount) + " (" + Math.floor(estTime/1000) + ")";
+			if (estCount < 0) {
+				el.parentElement.bgColor = "FF7373";
+			} else if (estCount < 5){
+				el.parentElement.bgColor = "F1F11A";
+			} else {
+				el.parentElement.bgColor = "3CFF3C";
+			}
+		}
+	};
+	
 	function updateUI(json, code) {
-		console.log("updateUI get called");
 		debug.log("json data for " + json.pid + " is loaded");
 		debug.log(json);
 		var tr;
@@ -405,6 +447,9 @@ function starter() {
 						if (data.pid !== undefined && (alluser || myPid.indexOf(data.pid) > -1)) {
 							updateBonus(data.pid);
 						}
+					} else if (data.type == "lockUpdate" ){
+						console.log(data);
+						updateLock(data);
 					}
 				},
 				"onerror" : function(e){
@@ -464,7 +509,7 @@ function starter() {
 	updateBonusTimeline();
 	updateStamina();
 	setInterval(update,60000);
-	setInterval(function () {updateStamina();updateBonusTimeline();}, 990);
+	setInterval(function () {updateStamina();updateBonusTimeline();updateLock();}, 990);
 	channel(false);  //try reusing an old channel resource.
 	
 	if (window.webkitNotifications.checkPermission() != 0) {

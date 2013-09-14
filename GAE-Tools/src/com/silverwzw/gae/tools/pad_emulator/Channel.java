@@ -5,13 +5,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelServiceFactory;
+import com.silverwzw.gae.tools.pad_emulator.PadEmulatorSettings.LockEntry;
 
 final public class Channel {
 
 
-	final static void broadcast(String json) {
+	final static void broadcastByWebUser(String json) {
 		for (String clientID : PadEmulatorSettings.googleSet()) {
 			if (PadEmulatorSettings.adminGoogleSet.contains(clientID) || clientID.equals(PadEmulatorSettings.currentUserHash())) {
+				notifyByHash(clientID, json);
+			}
+		}
+	}
+	final static void broadcastById(String id, String json) {
+		for (String clientID : PadEmulatorSettings.googleSet()) {
+			if (PadEmulatorSettings.adminGoogleSet.contains(clientID) || clientID.equals(PadEmulatorSettings.instance(id).userInfo.getHash())) {
 				notifyByHash(clientID, json);
 			}
 		}
@@ -98,5 +106,10 @@ final public class Channel {
 		token = new ChannelToken(hash);
 		PadEmulatorSettings.ChannelToken.set(hash,token);
 		return token;
+	}
+	public static void broadcastLock(String pid, LockEntry lockEntry) {
+		String s;
+		s = "{\"type\":\"lockUpdate\", \"pid\":\"" + pid + "\",\"time\":" + lockEntry.releaseTime() + ",\"count\":" + lockEntry.lockDownCount() + ",\"now\":" + System.currentTimeMillis() + "}";
+		broadcastById(pid, s);
 	}
 }

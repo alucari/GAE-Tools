@@ -47,16 +47,107 @@ final public class PadEmulatorSettings {
 		UserHashNotFoundException(String s) {super(s);};
 		UserHashNotFoundException(Exception e) {super(e);};
 	};
+	final public static class LockEntry {
+		private int lockDownCount;
+		private long releaseTime;
+		private boolean override = false;
+		static private int MAX_LOCK = 5;
+		static private int REC_COUNT = 3;
+		static private long INTERVAL = 90000;
+		public LockEntry() {
+			lockDownCount = MAX_LOCK;
+			releaseTime = System.currentTimeMillis() + INTERVAL;
+		}
+		final public void override(boolean b) {
+			full();
+			override = b;
+		}
+		final public boolean isOverride() {
+			return override == true;
+		}
+		final public boolean locked() {
+			return (!override) && (lockDownCount < 0);
+		}
+		private void update() {
+			long cTime = System.currentTimeMillis();
+			if (locked()) {
+				if (releaseTime <= cTime) {
+					lockDownCount = REC_COUNT + (int)((cTime - releaseTime) / INTERVAL);
+					releaseTime = cTime + INTERVAL - (cTime - releaseTime) % INTERVAL;
+				}
+				if (lockDownCount > MAX_LOCK) {
+					lockDownCount = MAX_LOCK;
+					releaseTime = cTime + INTERVAL;
+				}
+				return;
+			}
+			if (lockDownCount < MAX_LOCK && releaseTime <= cTime) {
+				lockDownCount += 1 + (cTime - releaseTime) / INTERVAL;
+				releaseTime = System.currentTimeMillis() + INTERVAL - ((cTime - releaseTime) % INTERVAL);
+				if (lockDownCount > MAX_LOCK) {
+					lockDownCount = MAX_LOCK;
+					releaseTime = cTime + INTERVAL;
+				}
+			}
+		}
+		public boolean acquire() {
+			if (override) {
+				return true;
+			}
+			long cTime = System.currentTimeMillis(); 
+			update();
+			if (locked()) {
+				return false;
+			}
+			lockDownCount --;
+			if (lockDownCount == MAX_LOCK - 1) {
+				releaseTime = cTime + INTERVAL;
+			} else if (lockDownCount < 0) {
+				lock();
+			}
+			return true;
+		}
+		private void lock() {
+			if (!override) {	
+				releaseTime = System.currentTimeMillis() + ban();
+			}
+		}
+		public int lockDownCount() {
+			update();
+			return lockDownCount;
+		}
+		public long releaseTime() {
+			update();
+			return releaseTime;
+		}
+		public void full() {
+			lockDownCount = MAX_LOCK;
+			releaseTime = System.currentTimeMillis() + INTERVAL;
+		}
+		public static long interval() {
+			return INTERVAL;
+		}
+		public static long ban() {
+			return INTERVAL * REC_COUNT * 2 + 5000;
+		}
+		public static int max() {
+			return MAX_LOCK;
+		}
+		public static int rec() {
+			return REC_COUNT;
+		}
+	}
 	
-	public static Map<String,String> pid2name;
-	public static Map<String,String> pid2uid;
-	public static Map<String,String> pid2google;
-	private static Map<String,Agent> pid2agent;
-	public static Map<String,Boolean> pid2dev;
-	public static Map<String,Boolean> pid2reg;
-	public static Map<String,Boolean> pid2fullfunction;
+	public static Map<String, String> pid2name;
+	public static Map<String, String> pid2uid;
+	public static Map<String, String> pid2google;
+	private static Map<String, Agent> pid2agent;
+	public static Map<String, Boolean> pid2dev;
+	public static Map<String, Boolean> pid2reg;
+	public static Map<String, Boolean> pid2fullfunction;
 	public static Set<String> adminGoogleSet;
-	public static Map<String,Integer> pid2tzadj;
+	public static Map<String, Integer> pid2tzadj;
+	public static Map<String, LockEntry> lockdown;
 	
 	static {
 		
@@ -111,7 +202,6 @@ final public class PadEmulatorSettings {
 			s += e.getKey() + '`' + e.getValue() + ';';
 		}
 		setGeneral("pid2tzadj",s);
-		
 	}
 	final public static synchronized void loadMeta() {
 		String s;
@@ -179,6 +269,14 @@ final public class PadEmulatorSettings {
 					continue;
 				}
 				pid2tzadj.put(pn.split("`")[0], (Integer)Integer.parseInt(pn.split("`")[1]));
+			}
+		}
+		if (lockdown == null) {
+			lockdown = new HashMap<String, LockEntry>();
+		}
+		for (String p : pidSet()) {
+			if (!lockdown.containsKey(p)) {
+				lockdown.put(p, new LockEntry());
 			}
 		}
 	}
@@ -327,7 +425,7 @@ final public class PadEmulatorSettings {
 		}
 		final public void set(Boolean b) {
 			setSpec("agentOn",b);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 	};
 	public AgentOn agentOn = new AgentOn();
@@ -346,7 +444,7 @@ final public class PadEmulatorSettings {
 		}
 		final public void set(boolean bool) {
 			setSpec("blockLevelUp", bool);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 	};
 	BlockLvlUp blockLvlUp = new BlockLvlUp();
@@ -354,7 +452,7 @@ final public class PadEmulatorSettings {
 		final public void setConditionNumber(int i) {
 			setSpec("ConditionNumber", (Long)(long)i);
 			lastFailedTS.set("0");
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public int getConditionNumber() {
 			Long i;
@@ -378,7 +476,7 @@ final public class PadEmulatorSettings {
 		final public void setMode(int mode) {
 			setSpec("eggHuntingMode", (Long)(long)mode);
 			lastFailedTS.set("0");
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public void huntEgg(String eggID, int value) {
 			Map<String, Integer> evmap;
@@ -405,7 +503,7 @@ final public class PadEmulatorSettings {
 			}
 			setSpec("huntEgg", evmap);
 			lastFailedTS.set("0");
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		@SuppressWarnings("unchecked")
 		final public Map<String,Integer> huntEggMap() {
@@ -420,7 +518,7 @@ final public class PadEmulatorSettings {
 		final public void cleanHuntEggMap() {
 			setSpec("huntEgg",new HashMap<String,Integer>());
 			lastFailedTS.set("0");
-			Channel.broadcast(Channel.refreshjson(pid));		
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));		
 		}
 	}
 	public EggHunting eggHunting = new EggHunting();
@@ -433,7 +531,7 @@ final public class PadEmulatorSettings {
 		}
 		final public void setMode(int mode) {
 			setSpec("DungeonMode", (Long)(long)mode);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public int getMode() {
 			if (getSpec("DungeonMode") == null || !pid2fullfunction.get(pid)) {
@@ -446,7 +544,7 @@ final public class PadEmulatorSettings {
 	final protected class Resolve {
 		final public void set(boolean b) {
 			setSpec("infStone",b);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public boolean isActive() {
 			if (!pid2fullfunction.get(pid)) {
@@ -614,11 +712,11 @@ final public class PadEmulatorSettings {
 		}
 		final public void time2full(String t) {
 			setSpec("fullStaminaTime",t);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public void maxValue(String max_sta) {
 			setSpec("maxStamina",(Long)(long)Integer.parseInt(max_sta));
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public int maxValue() {
 			Long i;
@@ -634,7 +732,7 @@ final public class PadEmulatorSettings {
 	final protected class SuperFriend {
 		final public void set(String cid) {
 			setSpec("superFriend",cid);
-			Channel.broadcast(Channel.refreshjson(pid));
+			Channel.broadcastByWebUser(Channel.refreshjson(pid));
 		}
 		final public String get() {
 			String s;
@@ -769,7 +867,7 @@ final public class PadEmulatorSettings {
 	final protected class DailyBonus {
 		final public void set(String s) {
 			setSpec("DailyBonus", s);
-			Channel.broadcast(Channel.refreshbonus(pid));
+			Channel.broadcastByWebUser(Channel.refreshbonus(pid));
 		}
 		final public String get() {
 			String s = (String) getSpec("DailyBonus");
@@ -809,13 +907,63 @@ final public class PadEmulatorSettings {
 	};
 	DownloadData downloadData = new DownloadData();
 	final public static String dungeonGroup(int dungeon) throws UnsupportedEncodingException {
-		//10-56 Normal
-		if (dungeon >= 10 && dungeon <= 56) {
+		switch (dungeon) {
+			case 110:
+				return utf82iso8859_1("0-普通地城");
+			case 121:
+				return utf82iso8859_1("1-每日地城");
+			case 217:
+			case 231:
+				return utf82iso8859_1("3-条件地城");
+			case 134:
+				return utf82iso8859_1("4-紧急地城");
+			//176,158,163,164,169,307,309,332,334,331
+			case 158:
+			case 176:
+			case 163:
+			case 164:
+			case 169:
+			case 307:
+			case 309:
+			case 318:
+			case 332:
+			case 334:
+			case 331:
+				return utf82iso8859_1("6-降临地城");
+			case 198:
+			case 341:
+			case 317:
+			case 308:
+			case 310:
+			case 342:
+				return utf82iso8859_1("7-合作地城");
+			//133, 135, 330, 190, 138
+			case 133:
+			case 135:
+			case 329:
+			case 330:
+			case 190:
+			case 138:
+			case 336:
+				return utf82iso8859_1("8-限定地城");
+			case 130:
+			case 162:
+			case 170:
+			case 171:
+			case 173:
+			case 306:
+			case 320:
+			case 335:
+				return utf82iso8859_1("9-活动地城");
+		}
+		
+		//10-60,110 Normal
+		if (dungeon >= 10 && dungeon <= 60) {
 			return utf82iso8859_1("0-普通地城");
 		}
 		
 		//102-105, 121 Weekly
-		if ((dungeon >= 102 && dungeon <= 105) || dungeon == 121){
+		if (dungeon >= 102 && dungeon <= 105) {
 			return utf82iso8859_1("1-每日地城");
 		}
 		
@@ -824,13 +972,13 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("2-技术地城");
 		}
 		
-		//217, 221-223 conditional
-		if (dungeon == 217 || (dungeon >= 221 && dungeon <= 223)){
+		//217, 221-223, 231 conditional
+		if (dungeon >= 221 && dungeon <= 223){
 			return utf82iso8859_1("3-条件地城");
 		}
 		
-		//122-126,326-327 Emergency
-		if ((dungeon >= 122 && dungeon <= 127) || (dungeon >= 326 && dungeon <= 327) || dungeon == 134){
+		//122-126,326-328,134 Emergency
+		if ((dungeon >= 122 && dungeon <= 127) || (dungeon >= 326 && dungeon <= 328)){
 			return utf82iso8859_1("4-紧急地城");
 		}
 		
@@ -839,23 +987,13 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("5-双周地城");
 		}
 		
-		//176,158,163-164,169,307,332,334
-		if (dungeon == 158 || dungeon == 176 || (dungeon >= 163 && dungeon <= 164) || dungeon == 169 || dungeon == 307 || dungeon == 318 || dungeon == 332 || dungeon == 334){
-			return utf82iso8859_1("6-降临地城");
-		}
-		
-		//187-188,308,310
-		if ((dungeon >= 187 && dungeon <=188) || dungeon == 198 || dungeon == 341 || dungeon == 317 || dungeon == 308 || dungeon == 310){
+		//187-188,198,341,317,308,310,336,342
+		if (dungeon >= 187 && dungeon <=188){
 			return utf82iso8859_1("7-合作地城");
 		}
-		
-		//133, 135, 330, 190
-		if (dungeon == 133 || dungeon == 135 || dungeon == 329 || dungeon == 330 || dungeon == 190) {
-			return utf82iso8859_1("8-限定地城");
-		}
-		
-		//306,162,165-168,170,130
-		if (dungeon == 306 || dungeon == 162 || (dungeon <= 168 && dungeon >= 165) || dungeon == 170 || dungeon == 130) {
+
+		//306,162,165-168,170,130,171,173,320,335
+		if (dungeon <= 168 && dungeon >= 165) {
 			return utf82iso8859_1("9-活动地城");
 		}
 		
@@ -882,6 +1020,19 @@ final public class PadEmulatorSettings {
 	}
 	final public static String utf82iso8859_1(String utf8) throws UnsupportedEncodingException {
 		return new String(utf8.getBytes("UTF-8"),"ISO-8859-1");
+	}
+	final public LockEntry lockEntry() {
+		return lockdown.get(pid);
+	}
+	final public static void systemLockDown() {
+		setGeneral("systemLock", (Long) System.currentTimeMillis());
+	}
+	final public static boolean isSystemLockDown() {
+		Long l = (Long) getGeneral("systemLock");
+		if (l == null) {
+			return false;
+		}
+		return (l + 960000) > System.currentTimeMillis();
 	}
 }
 
