@@ -18,6 +18,7 @@ public abstract class AbstractDungeon {
 		HashNotFoundException(){};
 		HashNotFoundException(String s){super(s);};
 		HashNotFoundException(Exception s){super(s);};
+		HashNotFoundException(String s, Exception e){super(s,e);};
 	};
 	
 	private String DungeonString;
@@ -89,7 +90,7 @@ public abstract class AbstractDungeon {
 			Matcher m;
 			m = pitem.matcher(DungeonString);
 			while (m.find()) {
-				if (!m.group(1).equals("900")) {
+				if (!m.group(1).equals("9900")) {
 					ll.add((Integer) Integer.parseInt(m.group(1)));
 				}
 			}

@@ -61,7 +61,7 @@ final public class ShowDungeon implements ActionHandler {
 			while (mitm.find()) {
 				String bon = mitm.group(1);
 				if (!bon.equals("0")) {
-					if (Integer.parseInt(bon) > 800 || Integer.parseInt(bon) < 0) {
+					if (Integer.parseInt(bon) == 9900) {
 						count ++;
 					} else {
 						itm += "<script>document.write(show(" + bon + "));</script>";

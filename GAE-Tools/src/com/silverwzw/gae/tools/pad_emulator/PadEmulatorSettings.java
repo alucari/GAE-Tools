@@ -914,10 +914,11 @@ final public class PadEmulatorSettings {
 				return utf82iso8859_1("1-每日地城");
 			case 217:
 			case 231:
+			case 291:
 				return utf82iso8859_1("3-条件地城");
 			case 134:
 				return utf82iso8859_1("4-紧急地城");
-			//176,158,163,164,169,307,309,332,334,331
+			//176,158,163,164,169,307,309,318
 			case 158:
 			case 176:
 			case 163:
@@ -926,9 +927,6 @@ final public class PadEmulatorSettings {
 			case 307:
 			case 309:
 			case 318:
-			case 332:
-			case 334:
-			case 331:
 				return utf82iso8859_1("6-降临地城");
 			case 198:
 			case 341:
@@ -936,6 +934,8 @@ final public class PadEmulatorSettings {
 			case 308:
 			case 310:
 			case 342:
+			case 345:
+			case 346:
 				return utf82iso8859_1("7-合作地城");
 			//133, 135, 330, 190, 138
 			case 133:
@@ -945,6 +945,7 @@ final public class PadEmulatorSettings {
 			case 190:
 			case 138:
 			case 336:
+			case 352:
 				return utf82iso8859_1("8-限定地城");
 			case 130:
 			case 162:
@@ -954,6 +955,7 @@ final public class PadEmulatorSettings {
 			case 306:
 			case 320:
 			case 335:
+			case 357:
 				return utf82iso8859_1("9-活动地城");
 		}
 		
@@ -982,9 +984,14 @@ final public class PadEmulatorSettings {
 			return utf82iso8859_1("4-紧急地城");
 		}
 		
-		//146-152,311-315,301-305 double weekly
-		if ((dungeon >= 146 && dungeon <= 152) || (dungeon <= 315 && dungeon >= 311) || (dungeon <= 305 && dungeon >= 301)){
+		//146-153,311-315,301-305,321 double weekly
+		if ((dungeon >= 146 && dungeon <= 153) || (dungeon <= 315 && dungeon >= 311) || (dungeon <= 305 && dungeon >= 301) || dungeon == 321){
 			return utf82iso8859_1("5-双周地城");
+		}
+		
+		//331-333 decent
+		if (dungeon >= 331 && dungeon <= 333) {
+			return utf82iso8859_1("6-降临地城");
 		}
 		
 		//187-188,198,341,317,308,310,336,342
