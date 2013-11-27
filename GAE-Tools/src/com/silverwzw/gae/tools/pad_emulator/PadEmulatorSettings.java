@@ -927,6 +927,7 @@ final public class PadEmulatorSettings {
 			case 307:
 			case 309:
 			case 318:
+			case 334:
 				return utf82iso8859_1("6-Ωµ¡Ÿµÿ≥«");
 			case 198:
 			case 341:

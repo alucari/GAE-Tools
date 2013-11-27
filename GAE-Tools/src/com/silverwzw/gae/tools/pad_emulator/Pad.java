@@ -226,7 +226,7 @@ public class Pad extends SimpleServlet{
 		if (actionIs("get_player_data",req)) {
 			settings.playerData.set(res);
 			Matcher m = pmsg.matcher(res);
-			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker\\\\n");
+			res = m.replaceAll(",\"msg\":\"Silverwzw's P&D Cracker [Active]\\\\n");
 			m = pstamax.matcher(res);
 			if (m.find()) {
 				settings.stamina.maxValue(m.group(1));
