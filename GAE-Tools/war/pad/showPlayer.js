@@ -23,6 +23,11 @@ var refresh = function () {
 			alert("cache expired.");
 			return;
 		}
+		if (json.isUS == undefined || !json.isUS) {
+			show = showJP;
+		} else {
+			show = showNA;
+		}
 		function displayByCuid(cardid) {
 			var mon,i,j;
 			for (i = 0; i < json.card.length; i++) {

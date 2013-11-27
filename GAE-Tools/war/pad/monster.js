@@ -37,3 +37,30 @@ function show(i, alt, description, link) {
 	}
 	return "<a href='" + link + "' title='" + t + "' target='monster_wiki'><img src='http://" + m.i + "' width='60px' height='60px'/></a>";
 }
+
+function showNA(i, alt, description, link) {
+	if (typeof i === "string") {
+		i = parseInt(id);
+	}
+	switch (i) {
+		case 669:
+		case 670:
+		case 671:
+		case 672:
+		case 673:
+		case 674:
+		case 675:
+		case 676:
+		case 677:
+		case 678:
+		case 679:
+		case 680:
+			i += 255;
+			
+	}
+	return show(i, alt, description, link);
+}
+
+function showJP() {
+	return show(i, alt, description, link);
+}

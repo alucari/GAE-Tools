@@ -145,7 +145,13 @@ final public class ControlPanel implements ActionHandler {
 			o.print(td(font(eggTypeS,"isLookingForCertainEgg") + sp + ajax("/pad?action=lookForEggs&mode=1&pid="+pid,"[!Y!]") + ajax("/pad?action=lookForEggs&mode=2&pid="+pid,"[!P!]") + "<a href='#' onclick='setConditionNumber(" + pid + ");'>[#]</a>"));
 			str = "";
 			for (Entry<String, Integer> e : settings.eggHunting.huntEggMap().entrySet()) {
-				str += "document.write('[' + show(" + e.getKey() + ") + '=' + " + e.getValue() +" + ']');";
+				String showFuncName;
+				if (settings.userInfo.regionIsUS()) {
+					showFuncName = "showNA";
+				} else {
+					showFuncName = "showJP";
+				}
+				str += "document.write('[' + " + showFuncName + "(" + e.getKey() + ") + '=' + " + e.getValue() +" + ']');";
 			}
 			if (str.equals("")) {
 				str = "N/A";

@@ -310,7 +310,9 @@ function starter() {
 			eggstr += "[" + show(json.wantedEggs[i].id) + "=" + json.wantedEggs[i].v + "]";
 		}
 		tr.find('.eggs')[0].innerHTML = eggstr;
-		tr.find('.superFriend')[0].innerHTML = (json.superFriend == "")?"":show(json.superFriend);
+		var superFriendIcon;
+		superFriendIcon = (json.isUS === undefined || json.isUS == false) ? showJP(json.superFriend) : showNA(json.superFriend);
+		tr.find('.superFriend')[0].innerHTML = (json.superFriend == "")?"":superFriendIcon;
 	};
 	
 	function update(id) {

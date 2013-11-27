@@ -42,7 +42,7 @@ public final class GetJSON implements ActionHandler {
 		}
 		
 		eggs = settings.eggHunting.huntEggMap().entrySet();
-		json = "{\"pid\":" + uid + ",\"isBlockLevelUp\":" + b2s(settings.blockLvlUp.does()) + ",\"isLookingForCertainEgg\":" + settings.eggHunting.getMode() + ",\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
+		json = "{\"pid\":" + uid +",\"isUS\":" + (settings.userInfo.regionIsUS()?"true":"false") +",\"isBlockLevelUp\":" + b2s(settings.blockLvlUp.does()) + ",\"isLookingForCertainEgg\":" + settings.eggHunting.getMode() + ",\"wantedEggs\":" + (eggs.size() == 0 ? "[],":"[");
 		for (Entry<String,Integer> egg : eggs) {
 			json += "{\"id\":" + egg.getKey() + ",\"v\":" + egg.getValue() + "}";
 			i++;
