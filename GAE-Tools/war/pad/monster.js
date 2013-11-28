@@ -40,27 +40,14 @@ function show(i, alt, description, link) {
 
 function showNA(i, alt, description, link) {
 	if (typeof i === "string") {
-		i = parseInt(id);
+		i = parseInt(i);
 	}
-	switch (i) {
-		case 669:
-		case 670:
-		case 671:
-		case 672:
-		case 673:
-		case 674:
-		case 675:
-		case 676:
-		case 677:
-		case 678:
-		case 679:
-		case 680:
-			i += 255;
-			
+	if (i <= 680 & i >= 669) {
+		i += 255;
 	}
 	return show(i, alt, description, link);
 }
 
-function showJP() {
+function showJP(i, alt, description, link) {
 	return show(i, alt, description, link);
 }

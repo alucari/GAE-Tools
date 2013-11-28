@@ -306,13 +306,13 @@ function starter() {
 		}
 		sta[json.pid]={"max":json.sta_max,"time":json.sta_time};
 		var eggstr = "";
+		var showFuncBind;
+		showFuncBind = (json.isUS === undefined || json.isUS == false) ? showJP : showNA; 
 		for (var i = 0; i < json.wantedEggs.length; i++) {
-			eggstr += "[" + show(json.wantedEggs[i].id) + "=" + json.wantedEggs[i].v + "]";
+			eggstr += "[" + showFuncBind(json.wantedEggs[i].id) + "=" + json.wantedEggs[i].v + "]";
 		}
 		tr.find('.eggs')[0].innerHTML = eggstr;
-		var superFriendIcon;
-		superFriendIcon = (json.isUS === undefined || json.isUS == false) ? showJP(json.superFriend) : showNA(json.superFriend);
-		tr.find('.superFriend')[0].innerHTML = (json.superFriend == "")?"":superFriendIcon;
+		tr.find('.superFriend')[0].innerHTML = (json.superFriend == "")?"":showFuncBind(json.superFriend);
 	};
 	
 	function update(id) {

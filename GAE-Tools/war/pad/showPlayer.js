@@ -15,54 +15,63 @@ var refresh = function () {
 	} catch (e) {
 		return;
 	}
-	url='/pad?action=getJSON&player&pid='+id;
-	$.get(url, function(json,code){
-		debug.log(json);
-		var deckStr = "",i, eggStr = "";
-		if (json == null) {
-			alert("cache expired.");
-			return;
-		}
-		if (json.isUS == undefined || !json.isUS) {
-			show = showJP;
+	url='/pad?action=getJSON&pid='+id;
+	$.get(url, function(json2,code2){
+		var isUS;
+		if (json2.isUS == undefined || !json2.isUS) {
+			isUS = false;
 		} else {
-			show = showNA;
+			isUS = true;
 		}
-		function displayByCuid(cardid) {
-			var mon,i,j;
+		$.get(url + "&player", function(json,code){
+			debug.log(json);
+			var deckStr = "",i, eggStr = "";
+			if (json == null) {
+				alert("cache expired.");
+				return;
+			}
+			function displayByCuid(cardid) {
+				var mon,i,j;
+				for (i = 0; i < json.card.length; i++) {
+					if (json.card[i].cuid == cardid) {
+						mon = json.card[i];
+						break;
+					}
+				}
+				if (mon === undefined) {
+					return show(-1);
+				}
+				return displayByObj(mon);
+			}
+			function displayByObj(mon) {
+				var showFuncBind;
+				if (isUS) {
+					showFuncBind = showNA;
+				} else {
+					showFuncBind = showJP;
+				}
+				return showFuncBind(mon.no, "Lv: " + mon.lv + ", Skill: " + mon.slv + ", HP +" + mon.plus[0] + " ATK +" + mon.plus[1] + " RCV +" + mon.plus[2], false);
+			};
+			$('#name')[0].innerHTML = json.name;
+			$('#basic')[0].innerHTML = "Level : " + json.lv + "<br />Stone : " + json.gold + "<br />Point : " + json.fripnt +" ("+ Math.floor(json.fripnt/200) +")" + "<br />Login : " + json.logins + "<br />Coins : " + json.coin + "<br />Costs : " + json.cost;
+			for (i = 0; i < json.decks.length; i++) {
+				var ms;
+				deckStr += "Set " + i + ": ";
+				ms = json.decks[i]["set_0"+i];
+				for (j = 0; j < ms.length; j++) {
+					deckStr += displayByCuid(ms[j]);
+				}
+				deckStr += "<br />";
+			}
+			$("#decks")[0].innerHTML = deckStr;
 			for (i = 0; i < json.card.length; i++) {
-				if (json.card[i].cuid == cardid) {
-					mon = json.card[i];
-					break;
+				eggStr += displayByObj(json.card[i]);
+				if (i%8 == 7) {
+					eggStr += "<br / >"
 				}
 			}
-			if (mon === undefined) {
-				return show(-1);
-			}
-			return displayByObj(mon);
-		}
-		function displayByObj(mon) {
-			return show(mon.no, "Lv: " + mon.lv + ", Skill: " + mon.slv + ", HP +" + mon.plus[0] + " ATK +" + mon.plus[1] + " RCV +" + mon.plus[2], false);
-		};
-		$('#name')[0].innerHTML = json.name;
-		$('#basic')[0].innerHTML = "Level : " + json.lv + "<br />Stone : " + json.gold + "<br />Point : " + json.fripnt +" ("+ Math.floor(json.fripnt/200) +")" + "<br />Login : " + json.logins + "<br />Coins : " + json.coin + "<br />Costs : " + json.cost;
-		for (i = 0; i < json.decks.length; i++) {
-			var ms;
-			deckStr += "Set " + i + ": ";
-			ms = json.decks[i]["set_0"+i];
-			for (j = 0; j < ms.length; j++) {
-				deckStr += displayByCuid(ms[j]);
-			}
-			deckStr += "<br />";
-		}
-		$("#decks")[0].innerHTML = deckStr;
-		for (i = 0; i < json.card.length; i++) {
-			eggStr += displayByObj(json.card[i]);
-			if (i%8 == 7) {
-				eggStr += "<br / >"
-			}
-		}
-		$("#eggs")[0].innerHTML = eggStr;
+			$("#eggs")[0].innerHTML = eggStr;
+		});
 	});
 }
 $(document).ready(refresh);
